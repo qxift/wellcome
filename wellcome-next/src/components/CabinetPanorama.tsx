@@ -1,8 +1,17 @@
 "use client";
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { DoubleSide, MathUtils, TextureLoader, type Group } from "three";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  DoubleSide,
+  MathUtils,
+  RepeatWrapping,
+  Vector3,
+  TextureLoader,
+  type Texture,
+  SRGBColorSpace,
+  type Group,
+} from "three";
 import type { CabinetItem } from "@/data/cabinetItems";
 
 type CabinetPanoramaProps = {
@@ -20,6 +29,7 @@ type CabinetStyle = {
   depth: number;
   y: number;
   wood: string;
+  woodTextureIndex: number;
   trim: string;
   back: string;
   crown: "flat" | "stepped" | "arch";
@@ -35,14 +45,33 @@ type CompartmentSpec = {
   type: "door-left" | "door-right";
 };
 
+type FocusTarget = {
+  cameraPosition: [number, number, number];
+  lookAt: [number, number, number];
+  yaw: number;
+};
+
+type CameraPose = {
+  cameraPosition: [number, number, number];
+  yaw: number;
+};
+
+type FurniturePlacement = {
+  position: [number, number, number];
+  rotationY: number;
+};
+
 const playerRadius = 0.28;
 const roomRadius = 5.2;
-const furnitureRadius = 4.45;
 const itemsPerCabinet = 4;
-const doorsPerCabinet = 9;
+const doorsPerCabinet = 16;
 
 function trimTitle(title: string) {
   return title.replace(/^\[/, "").replace(/\]\.?$/, "");
+}
+
+function cleanYear(year: string) {
+  return year.replace(/^\[/, "").replace(/\]$/, "");
 }
 
 function hashSeed(value: string) {
@@ -56,81 +85,79 @@ function hashSeed(value: string) {
   return hash >>> 0;
 }
 
-function pick<T>(values: T[], seed: number, offset = 0) {
-  return values[(seed + offset) % values.length];
-}
-
 function chunkItems(items: CabinetItem[]): CabinetGroup[] {
+  if (items.length === 0) {
+    return [];
+  }
+
+  const numCabinets = 9;
   const groups: CabinetGroup[] = [];
 
-  for (let index = 0; index < items.length; index += itemsPerCabinet) {
-    const groupItems = items.slice(index, index + itemsPerCabinet);
-    groups.push({
-      id: groupItems.map((item) => item.id).join("-"),
-      items: groupItems,
-    });
+  for (let i = 0; i < numCabinets; i++) {
+    const startIndex = i * itemsPerCabinet;
+    const endIndex = Math.min(startIndex + itemsPerCabinet, items.length);
+    const cabinetItems = items.slice(startIndex, endIndex);
+
+    if (cabinetItems.length > 0) {
+      groups.push({
+        id: cabinetItems.map((item) => item.id).join("-"),
+        items: cabinetItems,
+      });
+    }
   }
 
   return groups;
 }
 
-function getCabinetStyle(group: CabinetGroup, index: number): CabinetStyle {
-  const seed = hashSeed(`${group.id}-${index}`);
-  const woods = ["#3b1a0a", "#5a3217", "#2c1408", "#6c4727", "#49301b", "#271109"];
-  const trims = ["#8a5a2b", "#4b2410", "#a0713a", "#2f170a", "#6a3d1e"];
-  const furnitureType = pick(
-    ["tall-cabinet", "bookcase", "vitrine-table", "sideboard", "wall-case"] as const,
-    seed,
-    index,
-  );
-  const dimensions = {
-    "tall-cabinet": { width: 3.0, height: 3.55, depth: 0.82, y: 0 },
-    bookcase: { width: 3.45, height: 3.25, depth: 0.62, y: 0 },
-    "vitrine-table": { width: 3.1, height: 1.75, depth: 1.05, y: -0.68 },
-    sideboard: { width: 3.55, height: 2.15, depth: 0.86, y: -0.38 },
-    "wall-case": { width: 2.55, height: 2.25, depth: 0.48, y: 0.45 },
-  }[furnitureType];
+function getUnifiedCabinetWidth(totalGroups: number) {
+  const depth = 0.6;
+  const radius = roomRadius - depth * 0.5 + 0.3;
 
+  if (totalGroups === 1) {
+    return Math.max(3.8, Math.min(4.4, radius * 0.8));
+  }
+
+  const span = (Math.PI * 2) / Math.max(totalGroups, 1);
+  const outerWidth = 2 * radius * Math.sin(span / 2);
+
+  return Math.max(1.18, outerWidth);
+}
+
+function getCabinetStyle(group: CabinetGroup, index: number, totalGroups: number): CabinetStyle {
   return {
-    width: dimensions.width + (seed % 4) * 0.12,
-    height: dimensions.height + ((seed >> 3) % 4) * 0.1,
-    depth: dimensions.depth + ((seed >> 6) % 3) * 0.06,
-    y: dimensions.y + (((seed >> 9) % 5) - 2) * 0.04,
-    wood: pick(woods, seed),
-    trim: pick(trims, seed, 3),
+    width: getUnifiedCabinetWidth(totalGroups),
+    height: 4.02,
+    depth: 1.2, // Increased depth to ensure full wall coverage
+    y: 0,
+    wood: "#2c1408",
+    woodTextureIndex: 1,
+    trim: "#d3a95f",
     back: group.items[0]?.color ?? "#7b5732",
-    crown: furnitureType === "vitrine-table" ? "flat" : pick(["flat", "stepped", "arch"], seed, 11),
-    foot: pick(["block", "bun", "none"], seed, 17),
-    furnitureType,
+    crown: "flat",
+    foot: "none",
+    furnitureType: "tall-cabinet",
   };
 }
 
-function getCompartmentSpecs(style: CabinetStyle, count: number, seed: number): CompartmentSpec[] {
-  const innerWidth = style.width - 0.42;
-  const innerHeight = style.height - 0.56;
-  const columns = seed % 2 === 0 ? 3 : 4;
-  const rows = Math.ceil(count / columns);
-  const gap = 0.075;
+function getCompartmentSpecs(style: CabinetStyle, count: number, _seed: number): CompartmentSpec[] {
+  const innerWidth = style.width - 0.02;
+  const innerHeight = style.height - 0.02;
+  const columns = 4;
+  const rows = 4;
+  const gap = 0.002;
   const specs: CompartmentSpec[] = [];
-  const columnWidths = Array.from({ length: columns }, (_, column) => {
-    const wobble = ((seed >> (column * 3)) % 5 - 2) * 0.035;
-    return innerWidth / columns + wobble;
-  });
-  const normalizedWidth = columnWidths.reduce((sum, width) => sum + width, 0) + gap * (columns - 1);
-  const widthScale = innerWidth / normalizedWidth;
-  const scaledWidths = columnWidths.map((width) => width * widthScale);
+  const columnWidth = (innerWidth - gap * (columns - 1)) / columns;
   const rowHeight = (innerHeight - gap * (rows - 1)) / rows;
 
   let cursorX = -innerWidth / 2;
 
   for (let column = 0; column < columns; column += 1) {
-    const width = scaledWidths[column];
+    const width = columnWidth;
 
     for (let row = 0; row < rows; row += 1) {
       if (specs.length >= count) break;
 
-      const heightWobble = ((seed >> (row * 4 + column)) % 5 - 2) * 0.025;
-      const height = Math.max(0.34, rowHeight + heightWobble);
+      const height = Math.max(0.34, rowHeight);
       const x = cursorX + width / 2;
       const y = innerHeight / 2 - rowHeight / 2 - row * (rowHeight + gap);
 
@@ -139,7 +166,7 @@ function getCompartmentSpecs(style: CabinetStyle, count: number, seed: number): 
         y,
         width,
         height,
-        type: (row + column + seed) % 2 === 0 ? "door-left" : "door-right",
+        type: column % 2 === 0 ? "door-left" : "door-right",
       });
     }
 
@@ -149,16 +176,240 @@ function getCompartmentSpecs(style: CabinetStyle, count: number, seed: number): 
   return specs;
 }
 
-function getFurniturePlacement(index: number) {
-  const angle = index * 1.08 + 0.26;
-  const radius = furnitureRadius + (index % 3 - 1) * 0.12;
-  const x = Math.sin(angle) * radius;
-  const z = -Math.cos(angle) * radius;
+function getCabinetOuterFootprint(style: CabinetStyle) {
+  return {
+    width: style.width ,
+    depth: style.depth + 0.12,
+  };
+}
+
+function getDoorIdsForGroups(groups: CabinetGroup[]) {
+  return groups.flatMap((group, groupIndex) => {
+    const style = getCabinetStyle(group, groupIndex, groups.length);
+    const seed = hashSeed(`${group.id}-${groupIndex}-layout`);
+    const specs = getCompartmentSpecs(style, doorsPerCabinet, seed);
+
+    return specs.map((_, specIndex) => `${group.id}-${specIndex}`);
+  });
+}
+
+function getUniqueDoorItemId(
+  items: CabinetItem[],
+  currentDoorItems: Record<string, string>,
+  doorId: string,
+  offset: number,
+) {
+  if (items.length === 0) {
+    return "";
+  }
+
+  const usedItemIds = new Set(
+    Object.entries(currentDoorItems)
+      .filter(([candidateDoorId]) => candidateDoorId !== doorId)
+      .map(([, itemId]) => itemId),
+  );
+
+  for (let index = 0; index < items.length; index += 1) {
+    const candidate = items[(hashSeed(doorId) + offset + index) % items.length];
+
+    if (!usedItemIds.has(candidate.id)) {
+      return candidate.id;
+    }
+  }
+
+  return items[(hashSeed(doorId) + offset) % items.length]?.id ?? "";
+}
+
+function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
+  if (groups.length === 0) {
+    return [];
+  }
+
+  const styles = groups.map((group, index) => getCabinetStyle(group, index, groups.length));
+  const footprints = styles.map((style) => getCabinetOuterFootprint(style));
+  const maxDepth = Math.max(...footprints.map((footprint) => footprint.depth));
+  const radius = roomRadius; // Position cabinets at the wall radius
+  const spans = footprints.map((footprint) => {
+    const chord = footprint.width;
+    return 2 * Math.asin(Math.min(1, chord / (2 * radius)));
+  });
+  const totalSpan = spans.reduce((sum, span) => sum + span, 0);
+  const gapAngle = 0; // Make cabinets touch each other
+  const placements: FurniturePlacement[] = [];
+  let cursor = groups.length === 1 ? 0 : 0;
+
+  spans.forEach((span) => {
+    cursor += span / 2;
+    const x = Math.sin(cursor) * radius;
+    const z = -Math.cos(cursor) * radius;
+
+    placements.push({
+      position: [x, 0, z],
+      rotationY: -cursor,
+    });
+
+    cursor += span / 2 + gapAngle;
+  });
+
+  return placements;
+}
+
+function rotateY([x, y, z]: [number, number, number], rotationY: number): [number, number, number] {
+  const cos = Math.cos(rotationY);
+  const sin = Math.sin(rotationY);
+
+  return [x * cos + z * sin, y, -x * sin + z * cos];
+}
+
+function addVec3([ax, ay, az]: [number, number, number], [bx, by, bz]: [number, number, number]): [number, number, number] {
+  return [ax + bx, ay + by, az + bz];
+}
+
+function getDoorFocusTarget(
+  group: CabinetGroup,
+  index: number,
+  specIndex: number,
+  placement: FurniturePlacement,
+  totalGroups: number,
+): FocusTarget | null {
+  const style = getCabinetStyle(group, index, totalGroups);
+  const seed = hashSeed(`${group.id}-${index}-layout`);
+  const specs = getCompartmentSpecs(style, doorsPerCabinet, seed);
+  const spec = specs[specIndex];
+
+  if (!spec) {
+    return null;
+  }
+  const basePosition: [number, number, number] = [
+    placement.position[0],
+    placement.position[1] + style.y,
+    placement.position[2],
+  ];
+  const localLookAt: [number, number, number] = [spec.x, spec.y, style.depth * 0.28];
+  const localCamera: [number, number, number] = [spec.x, spec.y + 0.02, style.depth * 2.2];
+  const worldLookAt = addVec3(basePosition, rotateY(localLookAt, placement.rotationY));
+  const worldCamera = addVec3(basePosition, rotateY(localCamera, placement.rotationY));
 
   return {
-    position: [x, 0, z] as [number, number, number],
-    rotationY: -angle,
+    cameraPosition: worldCamera,
+    lookAt: worldLookAt,
+    yaw: placement.rotationY + Math.PI,
   };
+}
+
+function buildBackstory(item: CabinetItem) {
+  const year = cleanYear(item.year || "an unknown year");
+  const title = trimTitle(item.title);
+
+  return `You have opened a cabinet of ${item.theme.toLowerCase()}. This object dates to ${year}. ${title} It survives as a witness to how spectacle, medicine, and public fascination were once folded together in the same room.`;
+}
+
+function getLookAtFromPose(pose: CameraPose): [number, number, number] {
+  return [
+    pose.cameraPosition[0] - Math.sin(pose.yaw),
+    pose.cameraPosition[1],
+    pose.cameraPosition[2] - Math.cos(pose.yaw),
+  ];
+}
+
+function getFocusTargetFromPose(pose: CameraPose): FocusTarget {
+  return {
+    cameraPosition: pose.cameraPosition,
+    lookAt: getLookAtFromPose(pose),
+    yaw: pose.yaw,
+  };
+}
+
+function chooseNarrationVoice(voices: SpeechSynthesisVoice[]) {
+  const preferredNames = [
+    "samantha",
+    "ava",
+    "allison",
+    "moira",
+    "serena",
+    "karen",
+    "daniel",
+    "libby",
+    "aria",
+    "jenny",
+    "zira",
+    "google uk english female",
+    "google us english",
+  ];
+
+  return [...voices]
+    .filter((voice) => voice.lang.toLowerCase().startsWith("en"))
+    .sort((left, right) => {
+      const scoreVoice = (voice: SpeechSynthesisVoice) => {
+        const name = voice.name.toLowerCase();
+        let score = 0;
+
+        if (voice.default) score += 20;
+        if (voice.localService) score += 15;
+        if (voice.lang.toLowerCase().startsWith("en-gb")) score += 8;
+        if (voice.lang.toLowerCase().startsWith("en-us")) score += 6;
+        if (preferredNames.some((preferred) => name.includes(preferred))) score += 30;
+        if (name.includes("female")) score += 6;
+        if (name.includes("natural")) score += 8;
+        if (name.includes("enhanced")) score += 5;
+        if (name.includes("compact")) score -= 8;
+        if (name.includes("novelty")) score -= 20;
+
+        return score;
+      };
+
+      return scoreVoice(right) - scoreVoice(left);
+    })[0];
+}
+
+function playCabinetShakeSound() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const AudioContextClass = window.AudioContext ?? (window as typeof window & {
+    webkitAudioContext?: typeof AudioContext;
+  }).webkitAudioContext;
+
+  if (!AudioContextClass) {
+    return;
+  }
+
+  const audioContext = new AudioContextClass();
+  const startAt = audioContext.currentTime + 0.02;
+  const burstDurations = [0.12, 0.11, 0.13, 0.1];
+  let cursor = startAt;
+
+  burstDurations.forEach((duration, index) => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const filter = audioContext.createBiquadFilter();
+
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(92 + index * 10, cursor);
+    oscillator.frequency.linearRampToValueAtTime(138 + index * 8, cursor + duration);
+
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(620, cursor);
+    filter.Q.setValueAtTime(2.8, cursor);
+
+    gain.gain.setValueAtTime(0.0001, cursor);
+    gain.gain.linearRampToValueAtTime(0.06, cursor + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, cursor + duration);
+
+    oscillator.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start(cursor);
+    oscillator.stop(cursor + duration);
+    cursor += duration + 0.045;
+  });
+
+  void audioContext.resume();
+  window.setTimeout(() => {
+    void audioContext.close().catch(() => undefined);
+  }, 900);
 }
 
 type FloorRect = {
@@ -181,13 +432,19 @@ function pointInRect(x: number, z: number, rect: FloorRect) {
   return x >= rect.minX && x <= rect.maxX && z >= rect.minZ && z <= rect.maxZ;
 }
 
-function getFurnitureBlockers(groups: CabinetGroup[]) {
+function getFurnitureBlockers(groups: CabinetGroup[], placements: FurniturePlacement[]) {
   return groups.map((group, index) => {
-    const style = getCabinetStyle(group, index);
-    const placement = getFurniturePlacement(index);
+    const style = getCabinetStyle(group, index, groups.length);
+    const placement = placements[index];
+
+    if (!placement) {
+      return expandRect({ minX: 0, maxX: 0, minZ: 0, maxZ: 0 }, 0);
+    }
+
+    const footprint = getCabinetOuterFootprint(style);
     const facesSideWall = Math.abs(Math.sin(placement.rotationY)) > 0.7;
-    const footprintWidth = facesSideWall ? style.depth : style.width;
-    const footprintDepth = facesSideWall ? style.width : style.depth;
+    const footprintWidth = facesSideWall ? footprint.depth : footprint.width;
+    const footprintDepth = facesSideWall ? footprint.width : footprint.depth;
 
     return expandRect(
       {
@@ -209,51 +466,33 @@ function canStandAt(x: number, z: number, blockers: FloorRect[]) {
   return !blockers.some((blocker) => pointInRect(x, z, blocker));
 }
 
-function RoomArchitecture() {
-  const wallSegments = Array.from({ length: 28 }, (_, index) => {
-    const angle = (index / 28) * Math.PI * 2;
-    return {
-      angle,
-      x: Math.sin(angle) * roomRadius,
-      z: -Math.cos(angle) * roomRadius,
-    };
-  });
-
+function RoomArchitecture({
+  wallpaperTexture,
+  rugTexture,
+  floorTexture,
+}: {
+  wallpaperTexture?: Texture | null;
+  rugTexture?: Texture | null;
+  floorTexture?: Texture | null;
+}) {
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.92, 0]} receiveShadow>
         <circleGeometry args={[roomRadius, 96]} />
-        <meshStandardMaterial color="#5a3217" roughness={0.86} />
+        <meshStandardMaterial
+          map={floorTexture ?? undefined}
+          color={floorTexture ? "#ffffff" : "#5a3217"}
+          roughness={0.86}
+        />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.35, -1.915, -0.25]}>
-        <circleGeometry args={[1.55, 48]} />
-        <meshStandardMaterial color="#7c1f18" roughness={0.92} />
+        <circleGeometry args={[1.82, 48]} />
+        <meshStandardMaterial
+          map={rugTexture ?? undefined}
+          color={rugTexture ? "#ffffff" : "#7c1f18"}
+          roughness={0.92}
+        />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.35, -1.91, -0.25]}>
-        <ringGeometry args={[1.28, 1.55, 48]} />
-        <meshStandardMaterial color="#c49a54" roughness={0.8} />
-      </mesh>
-
-      {wallSegments.map((segment, index) => (
-        <group key={`wall-${index}`} position={[segment.x, 0.15, segment.z]} rotation={[0, -segment.angle, 0]}>
-          <mesh>
-            <boxGeometry args={[1.35, 4.2, 0.16]} />
-            <meshStandardMaterial color={index % 2 ? "#744a28" : "#6a4021"} roughness={0.92} />
-          </mesh>
-          <mesh position={[0, 0.62, -0.09]}>
-            <boxGeometry args={[0.72, 0.5, 0.04]} />
-            <meshStandardMaterial color={index % 3 ? "#2b170d" : "#3b2417"} roughness={0.82} />
-          </mesh>
-          <mesh position={[0, 0.62, -0.12]}>
-            <boxGeometry args={[0.5, 0.32, 0.035]} />
-            <meshStandardMaterial color={index % 2 ? "#9c6b34" : "#1f4a3a"} roughness={0.78} />
-          </mesh>
-          <mesh position={[0, -1.05, -0.1]}>
-            <boxGeometry args={[1.1, 0.08, 0.05]} />
-            <meshStandardMaterial color="#3b1a0a" roughness={0.76} />
-          </mesh>
-        </group>
-      ))}
 
       <mesh position={[0, 2.18, 0]}>
         <cylinderGeometry args={[0.22, 0.32, 0.18, 20]} />
@@ -281,23 +520,6 @@ function RoomArchitecture() {
         );
       })}
 
-      <group position={[-1.9, -1.35, 1.55]}>
-        <mesh position={[0, 0.55, 0]}>
-          <cylinderGeometry args={[0.04, 0.05, 1.1, 8]} />
-          <meshStandardMaterial color="#29492c" roughness={0.8} />
-        </mesh>
-        {[-0.45, -0.22, 0, 0.22, 0.45].map((leafAngle, index) => (
-          <mesh key={`fern-${index}`} position={[Math.sin(leafAngle) * 0.28, 1.05 - index * 0.05, Math.cos(leafAngle) * 0.08]} rotation={[0.9, leafAngle, 0.25]}>
-            <planeGeometry args={[0.18, 0.72]} />
-            <meshStandardMaterial color="#52783c" roughness={0.86} side={DoubleSide} />
-          </mesh>
-        ))}
-        <mesh position={[0, -0.05, 0]}>
-          <cylinderGeometry args={[0.22, 0.28, 0.28, 12]} />
-          <meshStandardMaterial color="#6a2f18" roughness={0.82} />
-        </mesh>
-      </group>
-
       {[0.9, 2.7, 4.5].map((angle, index) => (
         <group key={`lamp-${index}`} position={[Math.sin(angle) * 2.8, 1.7, -Math.cos(angle) * 2.8]}>
           <sphereGeometry args={[0.1, 20, 20]} />
@@ -314,34 +536,50 @@ function ItemDisplay({
   spec,
   style,
   open,
-  onSelect,
+  interactionLocked,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
-  onSelect: (item: CabinetItem) => void;
+  interactionLocked: boolean;
 }) {
-  const texture = useLoader(TextureLoader, item.imageUrl);
-  const imageWidth = spec.width * 0.68;
-  const imageHeight = spec.height * 0.58;
-  const handleClick = (event: { stopPropagation: () => void }) => {
-    event.stopPropagation();
+  const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
+    loader.crossOrigin = "anonymous";
+  });
+  const displayTexture = useMemo(() => {
+    const nextTexture = texture.clone();
+    nextTexture.colorSpace = SRGBColorSpace;
+    return nextTexture;
+  }, [texture]);
+  const { imageWidth, imageHeight } = useMemo(() => {
+    const maxWidth = spec.width * 0.68;
+    const maxHeight = spec.height * 0.58;
+    const source = texture.image as { width?: number; height?: number } | undefined;
+    const sourceWidth = source?.width ?? 1;
+    const sourceHeight = source?.height ?? 1;
+    const aspectRatio = sourceWidth / Math.max(1, sourceHeight);
 
-    if (open) {
-      onSelect(item);
+    if (aspectRatio >= maxWidth / maxHeight) {
+      return {
+        imageWidth: maxWidth,
+        imageHeight: maxWidth / Math.max(aspectRatio, 0.001),
+      };
     }
-  };
+
+    return {
+      imageWidth: maxHeight * aspectRatio,
+      imageHeight: maxHeight,
+    };
+  }, [spec.height, spec.width, texture.image]);
+  const displayZ = open ? -style.depth * 0.5 : style.depth * 0.3; // Adjusted for deeper cabinets
+  const displayY = spec.y;
 
   return (
-    <group position={[spec.x, spec.y, style.depth * 0.36]} onClick={handleClick}>
-      <mesh position={[0, -spec.height * 0.36, -0.03]} receiveShadow>
-        <boxGeometry args={[spec.width * 0.72, 0.08, style.depth * 0.52]} />
-        <meshStandardMaterial color={style.trim} roughness={0.78} />
-      </mesh>
-      <mesh scale={open ? 1.06 : 1} visible={open}>
+    <group position={[spec.x, displayY, displayZ]}>
+      <mesh raycast={() => null} scale={open ? 1.06 : 1} visible={open} renderOrder={10}>
         <planeGeometry args={[imageWidth, imageHeight]} />
-        <meshBasicMaterial map={texture} transparent side={DoubleSide} />
+        <meshBasicMaterial map={displayTexture} transparent side={DoubleSide} depthTest={!open} depthWrite={!open} />
       </mesh>
     </group>
   );
@@ -353,32 +591,49 @@ function ClickableFront({
   spec,
   style,
   open,
+  shaking,
+  interactionLocked,
   onToggle,
+  woodTexture,
 }: {
   doorId: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
+  shaking: boolean;
+  interactionLocked: boolean;
+  woodTexture?: Texture | null;
   onToggle: (doorId: string) => void;
 }) {
   const frontRef = useRef<Group>(null);
-  const frontZ = style.depth * 0.9;
+  const frontZ = style.depth * 0.15; // Adjusted for new depth
   const hingeDirection = spec.type === "door-left" ? -1 : 1;
-  const glassDoor = style.furnitureType === "vitrine-table" || style.furnitureType === "bookcase";
+  const arcDepth = spec.width * 0.04;
+  const doorWoodMaterialProps = {
+    map: woodTexture ?? undefined,
+    color: woodTexture ? "#ffffff" : style.wood,
+    roughness: 0.78,
+    metalness: 0.04,
+  };
 
   useFrame((_, delta) => {
     if (!frontRef.current) return;
 
+    const openAngle = hingeDirection * (Math.PI * 110 / 180);
+    const shakeOffset = shaking ? Math.sin(performance.now() * 0.035) * 0.16 : 0;
+    const targetRotation = (open ? openAngle : 0) + shakeOffset;
+
     frontRef.current.rotation.y = MathUtils.damp(
       frontRef.current.rotation.y,
-      open ? hingeDirection * 1.35 : 0,
-      7,
+      targetRotation,
+      shaking ? 18 : 10,
       delta,
     );
   });
 
   const handleClick = (event: { stopPropagation: () => void }) => {
     event.stopPropagation();
+    if (interactionLocked) return;
     onToggle(doorId);
   };
 
@@ -388,62 +643,19 @@ function ClickableFront({
       position={[spec.x + hingeDirection * spec.width * 0.5, spec.y, frontZ]}
       onClick={handleClick}
     >
-      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0]} castShadow>
-        <boxGeometry args={[spec.width + 0.1, spec.height + 0.1, 0.12]} />
-        <meshStandardMaterial color={style.trim} roughness={0.74} metalness={0.04} />
+      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[spec.width + 0.02, spec.height + 0.02, 0.08]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.78} />
       </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.075]}>
-        <boxGeometry args={[spec.width - 0.12, spec.height - 0.18, 0.04]} />
-        {glassDoor ? (
-          <meshPhysicalMaterial
-            color="#d8f2ff"
-            transparent
-            opacity={0.24}
-            roughness={0.04}
-            transmission={0.35}
-          />
-        ) : (
-          <meshStandardMaterial color={style.wood} roughness={0.82} />
-        )}
+      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.26, 0.095 + arcDepth]}>
+        <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
+        <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
       </mesh>
-      {glassDoor ? (
-        <>
-          <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.13]}>
-            <boxGeometry args={[0.035, spec.height - 0.12, 0.04]} />
-            <meshStandardMaterial color={style.trim} roughness={0.72} />
-          </mesh>
-          <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.14]}>
-            <boxGeometry args={[spec.width - 0.12, 0.035, 0.04]} />
-            <meshStandardMaterial color={style.trim} roughness={0.72} />
-          </mesh>
-          <mesh position={[-hingeDirection * spec.width * 0.74, 0, 0.145]}>
-            <boxGeometry args={[0.025, spec.height - 0.22, 0.035]} />
-            <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-          </mesh>
-          <mesh position={[-hingeDirection * spec.width * 0.26, 0, 0.145]}>
-            <boxGeometry args={[0.025, spec.height - 0.22, 0.035]} />
-            <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-          </mesh>
-        </>
-      ) : (
-        <>
-          <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.27, 0.13]}>
-            <boxGeometry args={[spec.width - 0.24, 0.04, 0.035]} />
-            <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-          </mesh>
-          <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.27, 0.13]}>
-            <boxGeometry args={[spec.width - 0.24, 0.04, 0.035]} />
-            <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-          </mesh>
-          {[-0.38, 0.38].map((xOffset) => (
-            <mesh key={xOffset} position={[-hingeDirection * spec.width * (0.5 + xOffset), spec.height * 0.42, 0.135]}>
-              <sphereGeometry args={[0.025, 10, 10]} />
-              <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-            </mesh>
-          ))}
-        </>
-      )}
-      <mesh position={[-hingeDirection * spec.width * 0.86, -spec.height * 0.18, 0.16]}>
+      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.26, 0.095 + arcDepth]}>
+        <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
+        <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
+      </mesh>
+      <mesh position={[-hingeDirection * spec.width * 0.82, -spec.height * 0.12, 0.11 + arcDepth]}>
         <sphereGeometry args={[0.045, 18, 18]} />
         <meshStandardMaterial color="#d3a95f" roughness={0.28} metalness={0.72} />
       </mesh>
@@ -456,26 +668,124 @@ function CabinetCompartment({
   item,
   spec,
   style,
+  woodTexture,
   open,
+  shaking,
+  interactionLocked,
   onToggle,
-  onSelect,
 }: {
   doorId: string;
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
+  woodTexture?: Texture | null;
   open: boolean;
+  shaking: boolean;
+  interactionLocked: boolean;
   onToggle: (doorId: string) => void;
-  onSelect: (item: CabinetItem) => void;
 }) {
+  const lockerDepth = style.depth * 0.8; // Adjusted for new depth
+  const innerWidth = spec.width - 0.04;
+  const innerHeight = spec.height - 0.04;
+  const wallThickness = 0.035;
+  const frontLipDepth = 0.08;
+  const interiorWood = woodTexture
+    ? "#ffffff"
+    : "#4a2411";
+
   return (
     <>
-      <mesh position={[spec.x, spec.y, style.depth * 0.28]}>
-        <boxGeometry args={[spec.width - 0.08, spec.height - 0.08, 0.08]} />
-        <meshStandardMaterial color={item.color || style.back} roughness={0.72} />
-      </mesh>
-      <ItemDisplay item={item} spec={spec} style={style} open={open} onSelect={onSelect} />
-      <ClickableFront doorId={doorId} spec={spec} style={style} open={open} onToggle={onToggle} />
+      <group position={[spec.x, spec.y, style.depth * 0.02]}>
+        <mesh position={[0, 0, -lockerDepth * 0.42]}>
+          <boxGeometry args={[innerWidth, innerHeight, wallThickness]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.8}
+          />
+        </mesh>
+        <mesh position={[-innerWidth * 0.5 + wallThickness * 0.5, 0, -lockerDepth * 0.18]}>
+          <boxGeometry args={[wallThickness, innerHeight, lockerDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[innerWidth * 0.5 - wallThickness * 0.5, 0, -lockerDepth * 0.18]}>
+          <boxGeometry args={[wallThickness, innerHeight, lockerDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[0, innerHeight * 0.5 - wallThickness * 0.5, -lockerDepth * 0.18]}>
+          <boxGeometry args={[innerWidth, wallThickness, lockerDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[0, -innerHeight * 0.5 + wallThickness * 0.5, -lockerDepth * 0.18]}>
+          <boxGeometry args={[innerWidth, wallThickness, lockerDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[-innerWidth * 0.5 + wallThickness * 0.5, 0, lockerDepth * 0.3]}>
+          <boxGeometry args={[wallThickness, innerHeight, frontLipDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[innerWidth * 0.5 - wallThickness * 0.5, 0, lockerDepth * 0.3]}>
+          <boxGeometry args={[wallThickness, innerHeight, frontLipDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[0, innerHeight * 0.5 - wallThickness * 0.5, lockerDepth * 0.3]}>
+          <boxGeometry args={[innerWidth, wallThickness, frontLipDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+        <mesh position={[0, -innerHeight * 0.5 + wallThickness * 0.5, lockerDepth * 0.3]}>
+          <boxGeometry args={[innerWidth, wallThickness, frontLipDepth]} />
+          <meshStandardMaterial
+            map={woodTexture ?? undefined}
+            color={interiorWood}
+            roughness={0.82}
+          />
+        </mesh>
+      </group>
+      <ItemDisplay
+        item={item}
+        spec={spec}
+        style={style}
+        open={open}
+        interactionLocked={interactionLocked}
+      />
+      <ClickableFront
+        doorId={doorId}
+        spec={spec}
+        style={style}
+        open={open}
+        shaking={shaking}
+        interactionLocked={interactionLocked}
+        woodTexture={woodTexture}
+        onToggle={onToggle}
+      />
     </>
   );
 }
@@ -519,325 +829,127 @@ function AntiqueAdornment({
   group,
   style,
   seed,
+  woodTexture,
 }: {
   group: CabinetGroup;
   style: CabinetStyle;
   seed: number;
+  woodTexture?: Texture | null;
 }) {
   const brass = "#d3a95f";
   const frontZ = style.depth * 0.88;
   const topY = style.height * 0.58;
+  const woodMaterialProps = {
+    map: woodTexture ?? undefined,
+    color: "#ffffff",
+    roughness: 0.82,
+    metalness: 0.08,
+  };
 
-  return (
-    <group>
-      {style.furnitureType === "sideboard" ? (
-        <group position={[0, style.height * 0.36, frontZ + 0.03]}>
-          {Array.from({ length: 10 }, (_, drawerIndex) => {
-            const column = drawerIndex % 5;
-            const row = Math.floor(drawerIndex / 5);
-            return (
-              <group
-                key={`drawer-front-${group.id}-${drawerIndex}`}
-                position={[-style.width * 0.34 + column * style.width * 0.17, -row * 0.34, 0]}
-              >
-                <mesh>
-                  <boxGeometry args={[0.42, 0.22, 0.045]} />
-                  <meshStandardMaterial color={style.wood} roughness={0.82} />
-                </mesh>
-                <mesh position={[0, 0, 0.04]}>
-                  <boxGeometry args={[0.16, 0.035, 0.04]} />
-                  <meshStandardMaterial color={brass} roughness={0.3} metalness={0.7} />
-                </mesh>
-              </group>
-            );
-          })}
-        </group>
-      ) : null}
-
-      {style.furnitureType === "vitrine-table" ? (
-        <>
-          <mesh position={[0, style.height * 0.18, frontZ + 0.03]}>
-            <boxGeometry args={[style.width * 0.92, style.height * 0.62, 0.035]} />
-            <meshPhysicalMaterial
-              color="#d8f2ff"
-              transparent
-              opacity={0.16}
-              roughness={0.02}
-              transmission={0.45}
-            />
-          </mesh>
-          <SpecimenDome x={-style.width * 0.28} y={topY + 0.18} z={0.08} accent={group.items[0]?.color ?? brass} />
-          <mesh position={[style.width * 0.28, topY + 0.12, 0.08]} rotation={[0.25, 0, 0.2]}>
-            <boxGeometry args={[0.54, 0.12, 0.34]} />
-            <meshStandardMaterial color="#5f4329" roughness={0.84} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.furnitureType === "bookcase" ? (
-        <>
-          {[-0.9, -0.62, -0.34, -0.06, 0.22, 0.5, 0.78].map((bookX, bookIndex) => (
-            <mesh
-              key={`upper-book-${group.id}-${bookIndex}`}
-              position={[bookX, topY + 0.02, frontZ - 0.02]}
-              rotation={[0, 0, (bookIndex % 3 - 1) * 0.05]}
-            >
-              <boxGeometry args={[0.16, 0.72 + (bookIndex % 2) * 0.14, 0.16]} />
-              <meshStandardMaterial color={bookIndex % 2 ? "#2f4a36" : "#9c6b34"} roughness={0.82} />
-            </mesh>
-          ))}
-          <SpecimenDome x={style.width * 0.34} y={topY - 0.02} z={frontZ - 0.02} accent={brass} />
-        </>
-      ) : null}
-
-      {style.furnitureType === "wall-case" ? (
-        <>
-          <mesh position={[0, topY + 0.24, 0.02]} rotation={[0, 0, 0]}>
-            <torusGeometry args={[style.width * 0.28, 0.035, 12, 36, Math.PI]} />
-            <meshStandardMaterial color={style.trim} roughness={0.68} />
-          </mesh>
-          <mesh position={[-style.width * 0.35, -style.height * 0.55, frontZ]}>
-            <coneGeometry args={[0.12, 0.48, 5]} />
-            <meshStandardMaterial color={brass} roughness={0.32} metalness={0.62} />
-          </mesh>
-          <mesh position={[style.width * 0.35, -style.height * 0.55, frontZ]}>
-            <coneGeometry args={[0.12, 0.48, 5]} />
-            <meshStandardMaterial color={brass} roughness={0.32} metalness={0.62} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.furnitureType === "tall-cabinet" ? (
-        <>
-          <SpecimenDome x={-style.width * 0.28} y={topY + 0.12} z={0.08} accent={group.items[1]?.color ?? brass} />
-          <mesh position={[style.width * 0.28, topY + 0.2, 0.08]} rotation={[0.2, 0.4, 0]}>
-            <sphereGeometry args={[0.18 + (seed % 3) * 0.03, 18, 18]} />
-            <meshStandardMaterial color="#f1dfbd" roughness={0.62} />
-          </mesh>
-          <mesh position={[style.width * 0.28, topY, 0.08]}>
-            <cylinderGeometry args={[0.05, 0.07, 0.36, 10]} />
-            <meshStandardMaterial color={style.trim} roughness={0.72} />
-          </mesh>
-        </>
-      ) : null}
-
-      <mesh position={[0, -style.height * 0.48, frontZ + 0.04]}>
-        <boxGeometry args={[style.width * 0.62, 0.045, 0.035]} />
-        <meshStandardMaterial color={brass} roughness={0.35} metalness={0.65} />
-      </mesh>
-    </group>
-  );
+  return null;
 }
 
 function CabinetPanel({
   group,
   index,
+  totalGroups,
+  placement,
+  focusedDoorId,
   allItems,
-  openedDoorIds,
   doorItemIds,
+  shakingDoorId,
+  interactionLocked,
+  woodTextures,
   onToggleDoor,
-  onSelectItem,
 }: {
   group: CabinetGroup;
   index: number;
+  totalGroups: number;
+  placement: FurniturePlacement;
+  focusedDoorId: string;
   allItems: CabinetItem[];
-  openedDoorIds: Set<string>;
   doorItemIds: Record<string, string>;
+  shakingDoorId: string;
+  interactionLocked: boolean;
+  woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
-  onSelectItem: (item: CabinetItem) => void;
 }) {
-  const style = getCabinetStyle(group, index);
+  const style = getCabinetStyle(group, index, totalGroups);
   const seed = hashSeed(`${group.id}-${index}-layout`);
   const specs = getCompartmentSpecs(style, doorsPerCabinet, seed);
-  const placement = getFurniturePlacement(index);
+
+  const cabinetWoodTexture = woodTextures[style.woodTextureIndex];
+  const woodMaterialProps = {
+    map: cabinetWoodTexture ?? undefined,
+    color: "#ffffff",
+    roughness: 0.82,
+    metalness: 0.08,
+  };
 
   return (
     <group
       position={[placement.position[0], placement.position[1] + style.y, placement.position[2]]}
       rotation={[0, placement.rotationY, 0]}
     >
-      <mesh position={[0, 0, -style.depth * 0.28]} receiveShadow castShadow>
-        <boxGeometry args={[style.width, style.height, style.depth]} />
-        <meshStandardMaterial color={style.wood} roughness={0.82} metalness={0.08} />
+      <mesh position={[0, 0, -style.depth * 0.4]} receiveShadow castShadow>
+        <boxGeometry args={[style.width * 0.995, style.height, 0.08]} />
+        <meshStandardMaterial {...woodMaterialProps} />
       </mesh>
 
-      <mesh position={[0, style.height * 0.52, 0.1]} castShadow>
-        <boxGeometry args={[style.width + 0.26, 0.16, style.depth + 0.18]} />
-        <meshStandardMaterial color={style.trim} roughness={0.7} />
-      </mesh>
-      <mesh position={[0, -style.height * 0.52, 0.1]} castShadow>
-        <boxGeometry args={[style.width + 0.26, 0.16, style.depth + 0.18]} />
-        <meshStandardMaterial color={style.trim} roughness={0.7} />
-      </mesh>
-      <mesh position={[-style.width * 0.52, 0, 0.1]} castShadow>
-        <boxGeometry args={[0.16, style.height + 0.28, style.depth + 0.18]} />
-        <meshStandardMaterial color={style.trim} roughness={0.7} />
-      </mesh>
-      <mesh position={[style.width * 0.52, 0, 0.1]} castShadow>
-        <boxGeometry args={[0.16, style.height + 0.28, style.depth + 0.18]} />
-        <meshStandardMaterial color={style.trim} roughness={0.7} />
-      </mesh>
+      {specs
+        .map((spec, specIndex) => ({ spec, specIndex }))
+        .map(({ spec, specIndex }) => {
+          const doorId = `${group.id}-${specIndex}`;
+          const item =
+            allItems.find((candidate) => candidate.id === doorItemIds[doorId]) ??
+            allItems[(index * doorsPerCabinet + specIndex) % allItems.length];
 
-      {specs.map((spec, specIndex) => {
-        const doorId = `${group.id}-${specIndex}`;
-        const item =
-          allItems.find((candidate) => candidate.id === doorItemIds[doorId]) ??
-          allItems[(index * doorsPerCabinet + specIndex) % allItems.length];
-
-        return (
-          <CabinetCompartment
-            key={doorId}
-            doorId={doorId}
-            item={item}
-            spec={spec}
-            style={style}
-            open={openedDoorIds.has(doorId)}
-            onToggle={onToggleDoor}
-            onSelect={onSelectItem}
-          />
-        );
-      })}
-
-      {specs.map((spec, specIndex) => (
-        <group key={`trim-${group.id}-${specIndex}`} position={[spec.x, spec.y, style.depth * 0.82]}>
-          <mesh position={[0, spec.height * 0.5, 0]}>
-            <boxGeometry args={[spec.width + 0.1, 0.045, 0.055]} />
-            <meshStandardMaterial color={style.trim} roughness={0.76} />
-          </mesh>
-          <mesh position={[0, -spec.height * 0.5, 0]}>
-            <boxGeometry args={[spec.width + 0.1, 0.045, 0.055]} />
-            <meshStandardMaterial color={style.trim} roughness={0.76} />
-          </mesh>
-          <mesh position={[-spec.width * 0.5, 0, 0]}>
-            <boxGeometry args={[0.045, spec.height + 0.1, 0.055]} />
-            <meshStandardMaterial color={style.trim} roughness={0.76} />
-          </mesh>
-          <mesh position={[spec.width * 0.5, 0, 0]}>
-            <boxGeometry args={[0.045, spec.height + 0.1, 0.055]} />
-            <meshStandardMaterial color={style.trim} roughness={0.76} />
-          </mesh>
-        </group>
-      ))}
-
-      {Array.from({ length: 18 }, (_, studIndex) => {
-        const side = studIndex % 2 === 0 ? -1 : 1;
-        const row = Math.floor(studIndex / 2);
-        return (
-          <mesh
-            key={`stud-${group.id}-${studIndex}`}
-            position={[side * style.width * 0.49, -style.height * 0.42 + row * style.height * 0.105, style.depth * 0.9]}
-          >
-            <sphereGeometry args={[0.025, 10, 10]} />
-            <meshStandardMaterial color="#d3a95f" roughness={0.35} metalness={0.66} />
-          </mesh>
-        );
-      })}
-
-      {[-0.34, 0, 0.34].map((railY) => (
-        <mesh key={`rail-${group.id}-${railY}`} position={[0, railY * style.height, style.depth * 0.93]}>
-          <boxGeometry args={[style.width * 0.92, 0.025, 0.04]} />
-          <meshStandardMaterial color="#d3a95f" roughness={0.35} metalness={0.66} />
-        </mesh>
-      ))}
-
-      {style.crown === "stepped" ? (
-        <>
-          <mesh position={[0, style.height * 0.59, 0.03]} castShadow>
-            <boxGeometry args={[style.width * 0.8, 0.14, style.depth * 0.74]} />
-            <meshStandardMaterial color={style.trim} roughness={0.7} />
-          </mesh>
-          <mesh position={[0, style.height * 0.65, 0.03]} castShadow>
-            <boxGeometry args={[style.width * 0.56, 0.12, style.depth * 0.58]} />
-            <meshStandardMaterial color={style.trim} roughness={0.7} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.crown === "arch" ? (
-        <mesh position={[0, style.height * 0.58, 0.03]} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[style.depth * 0.42, style.depth * 0.42, style.width * 0.76, 24, 1, true]} />
-          <meshStandardMaterial color={style.trim} roughness={0.72} side={DoubleSide} />
-        </mesh>
-      ) : null}
-
-      {style.foot === "block" ? (
-        <>
-          <mesh position={[-style.width * 0.35, -style.height * 0.58, 0.18]} castShadow>
-            <boxGeometry args={[0.28, 0.18, style.depth * 0.62]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-          <mesh position={[style.width * 0.35, -style.height * 0.58, 0.18]} castShadow>
-            <boxGeometry args={[0.28, 0.18, style.depth * 0.62]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.foot === "bun" ? (
-        <>
-          <mesh position={[-style.width * 0.34, -style.height * 0.57, 0.18]} castShadow>
-            <sphereGeometry args={[0.14, 18, 18]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-          <mesh position={[style.width * 0.34, -style.height * 0.57, 0.18]} castShadow>
-            <sphereGeometry args={[0.14, 18, 18]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.furnitureType === "vitrine-table" ? (
-        <>
-          <mesh position={[-style.width * 0.38, -style.height * 0.72, style.depth * 0.18]} castShadow>
-            <cylinderGeometry args={[0.055, 0.075, 1.05, 12]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-          <mesh position={[style.width * 0.38, -style.height * 0.72, style.depth * 0.18]} castShadow>
-            <cylinderGeometry args={[0.055, 0.075, 1.05, 12]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-          <mesh position={[-style.width * 0.38, -style.height * 0.72, -style.depth * 0.46]} castShadow>
-            <cylinderGeometry args={[0.055, 0.075, 1.05, 12]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-          <mesh position={[style.width * 0.38, -style.height * 0.72, -style.depth * 0.46]} castShadow>
-            <cylinderGeometry args={[0.055, 0.075, 1.05, 12]} />
-            <meshStandardMaterial color={style.trim} roughness={0.78} />
-          </mesh>
-        </>
-      ) : null}
-
-      {style.furnitureType === "bookcase" ? (
-        <>
-          {[-0.8, -0.45, -0.1, 0.25, 0.6, 0.95].map((bookX, bookIndex) => (
-            <mesh
-              key={`book-${group.id}-${bookIndex}`}
-              position={[bookX, style.height * 0.46, style.depth * 0.6]}
-              rotation={[0, 0, (bookIndex % 3 - 1) * 0.04]}
-            >
-              <boxGeometry args={[0.14, 0.62 + (bookIndex % 2) * 0.12, 0.18]} />
-              <meshStandardMaterial color={bookIndex % 2 ? "#8f2f1d" : "#c19a54"} roughness={0.8} />
-            </mesh>
-          ))}
-        </>
-      ) : null}
-
-      <AntiqueAdornment group={group} style={style} seed={seed} />
+          return (
+            <CabinetCompartment
+              key={doorId}
+              doorId={doorId}
+              item={item}
+              spec={spec}
+              style={style}
+              woodTexture={cabinetWoodTexture}
+              open={focusedDoorId === doorId}
+              shaking={shakingDoorId === doorId}
+              interactionLocked={interactionLocked}
+              onToggle={onToggleDoor}
+            />
+          );
+        })}
     </group>
   );
 }
 
-function WasdCamera({ blockers }: { blockers: FloorRect[] }) {
+function WasdCamera({
+  blockers,
+  focusTarget,
+  onRoamPoseChange,
+  onTargetReached,
+  targetMode,
+}: {
+  blockers: FloorRect[];
+  focusTarget: FocusTarget | null;
+  onRoamPoseChange: (pose: CameraPose) => void;
+  onTargetReached: (mode: "focus" | "return") => void;
+  targetMode: "focus" | "return" | null;
+}) {
   const { camera } = useThree();
   const cameraRef = useRef(camera);
   const keys = useRef<Record<string, boolean>>({});
   const yaw = useRef(0);
+  const lookAtRef = useRef(new Vector3(0, 0, -1));
+  const settledTargetModeRef = useRef<"focus" | "return" | null>(null);
 
   useEffect(() => {
     cameraRef.current = camera;
     cameraRef.current.position.set(0, 0.05, 0.25);
     cameraRef.current.rotation.set(0, 0, 0);
-  }, [camera]);
+    lookAtRef.current.set(0, 0.05, -1);
+    onRoamPoseChange({ cameraPosition: [0, 0.05, 0.25], yaw: 0 });
+  }, [camera, onRoamPoseChange]);
 
   useEffect(() => {
     const setKey = (event: KeyboardEvent, pressed: boolean) => {
@@ -860,10 +972,41 @@ function WasdCamera({ blockers }: { blockers: FloorRect[] }) {
     };
   }, []);
 
+  useEffect(() => {
+    settledTargetModeRef.current = null;
+  }, [focusTarget, targetMode]);
+
   useFrame((_, delta) => {
     const sceneCamera = cameraRef.current;
     const turnSpeed = 1.85;
     const walkSpeed = 2.05;
+
+    if (focusTarget) {
+      sceneCamera.position.x = MathUtils.damp(sceneCamera.position.x, focusTarget.cameraPosition[0], 5.5, delta);
+      sceneCamera.position.y = MathUtils.damp(sceneCamera.position.y, focusTarget.cameraPosition[1], 5.5, delta);
+      sceneCamera.position.z = MathUtils.damp(sceneCamera.position.z, focusTarget.cameraPosition[2], 5.5, delta);
+      yaw.current = MathUtils.damp(yaw.current, focusTarget.yaw, 5.5, delta);
+      lookAtRef.current.x = MathUtils.damp(lookAtRef.current.x, focusTarget.lookAt[0], 5.5, delta);
+      lookAtRef.current.y = MathUtils.damp(lookAtRef.current.y, focusTarget.lookAt[1], 5.5, delta);
+      lookAtRef.current.z = MathUtils.damp(lookAtRef.current.z, focusTarget.lookAt[2], 5.5, delta);
+      sceneCamera.lookAt(lookAtRef.current);
+
+      if (targetMode && settledTargetModeRef.current !== targetMode) {
+        const distance =
+          Math.abs(sceneCamera.position.x - focusTarget.cameraPosition[0]) +
+          Math.abs(sceneCamera.position.y - focusTarget.cameraPosition[1]) +
+          Math.abs(sceneCamera.position.z - focusTarget.cameraPosition[2]);
+        const yawDistance = Math.abs(yaw.current - focusTarget.yaw);
+
+        if (distance < 0.03 && yawDistance < 0.03) {
+          settledTargetModeRef.current = targetMode;
+          onTargetReached(targetMode);
+        }
+      }
+
+      return;
+    }
+
     const forward = Number(Boolean(keys.current.w)) - Number(Boolean(keys.current.s));
     const turn = Number(Boolean(keys.current.a)) - Number(Boolean(keys.current.d));
 
@@ -884,6 +1027,15 @@ function WasdCamera({ blockers }: { blockers: FloorRect[] }) {
     }
 
     sceneCamera.rotation.set(0, yaw.current, 0);
+    lookAtRef.current.set(
+      sceneCamera.position.x - Math.sin(yaw.current),
+      sceneCamera.position.y,
+      sceneCamera.position.z - Math.cos(yaw.current),
+    );
+    onRoamPoseChange({
+      cameraPosition: [sceneCamera.position.x, sceneCamera.position.y, sceneCamera.position.z],
+      yaw: yaw.current,
+    });
   });
 
   return null;
@@ -892,19 +1044,39 @@ function WasdCamera({ blockers }: { blockers: FloorRect[] }) {
 function CabinetRoom({
   allItems,
   groups,
-  openedDoorIds,
+  placements,
+  focusedDoorId,
   doorItemIds,
+  shakingDoorId,
+  interactionLocked,
+  woodTextures,
+  wallpaperTexture,
+  rugTexture,
+  floorTexture,
+  focusTarget,
+  targetMode,
+  onRoamPoseChange,
+  onTargetReached,
   onToggleDoor,
-  onSelectItem,
 }: {
   allItems: CabinetItem[];
   groups: CabinetGroup[];
-  openedDoorIds: Set<string>;
+  placements: FurniturePlacement[];
+  focusedDoorId: string;
   doorItemIds: Record<string, string>;
+  shakingDoorId: string;
+  interactionLocked: boolean;
+  woodTextures: Texture[];
+  wallpaperTexture?: Texture | null;
+  rugTexture?: Texture | null;
+  floorTexture?: Texture | null;
+  focusTarget: FocusTarget | null;
+  targetMode: "focus" | "return" | null;
+  onRoamPoseChange: (pose: CameraPose) => void;
+  onTargetReached: (mode: "focus" | "return") => void;
   onToggleDoor: (doorId: string) => void;
-  onSelectItem: (item: CabinetItem) => void;
 }) {
-  const blockers = useMemo(() => getFurnitureBlockers(groups), [groups]);
+  const blockers = useMemo(() => getFurnitureBlockers(groups, placements), [groups, placements]);
 
   return (
     <>
@@ -924,63 +1096,316 @@ function CabinetRoom({
         castShadow
       />
 
-      <RoomArchitecture />
-      <WasdCamera blockers={blockers} />
+      <RoomArchitecture
+        wallpaperTexture={wallpaperTexture}
+        rugTexture={rugTexture}
+        floorTexture={floorTexture}
+      />
+      <WasdCamera
+        blockers={blockers}
+        focusTarget={focusTarget}
+        onRoamPoseChange={onRoamPoseChange}
+        onTargetReached={onTargetReached}
+        targetMode={targetMode}
+      />
 
       <group>
-        {groups.map((group, index) => (
-          <CabinetPanel
-            key={group.id}
-            group={group}
-            index={index}
-            allItems={allItems}
-            openedDoorIds={openedDoorIds}
-            doorItemIds={doorItemIds}
-            onToggleDoor={onToggleDoor}
-            onSelectItem={onSelectItem}
-          />
-        ))}
+        {groups.map((group, index) => {
+          return (
+            <CabinetPanel
+              key={group.id}
+              group={group}
+              index={index}
+              totalGroups={groups.length}
+              placement={placements[index]}
+              focusedDoorId={focusedDoorId}
+              allItems={allItems}
+              doorItemIds={doorItemIds}
+              shakingDoorId={shakingDoorId}
+              interactionLocked={interactionLocked}
+              woodTextures={woodTextures}
+              onToggleDoor={onToggleDoor}
+            />
+          );
+        })}
       </group>
     </>
   );
 }
 
+const cabinetWoodTextureFiles = [
+  "/wood-surface.jpg",
+  "/dark_wood.jpg",
+  "/light_wood.jpg",
+  "/medium_light_wood.jpg",
+];
+
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const groups = useMemo(() => chunkItems(items), [items]);
-  const [openedDoorIds, setOpenedDoorIds] = useState<Set<string>>(() => new Set());
-  const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>({});
-  const [doorOpenCounts, setDoorOpenCounts] = useState<Record<string, number>>({});
-  const [selectedItemId, setSelectedItemId] = useState("");
-  const selectedItem = items.find((item) => item.id === selectedItemId);
+  const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
+  const placements = useMemo(() => getFurniturePlacements(groups), [groups]);
+  const initialDoorItemIds = useMemo(() => {
+    const nextDoorItemIds: Record<string, string> = {};
 
-  const toggleDoor = (doorId: string) => {
-    const opening = !openedDoorIds.has(doorId);
-
-    if (opening && items.length > 0) {
-      const nextCount = (doorOpenCounts[doorId] ?? 0) + 1;
-      const nextItem = items[(hashSeed(doorId) + nextCount * 7) % items.length];
-
-      setDoorOpenCounts((current) => ({ ...current, [doorId]: nextCount }));
-      setDoorItemIds((current) => ({ ...current, [doorId]: nextItem.id }));
-      setSelectedItemId("");
+    if (items.length === 0) {
+      return nextDoorItemIds;
     }
 
-    setOpenedDoorIds((current) => {
-      const next = new Set(current);
+    doorIds.forEach((doorId, index) => {
+      const item = items[index % items.length];
+      nextDoorItemIds[doorId] = item.id;
+    });
 
-      if (next.has(doorId)) {
-        next.delete(doorId);
-      } else {
-        next.add(doorId);
+    return nextDoorItemIds;
+  }, [doorIds, items]);
+  const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
+  const [doorOpenCounts, setDoorOpenCounts] = useState<Record<string, number>>({});
+  const [selectedItemId, setSelectedItemId] = useState("");
+  const [focusedDoorId, setFocusedDoorId] = useState("");
+  const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
+  const [shakingDoorId, setShakingDoorId] = useState("");
+  const [interactionLocked, setInteractionLocked] = useState(false);
+  const selectedItem = items.find((item) => item.id === selectedItemId);
+  const [woodTextures, setWoodTextures] = useState<Texture[]>([]);
+  const [wallpaperTexture, setWallpaperTexture] = useState<Texture | null>(null);
+  const [rugTexture, setRugTexture] = useState<Texture | null>(null);
+  const [floorTexture, setFloorTexture] = useState<Texture | null>(null);
+  const mountedRef = useRef(false);
+  const roamPoseRef = useRef<CameraPose>({
+    cameraPosition: [0, 0.05, 0.25],
+    yaw: 0,
+  });
+  const narrationDoorIdRef = useRef("");
+  const pendingPostStoryShakeRef = useRef(false);
+  const shakeTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setDoorItemIds(initialDoorItemIds);
+    setDoorOpenCounts({});
+    setSelectedItemId("");
+    setFocusedDoorId("");
+    setReturnPose(null);
+    setShakingDoorId("");
+    setInteractionLocked(false);
+    pendingPostStoryShakeRef.current = false;
+  }, [initialDoorItemIds]);
+
+  const cabinetFocusTarget = useMemo(() => {
+    if (!focusedDoorId) {
+      return null;
+    }
+
+    const specSeparatorIndex = focusedDoorId.lastIndexOf("-");
+
+    if (specSeparatorIndex === -1) {
+      return null;
+    }
+
+    const groupId = focusedDoorId.slice(0, specSeparatorIndex);
+    const specIndex = Number(focusedDoorId.slice(specSeparatorIndex + 1));
+    const groupIndex = groups.findIndex((group) => group.id === groupId);
+
+    if (groupIndex === -1 || Number.isNaN(specIndex)) {
+      return null;
+    }
+
+    const placement = placements[groupIndex];
+
+    if (!placement) {
+      return null;
+    }
+
+    return getDoorFocusTarget(groups[groupIndex], groupIndex, specIndex, placement, groups.length);
+  }, [focusedDoorId, groups, placements]);
+
+  const focusTarget = useMemo(() => {
+    if (cabinetFocusTarget) {
+      return cabinetFocusTarget;
+    }
+
+    if (returnPose) {
+      return getFocusTargetFromPose(returnPose);
+    }
+
+    return null;
+  }, [cabinetFocusTarget, returnPose]);
+
+  const targetMode: "focus" | "return" | null = cabinetFocusTarget
+    ? "focus"
+    : returnPose
+      ? "return"
+      : null;
+
+  useEffect(() => {
+    if (mountedRef.current) return;
+    mountedRef.current = true;
+
+    const loader = new TextureLoader();
+    loader.setCrossOrigin("anonymous");
+
+    const loadedTextures: Array<Texture | null> = Array(cabinetWoodTextureFiles.length).fill(null);
+    let loadedCount = 0;
+
+    cabinetWoodTextureFiles.forEach((url, index) => {
+      loader.load(url, (texture) => {
+        texture.wrapS = RepeatWrapping;
+        texture.wrapT = RepeatWrapping;
+        texture.repeat.set(2.4, 1.2);
+        texture.colorSpace = SRGBColorSpace;
+        loadedTextures[index] = texture;
+        loadedCount += 1;
+
+        if (loadedCount === cabinetWoodTextureFiles.length) {
+          setWoodTextures(loadedTextures as Texture[]);
+        }
+      });
+    });
+
+    loader.load("/wallpaper.jpg", (wallTex) => {
+      wallTex.wrapS = RepeatWrapping;
+      wallTex.wrapT = RepeatWrapping;
+      wallTex.repeat.set(4, 2);
+      wallTex.colorSpace = SRGBColorSpace;
+      setWallpaperTexture(wallTex);
+    });
+
+    loader.load("/rug.jpg", (texture) => {
+      texture.colorSpace = SRGBColorSpace;
+      setRugTexture(texture);
+    });
+
+    loader.load("/floor.jpg", (texture) => {
+      texture.wrapS = RepeatWrapping;
+      texture.wrapT = RepeatWrapping;
+      texture.repeat.set(5, 5);
+      texture.colorSpace = SRGBColorSpace;
+      setFloorTexture(texture);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+
+    const speech = window.speechSynthesis;
+    speech.cancel();
+
+    if (!selectedItem || !focusedDoorId) {
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(buildBackstory(selectedItem));
+    const applyVoice = () => {
+      const preferredVoice = chooseNarrationVoice(speech.getVoices());
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+    };
+
+    applyVoice();
+    narrationDoorIdRef.current = focusedDoorId;
+    setInteractionLocked(true);
+    utterance.rate = 0.9;
+    utterance.pitch = 0.88;
+    utterance.volume = 1;
+    utterance.onend = () => {
+      pendingPostStoryShakeRef.current = true;
+      setReturnPose(roamPoseRef.current);
+      setFocusedDoorId("");
+      setSelectedItemId("");
+    };
+
+    const handleVoicesChanged = () => {
+      applyVoice();
+    };
+
+    speech.addEventListener("voiceschanged", handleVoicesChanged);
+    speech.speak(utterance);
+
+    return () => {
+      speech.removeEventListener("voiceschanged", handleVoicesChanged);
+      speech.cancel();
+    };
+  }, [focusedDoorId, selectedItem]);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current !== null) {
+        window.clearTimeout(shakeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const toggleDoor = (doorId: string) => {
+    if (interactionLocked) {
+      return;
+    }
+
+    if (focusedDoorId === doorId) {
+      if (items.length > 0) {
+        const nextCount = (doorOpenCounts[doorId] ?? 0) + 1;
+        const nextItemId = getUniqueDoorItemId(items, doorItemIds, doorId, nextCount * 7);
+
+        setDoorOpenCounts((currentCounts) => ({ ...currentCounts, [doorId]: nextCount }));
+        setDoorItemIds((currentItems) => ({ ...currentItems, [doorId]: nextItemId }));
       }
 
-      return next;
-    });
+      pendingPostStoryShakeRef.current = false;
+      setReturnPose(roamPoseRef.current);
+      setFocusedDoorId("");
+      setSelectedItemId("");
+      return;
+    }
+
+    if (items.length > 0) {
+      const currentItemId = doorItemIds[doorId];
+      const currentItem =
+        items.find((candidate) => candidate.id === currentItemId) ??
+        items[hashSeed(doorId) % Math.max(items.length, 1)];
+
+      if (!currentItem) {
+        return;
+      }
+
+      setSelectedItemId(currentItem.id);
+      setFocusedDoorId(doorId);
+      setReturnPose(null);
+    }
   };
 
-  const selectItem = (item: CabinetItem) => {
-    setSelectedItemId(item.id);
-  };
+  const handleRoamPoseChange = useCallback((pose: CameraPose) => {
+    roamPoseRef.current = pose;
+  }, []);
+
+  const handleTargetReached = useCallback((mode: "focus" | "return") => {
+    if (mode === "return") {
+      setReturnPose(null);
+
+      if (pendingPostStoryShakeRef.current && groups.length > 0) {
+        const groupIndex = Math.floor(Math.random() * groups.length);
+        const doorIndex = Math.floor(Math.random() * doorsPerCabinet);
+        const nextDoorId = `${groups[groupIndex].id}-${doorIndex}`;
+
+        pendingPostStoryShakeRef.current = false;
+        setShakingDoorId(nextDoorId);
+        playCabinetShakeSound();
+
+        if (shakeTimeoutRef.current !== null) {
+          window.clearTimeout(shakeTimeoutRef.current);
+        }
+
+        shakeTimeoutRef.current = window.setTimeout(() => {
+          setShakingDoorId("");
+          setInteractionLocked(false);
+          shakeTimeoutRef.current = null;
+        }, 1200);
+      } else {
+        setInteractionLocked(false);
+      }
+    }
+  }, [groups]);
 
   return (
     <section className="panorama-shell" aria-label="Cabinet of curiosities panorama">
@@ -990,39 +1415,31 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
           shadows
           gl={{ antialias: true, alpha: false }}
         >
-          <Suspense fallback={null}>
-            <CabinetRoom
-              allItems={items}
-              groups={groups}
-              openedDoorIds={openedDoorIds}
-              doorItemIds={doorItemIds}
-              onToggleDoor={toggleDoor}
-              onSelectItem={selectItem}
-            />
-          </Suspense>
+          {woodTextures.length > 0 && wallpaperTexture && rugTexture && floorTexture && (
+            <Suspense fallback={null}>
+              <CabinetRoom
+                allItems={items}
+                groups={groups}
+                placements={placements}
+                focusedDoorId={focusedDoorId}
+                doorItemIds={doorItemIds}
+                shakingDoorId={shakingDoorId}
+                interactionLocked={interactionLocked}
+                woodTextures={woodTextures}
+                wallpaperTexture={wallpaperTexture}
+                rugTexture={rugTexture}
+                floorTexture={floorTexture}
+                focusTarget={focusTarget}
+                targetMode={targetMode}
+                onRoamPoseChange={handleRoamPoseChange}
+                onTargetReached={handleTargetReached}
+                onToggleDoor={toggleDoor}
+              />
+            </Suspense>
+          )}
         </Canvas>
 
         <div className="panorama-vignette" />
-        <div className="panorama-copy">
-          <p>Wellcome cabinet prototype</p>
-          <span>Use W/S to walk, A/D to turn. Click a door, then click the item inside.</span>
-        </div>
-
-        <div className="movement-hint" aria-label="Movement controls">
-          <span>W</span>
-          <span>A</span>
-          <span>S</span>
-          <span>D</span>
-          <p>click doors</p>
-        </div>
-
-        {selectedItem ? (
-          <aside className="active-caption">
-            <p>{selectedItem.theme}</p>
-            <h2>{trimTitle(selectedItem.title)}</h2>
-            {selectedItem.year ? <span>{selectedItem.year}</span> : null}
-          </aside>
-        ) : null}
       </div>
     </section>
   );
