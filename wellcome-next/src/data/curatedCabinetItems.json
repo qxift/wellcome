@@ -1,0 +1,7422 @@
+{
+  "generatedAt": "2026-04-30T09:41:25.447Z",
+  "source": "../images.json",
+  "selection": {
+    "requestedLimit": 100,
+    "actualCount": 100,
+    "seed": 42,
+    "candidateCount": 1561,
+    "method": "Stream images.json, keep likely 3D records from Museum object genre and object-like metadata keywords, then link selected items by shared subjects, genres, and normalized object keywords."
+  },
+  "items": [
+    {
+      "id": "xf7xtczs",
+      "workId": "r5xws5y8",
+      "title": "A moving coil galvanometer.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016397/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016397/info.json",
+      "averageColor": "#afafaf",
+      "aspectRatio": 1.1299435,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Electrotherapy"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "electrotherapy",
+        "coil",
+        "galvanometer",
+        "moving"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "nzug2uaj",
+          "score": 8,
+          "reasons": [
+            "keyword:electrotherapy",
+            "subject:electrotherapy",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "guqmtzwk",
+      "workId": "ve83fdye",
+      "title": "Anatomical model of human brain, paper mache, French, 19th century",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010006/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010006/info.json",
+      "averageColor": "#464646",
+      "aspectRatio": 0.7325,
+      "license": {
+        "id": "pdm",
+        "label": "Public Domain Mark",
+        "url": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "brain",
+        "model",
+        "19th",
+        "french",
+        "human",
+        "mache",
+        "paper"
+      ],
+      "curation": {
+        "score": 17,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:brain",
+          "keyword:model",
+          "license:pdm"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "m2hrbmbd",
+          "score": 16,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:brain",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 13,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g4gkqkah",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h4j8yf6n",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 7,
+          "reasons": [
+            "keyword:19th",
+            "keyword:french",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "x4kf3khv",
+      "workId": "mh5d8mfj",
+      "title": "Apparatus for preparing injected preparations for histological work including a dissection microscope, injection syringe and bull-dog forceps.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0018212/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0018212/info.json",
+      "averageColor": "#c7c7c7",
+      "aspectRatio": 0.6975,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Microscopes",
+        "Apparatus"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "apparatus",
+        "forceps",
+        "microscope",
+        "syringe",
+        "microscopes",
+        "bull",
+        "dissection",
+        "histological",
+        "including",
+        "injected",
+        "injection",
+        "preparations",
+        "preparing"
+      ],
+      "curation": {
+        "score": 16,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:apparatus",
+          "keyword:forceps",
+          "keyword:microscope",
+          "keyword:syringe"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "ekpes2kh",
+      "workId": "kfpjxsqt",
+      "title": "Graeco-Roman limestone statue, identified as a figure of Bes, and dated 6th/5th century, B.C.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0014394/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0014394/info.json",
+      "averageColor": "#545454",
+      "aspectRatio": 1.754386,
+      "license": {
+        "id": "pdm",
+        "label": "Public Domain Mark",
+        "url": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "figure",
+        "statue",
+        "dated",
+        "graeco",
+        "identified",
+        "limestone",
+        "roman"
+      ],
+      "curation": {
+        "score": 14,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:figure",
+          "keyword:statue",
+          "license:pdm"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "svu67wxz",
+          "score": 22,
+          "reasons": [
+            "keyword:figure",
+            "keyword:statue",
+            "keyword:dated",
+            "keyword:graeco",
+            "keyword:identified",
+            "keyword:limestone"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brawb4vg",
+      "workId": "d7wzedp6",
+      "title": "Silver feeding cup or small posset pot, by Andrews, 1698.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0018434/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0018434/info.json",
+      "averageColor": "#898989",
+      "aspectRatio": 1.0362694,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Domestic"
+      ],
+      "contributors": [
+        "William Andrews"
+      ],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "cup",
+        "pot",
+        "domestic",
+        "andrews",
+        "feeding",
+        "posset",
+        "silver",
+        "small"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:cup",
+          "keyword:pot"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "zqyavyyb",
+          "score": 14,
+          "reasons": [
+            "keyword:pot",
+            "keyword:domestic",
+            "keyword:posset",
+            "subject:domestic",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b4qdk6cq",
+      "workId": "sz8k2xau",
+      "title": "Medal: International Medical Congress, London, 1881.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0003248/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0003248/info.json",
+      "averageColor": "#8b8b8b",
+      "aspectRatio": 0.995,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "medal",
+        "congress",
+        "international",
+        "london"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:medal"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "qpdgtzf5",
+      "workId": "w68xrfnx",
+      "title": "Museum objects from exhibition-various.1972-3",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010357/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010357/info.json",
+      "averageColor": "#858585",
+      "aspectRatio": 1.754386,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Wellcome Exhibitions",
+        "Prehistory",
+        "Ethnographic",
+        "Primitive"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "wellcome exhibitions",
+        "prehistory",
+        "ethnographic",
+        "primitive",
+        "exhibition",
+        "exhibitions",
+        "objects",
+        "various",
+        "wellcome"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "j52w942v",
+      "workId": "q7nzpw2u",
+      "title": "'Mallam's vaccinators' made by Arnold and Sons, London.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0001193/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0001193/info.json",
+      "averageColor": "#bbbbbb",
+      "aspectRatio": 1.7167382,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Vaccination, instruments and apparatus"
+      ],
+      "contributors": [
+        "Arnold & Sons"
+      ],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "apparatus",
+        "vaccination instruments and apparatus",
+        "arnold",
+        "instruments",
+        "london",
+        "mallam",
+        "sons",
+        "vaccination",
+        "vaccinators"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:apparatus"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "dz4fasgs",
+          "score": 7,
+          "reasons": [
+            "keyword:apparatus",
+            "keyword:instruments",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pes4mctf",
+      "workId": "vw25jzgf",
+      "title": "Statue of Saint Apollonia",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014103/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014103/info.json",
+      "averageColor": "#a8a8a8",
+      "aspectRatio": 0.5025,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statue",
+        "apollonia",
+        "saint"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statue"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "d63q57qj",
+      "workId": "xb23jdzu",
+      "title": "Pefume bottle, glass, white.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008620/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008620/info.json",
+      "averageColor": "#454545",
+      "aspectRatio": 0.485,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "bottle",
+        "glass",
+        "pefume",
+        "white"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:bottle"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "yj7g9gmc",
+      "workId": "qfqwvrc6",
+      "title": "Fraisenhendchen or Lorettohemdchen; amulet. Image printed on silk and attached to a piece of gauze with cross-stitch.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016857/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016857/info.json",
+      "averageColor": "#6d6d6d",
+      "aspectRatio": 1.6393442,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "attached",
+        "cross",
+        "fraisenhendchen",
+        "gauze",
+        "image",
+        "lorettohemdchen",
+        "piece",
+        "printed",
+        "silk",
+        "stitch"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s8227xzh",
+      "workId": "yvk9c3tc",
+      "title": "Ancient Graeco-Italian ceramic; Gnathia kantheros",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0012639/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0012639/info.json",
+      "averageColor": "#bbbbbb",
+      "aspectRatio": 1.179941,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "ancient",
+        "ceramic",
+        "gnathia",
+        "graeco",
+        "italian",
+        "kantheros"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "b9yugpsu",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qkze2uht",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "svu67wxz",
+      "workId": "n9agzv74",
+      "title": "Graeco-Roman limestone statue, identified as a figure of Bes, and dated 6th/5th century, B.C., hole in head for support of hat",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0014395/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0014395/info.json",
+      "averageColor": "#5d5d5d",
+      "aspectRatio": 1.1396011,
+      "license": {
+        "id": "pdm",
+        "label": "Public Domain Mark",
+        "url": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure",
+        "wearable"
+      ],
+      "linkKeywords": [
+        "head",
+        "figure",
+        "statue",
+        "hat",
+        "dated",
+        "graeco",
+        "hole",
+        "identified",
+        "limestone",
+        "roman",
+        "support"
+      ],
+      "curation": {
+        "score": 17,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:head",
+          "keyword:figure",
+          "keyword:statue",
+          "keyword:hat",
+          "license:pdm"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "ekpes2kh",
+          "score": 22,
+          "reasons": [
+            "keyword:figure",
+            "keyword:statue",
+            "keyword:dated",
+            "keyword:graeco",
+            "keyword:identified",
+            "keyword:limestone"
+          ]
+        },
+        {
+          "targetId": "h2hs32m9",
+          "score": 7,
+          "reasons": [
+            "keyword:head",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jjm9xdx7",
+      "workId": "w7v9ctxt",
+      "title": "Monaural stethoscope designed by Hughes (?).",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014342EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014342EB/info.json",
+      "averageColor": "#c6c6c6",
+      "aspectRatio": 0.4325,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "designed",
+        "hughes",
+        "monaural"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fb2a26mw",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "m7jdsc36",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "n8rjajh7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "f4f9estf",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "anyqvdxd",
+      "workId": "rmzcrt9n",
+      "title": "An ancient copy of the statue of Niki, Goddess of Victory.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0015205/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0015205/info.json",
+      "averageColor": "#414141",
+      "aspectRatio": 0.4525,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statue",
+        "ancient greece",
+        "ancient",
+        "copy",
+        "goddess",
+        "greece",
+        "niki",
+        "victory"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statue"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "pbp5uz7k",
+          "score": 20,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:copy",
+            "keyword:greece",
+            "subject:ancient greece"
+          ]
+        },
+        {
+          "targetId": "g36fp9w8",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "f22c9sjn",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zqyavyyb",
+      "workId": "utepv6ge",
+      "title": "Posset pot, delftware, Bristol, early 18th C.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014359/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014359/info.json",
+      "averageColor": "#c9c9c9",
+      "aspectRatio": 1.0309278,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Domestic",
+        "Food container"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "container",
+        "pot",
+        "domestic",
+        "food container",
+        "18th",
+        "bristol",
+        "delftware",
+        "early",
+        "food",
+        "posset"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:container",
+          "keyword:pot"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "brawb4vg",
+          "score": 14,
+          "reasons": [
+            "keyword:pot",
+            "keyword:domestic",
+            "keyword:posset",
+            "subject:domestic",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rxmzc5g5",
+      "workId": "w769nuvt",
+      "title": "Amulet, short length of carved ivory, Africa.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017483/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017483/info.json",
+      "averageColor": "#555555",
+      "aspectRatio": 0.4725,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Charms and amulets",
+        "Indigenous medicine",
+        "Non-European medicine"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charms and amulets",
+        "indigenous medicine",
+        "non european medicine",
+        "africa",
+        "amulets",
+        "carved",
+        "charms",
+        "european",
+        "indigenous",
+        "ivory",
+        "length",
+        "short"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fqzygw6m",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "s5fxu5q2",
+          "score": 24,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:africa",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine"
+          ]
+        },
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "c6qkg6gp",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nrgg7juz",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nzug2uaj",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pcmq4577",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u222ceek",
+      "workId": "fvhfghhk",
+      "title": "Arab Pharmacy",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0002454/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0002454/info.json",
+      "averageColor": "#8e8e8e",
+      "aspectRatio": 0.79,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Shops",
+        "Druggists"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "shops",
+        "druggists",
+        "arab",
+        "pharmacy"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "fj96j3vx",
+      "workId": "jqucrj34",
+      "title": "Chinese ivory diagnostic doll",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0034191/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0034191/info.json",
+      "averageColor": "#e3dac7",
+      "aspectRatio": 1.532567,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Anatomical model"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "doll",
+        "model",
+        "chinese",
+        "diagnostic",
+        "ivory"
+      ],
+      "curation": {
+        "score": 16,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:doll",
+          "keyword:model"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "g4gkqkah",
+          "score": 17,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:ivory",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h4j8yf6n",
+          "score": 17,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:ivory",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m2hrbmbd",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "r9kfwdbn",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:chinese",
+            "keyword:diagnostic",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:chinese",
+            "keyword:diagnostic",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jkf79bh5",
+      "workId": "yjsx52pa",
+      "title": "Two-bladed obststric speculum, Weiss",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0006259/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0006259/info.json",
+      "averageColor": "#afafaf",
+      "aspectRatio": 1.6806723,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Instruments"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "speculum",
+        "instruments",
+        "bladed",
+        "obststric",
+        "weiss"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:speculum"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "vhq5v2e2",
+      "workId": "az6qx7eu",
+      "title": "Pewter chamber pot, marked SUR 22.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008771/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008771/info.json",
+      "averageColor": "#9a9a9a",
+      "aspectRatio": 1.4336917,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "pot",
+        "chamber",
+        "marked",
+        "pewter"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:pot"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "nryg63kc",
+      "workId": "c65ewsum",
+      "title": "Necklet of the vertebrae of an adder hung with 3 medallions.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016842/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016842/info.json",
+      "averageColor": "#2b2b2b",
+      "aspectRatio": 0.8725,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet",
+        "Charm"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charm",
+        "adder",
+        "hung",
+        "medallions",
+        "necklet",
+        "vertebrae"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "c6qkg6gp",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sj6m84bc",
+      "workId": "e353xd6r",
+      "title": "Carwardine's Saccharometer.Used to facilitate the quantative estimation of sugar in urine by Fehling's solution.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010303/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010303/info.json",
+      "averageColor": "#979797",
+      "aspectRatio": 1.6949153,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Diabetes",
+        "Saccarimeter"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "diabetes",
+        "saccarimeter",
+        "carwardine",
+        "estimation",
+        "facilitate",
+        "fehling",
+        "quantative",
+        "saccharometer",
+        "solution",
+        "sugar",
+        "urine"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "m2hrbmbd",
+      "workId": "yf6qc4z3",
+      "title": "Anatomical model of human brain,",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010009/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010009/info.json",
+      "averageColor": "#949494",
+      "aspectRatio": 1.183432,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "brain",
+        "model",
+        "human"
+      ],
+      "curation": {
+        "score": 16,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:brain",
+          "keyword:model"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "guqmtzwk",
+          "score": 16,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:brain",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 13,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g4gkqkah",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h4j8yf6n",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fb2a26mw",
+      "workId": "w2y3rx3h",
+      "title": "Monaural stethoscope, designed by Laennec.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014325ED/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014325ED/info.json",
+      "averageColor": "#b7b7b7",
+      "aspectRatio": 0.2,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "designed",
+        "laennec",
+        "monaural"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "jjm9xdx7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "m7jdsc36",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "n8rjajh7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "f4f9estf",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vn8dcndy",
+          "score": 7,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:laennec",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b9yugpsu",
+      "workId": "cdwteegk",
+      "title": "Ancient Graeco-Italian ceramic; Attic black-glaze cup",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0012649/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0012649/info.json",
+      "averageColor": "#bbbbbb",
+      "aspectRatio": 1.509434,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "cup",
+        "ancient",
+        "attic",
+        "ceramic",
+        "glaze",
+        "graeco",
+        "italian"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:cup"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "spsn449k",
+          "score": 16,
+          "reasons": [
+            "keyword:cup",
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qkze2uht",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s8227xzh",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c6qkg6gp",
+      "workId": "yc73esn7",
+      "title": "Fraiskette with 3 cases of charms",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016844/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016844/info.json",
+      "averageColor": "#dcdcdc",
+      "aspectRatio": 1.3651878,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet",
+        "Charm"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charm",
+        "cases",
+        "charms",
+        "fraiskette"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "hwkehbys",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gt5hnmwy",
+      "workId": "cdbgzu3c",
+      "title": "An itinerant musician playing to an audience using an instrument that is partly made out of an animals bladder. Drypoint.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0002354/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0002354/info.json",
+      "averageColor": "#dadada",
+      "aspectRatio": 1.5151515,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object",
+        "Drypoints"
+      ],
+      "subjects": [
+        "Knives"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "instrument",
+        "knives",
+        "animals",
+        "audience",
+        "bladder",
+        "drypoint",
+        "itinerant",
+        "musician",
+        "partly",
+        "playing",
+        "that",
+        "using"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:instrument"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "eemzwuxw",
+      "workId": "yuyrx237",
+      "title": "Bust of A. Vesalius",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0014016/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0014016/info.json",
+      "averageColor": "#a4a4a4",
+      "aspectRatio": 0.71,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "bust",
+        "vesalius"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:bust"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "wz7n3q9s",
+      "workId": "r4aea2db",
+      "title": "Pharmacy scales, in oak stained box",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0006742/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0006742/info.json",
+      "averageColor": "#c7c7c7",
+      "aspectRatio": 0.6075,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "box",
+        "pharmacy",
+        "scales",
+        "stained"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:box"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "qtmfdf7p",
+      "workId": "vne7ugyu",
+      "title": "Wehen Kreuz, double cross, two crosses with equal arms, but one arm is common tothem both. Silver inlaid with malachite. Worn during labour.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016859/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016859/info.json",
+      "averageColor": "#b9b9b9",
+      "aspectRatio": 0.5775,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "arms",
+        "both",
+        "common",
+        "cross",
+        "crosses",
+        "double",
+        "during",
+        "equal",
+        "inlaid",
+        "kreuz",
+        "labour"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "twpspnm4",
+          "score": 14,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "keyword:double",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "c6qkg6gp",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "yj7g9gmc",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d77pettz",
+      "workId": "nc44rwbn",
+      "title": "Glass, milky beads, fig-hands and beads.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016759/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016759/info.json",
+      "averageColor": "#d0d0d0",
+      "aspectRatio": 1.1142061,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "beads",
+        "glass",
+        "hands",
+        "milky"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "h4j8yf6n",
+      "workId": "utvhpbh7",
+      "title": "Ivory anatomical model of a pregnant female",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0034188/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0034188/info.json",
+      "averageColor": "#938275",
+      "aspectRatio": 1.532567,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Anatomical model"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "model",
+        "female",
+        "ivory",
+        "pregnant"
+      ],
+      "curation": {
+        "score": 15,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:model"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "g4gkqkah",
+          "score": 23,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:female",
+            "keyword:ivory",
+            "keyword:pregnant"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 17,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:ivory",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m2hrbmbd",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a37ywxca",
+      "workId": "s54mkqmx",
+      "title": "Bronze vaginal speculum, three blades.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0007296/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0007296/info.json",
+      "averageColor": "#e0e0e0",
+      "aspectRatio": 0.6825,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "speculum",
+        "blades",
+        "bronze",
+        "vaginal"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:speculum"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "dsmbybrp",
+      "workId": "hyyfqygj",
+      "title": "Female figurine with halo, probably amuletic, bronze, South American Indian",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0018934EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0018934EB/info.json",
+      "averageColor": "#bababa",
+      "aspectRatio": 0.59,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient American"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "figurine",
+        "ancient american",
+        "american",
+        "amuletic",
+        "ancient",
+        "bronze",
+        "female",
+        "halo",
+        "indian",
+        "probably",
+        "south"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:figurine"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "yh29ejjz",
+          "score": 7,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:bronze",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hwkehbys",
+      "workId": "ayqe47uh",
+      "title": "Pilgrim's token, a blue bottle showing a little chapel. Formerly contained St. Wolfgang's water. The bottle was covered with water-paint in order to show the design, when the lantern slide was made.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016838/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016838/info.json",
+      "averageColor": "#909090",
+      "aspectRatio": 0.9125,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet",
+        "Charm"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container",
+        "wearable"
+      ],
+      "linkKeywords": [
+        "bottle",
+        "amulet",
+        "charm",
+        "water",
+        "blue",
+        "chapel",
+        "contained",
+        "covered",
+        "design",
+        "formerly",
+        "lantern",
+        "little"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:bottle",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "c6qkg6gp",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sr6e95g8",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:lantern",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nzug2uaj",
+      "workId": "yrd9gmq6",
+      "title": "Electro-galvanic ring.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0004524/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0004524/info.json",
+      "averageColor": "#dadada",
+      "aspectRatio": 1.6393442,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulets and charms",
+        "Electrotherapy",
+        "Galvanism"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "ring",
+        "amulets and charms",
+        "electrotherapy",
+        "galvanism",
+        "amulets",
+        "charms",
+        "electro",
+        "galvanic"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:ring"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "xf7xtczs",
+          "score": 8,
+          "reasons": [
+            "keyword:electrotherapy",
+            "subject:electrotherapy",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sr6e95g8",
+      "workId": "zb88wx8r",
+      "title": "Lantern slides; Commercialized, Electric medal. Ring made from horseshoe-nail, 3 hunchback, ring with skull, imitation 4-leaf clover under glass. Coll. Hl. 3827",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016770/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016770/info.json",
+      "averageColor": "#d2d2d2",
+      "aspectRatio": 1.1527377,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Spanish Amulet"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "wearable"
+      ],
+      "linkKeywords": [
+        "skull",
+        "amulet",
+        "medal",
+        "ring",
+        "spanish amulet",
+        "clover",
+        "coll",
+        "commercialized",
+        "electric",
+        "glass",
+        "horseshoe",
+        "hunchback",
+        "imitation",
+        "lantern",
+        "leaf"
+      ],
+      "curation": {
+        "score": 16,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:skull",
+          "keyword:amulet",
+          "keyword:medal",
+          "keyword:ring"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "amcbys66",
+          "score": 11,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:spanish amulet",
+            "subject:spanish amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:lantern",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f4f9estf",
+      "workId": "g3acs98u",
+      "title": "Monaural stethoscope.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014333EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014333EB/info.json",
+      "averageColor": "#d3d3d3",
+      "aspectRatio": 0.3925,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "monaural"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fb2a26mw",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjm9xdx7",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m7jdsc36",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "n8rjajh7",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dw32bcjd",
+      "workId": "ky9j8ufs",
+      "title": "Statuette of Aesculapius",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013565/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013565/info.json",
+      "averageColor": "#b2b2b2",
+      "aspectRatio": 0.555,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statuette",
+        "aesculapius"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statuette"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "v9fsh9ef",
+          "score": 7,
+          "reasons": [
+            "keyword:statuette",
+            "keyword:aesculapius",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g3e2mrm4",
+      "workId": "gc9snhg9",
+      "title": "Lancet and case-for blood-letting. Georgian period.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010166/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010166/info.json",
+      "averageColor": "#cecece",
+      "aspectRatio": 1.0309278,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "blood",
+        "georgian",
+        "lancet",
+        "letting",
+        "period"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "vvee3weq",
+          "score": 7,
+          "reasons": [
+            "keyword:blood",
+            "keyword:letting",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s7stznep",
+      "workId": "bkhwaseb",
+      "title": "Amulet 'for warding off the evils of war and sickness'.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0019363EA/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0019363EA/info.json",
+      "averageColor": "#a9a9a9",
+      "aspectRatio": 1.2232416,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Charms and amulets",
+        "Indigenous medicine",
+        "Non-European medicine"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charms and amulets",
+        "indigenous medicine",
+        "non european medicine",
+        "amulets",
+        "charms",
+        "european",
+        "evils",
+        "indigenous",
+        "sickness",
+        "warding"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fqzygw6m",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "s5fxu5q2",
+          "score": 21,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine",
+            "subject:non european medicine"
+          ]
+        },
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "c6qkg6gp",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nrgg7juz",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nzug2uaj",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pcmq4577",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mj954btw",
+      "workId": "u3j2kjvb",
+      "title": "Pewter eye cup.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008783/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008783/info.json",
+      "averageColor": "#9d9d9d",
+      "aspectRatio": 0.935,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "container"
+      ],
+      "linkKeywords": [
+        "eye",
+        "cup",
+        "pewter"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:eye",
+          "keyword:cup"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "tsjwtdwf",
+      "workId": "pfyq5nk7",
+      "title": "Danchell's Patent Water Testing Apparatus.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010277/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010277/info.json",
+      "averageColor": "#c0c0c0",
+      "aspectRatio": 0.9825,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [
+        "General Water Purifying Company"
+      ],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "apparatus",
+        "danchell",
+        "patent",
+        "testing",
+        "water"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:apparatus"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "nrmcwf75",
+      "workId": "ug8qem52",
+      "title": "Obstetric specula, American model",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0006255/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0006255/info.json",
+      "averageColor": "#b4b4b4",
+      "aspectRatio": 1.6460905,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Insturments"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "model",
+        "insturments",
+        "american",
+        "obstetric",
+        "specula"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:model"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "e9yfa4mt",
+      "workId": "dvtwjv93",
+      "title": "A case of surgical instruments; by Down brothers.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0005035/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0005035/info.json",
+      "averageColor": "#757575",
+      "aspectRatio": 1.0695187,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Surgery, instruments"
+      ],
+      "contributors": [
+        "Down Brothers"
+      ],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "surgery instruments",
+        "instruments",
+        "brothers",
+        "down",
+        "surgery",
+        "surgical"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "gw84d9nt",
+      "workId": "xyhkf9y8",
+      "title": "Egyptian amulet showing 'SMA', emblem of union...",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016456/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016456/info.json",
+      "averageColor": "#c0c0c0",
+      "aspectRatio": 1.081081,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Egyptology"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "egyptology",
+        "egyptian",
+        "emblem",
+        "union"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "d2cqpuhr",
+          "score": 11,
+          "reasons": [
+            "keyword:egyptology",
+            "keyword:egyptian",
+            "subject:egyptology",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "uc2urw3m",
+      "workId": "pe6hr59e",
+      "title": "Seals: Egyptian and Syrian, Group 15",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010665/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010665/info.json",
+      "averageColor": "#979797",
+      "aspectRatio": 1.2944983,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Seal"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "seal",
+        "egyptian",
+        "seals",
+        "syrian"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "jjbevs6y",
+      "workId": "qyqb57cx",
+      "title": "Anatomical model of human tongue, made of China, on plaster base. European, for hanging",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0010002/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0010002/info.json",
+      "averageColor": "#b7b7b7",
+      "aspectRatio": 1.3513514,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Anatomical Model"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "model",
+        "base",
+        "china",
+        "european",
+        "hanging",
+        "human",
+        "plaster",
+        "tongue"
+      ],
+      "curation": {
+        "score": 15,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:model"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fj96j3vx",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g4gkqkah",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h4j8yf6n",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 13,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m2hrbmbd",
+          "score": 13,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m7jdsc36",
+      "workId": "dtgfcynh",
+      "title": "Monaural stethoscope, designed by Piorry.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014327EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014327EB/info.json",
+      "averageColor": "#c4c4c4",
+      "aspectRatio": 0.365,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "designed",
+        "monaural",
+        "piorry"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fb2a26mw",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "jjm9xdx7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "n8rjajh7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "f4f9estf",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f22c9sjn",
+      "workId": "ef7cve7w",
+      "title": "Polycleitan headless statuette of kouros",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013602/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013602/info.json",
+      "averageColor": "#c8c8c8",
+      "aspectRatio": 0.595,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statuette",
+        "ancient greece",
+        "ancient",
+        "greece",
+        "headless",
+        "kouros",
+        "polycleitan"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statuette"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "g36fp9w8",
+          "score": 17,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "keyword:headless",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 17,
+          "reasons": [
+            "keyword:statuette",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "anyqvdxd",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pbp5uz7k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aqgcup84",
+      "workId": "w5v8m5jd",
+      "title": "Antimony Cup. XVIIth century with tooled leather case.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0011113/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0011113/info.json",
+      "averageColor": "#b7b7b7",
+      "aspectRatio": 1.6666666,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "cup",
+        "antimony",
+        "leather",
+        "tooled",
+        "xviith"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case",
+          "keyword:cup"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "ddk47scm",
+          "score": 7,
+          "reasons": [
+            "keyword:case",
+            "keyword:leather",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "r4wa87su",
+      "workId": "np7bu48u",
+      "title": "Ring-shaped anode, first special type of tube for x-rays.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0015833EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0015833EB/info.json",
+      "averageColor": "#a7a7a7",
+      "aspectRatio": 0.615,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "X-rays and discharge tubes"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "ring",
+        "x rays and discharge tubes",
+        "rays",
+        "anode",
+        "discharge",
+        "first",
+        "shaped",
+        "special",
+        "tube",
+        "tubes",
+        "type"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:ring"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "davzqa66",
+      "workId": "wvcj252e",
+      "title": "Drug Jars: Persian",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0011521/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0011521/info.json",
+      "averageColor": "#aeaeae",
+      "aspectRatio": 0.79,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "drug",
+        "jars",
+        "persian"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "wd5phauq",
+      "workId": "the59yzr",
+      "title": "Anatomical wax figure, attributed to Anne Marandi Mazzolini of Bologna",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/S0008032/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/S0008032/info.json",
+      "averageColor": "#ae6d6d",
+      "aspectRatio": 1.4440433,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "figure",
+        "anne",
+        "attributed",
+        "bologna",
+        "marandi",
+        "mazzolini"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "r9kfwdbn",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sm6ruvr9",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sy7z62jq",
+      "workId": "yhy37k34",
+      "title": "Nike statuette on orb",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013583/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013583/info.json",
+      "averageColor": "#c2c2c2",
+      "aspectRatio": 0.485,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statuette",
+        "ancient greece",
+        "ancient",
+        "greece",
+        "nike"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statuette"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "f22c9sjn",
+          "score": 17,
+          "reasons": [
+            "keyword:statuette",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "anyqvdxd",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g36fp9w8",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pbp5uz7k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vvee3weq",
+      "workId": "qg89y593",
+      "title": "Alcock-type leech jar.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017487/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017487/info.json",
+      "averageColor": "#a7a7a7",
+      "aspectRatio": 0.545,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Blood letting"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "jar",
+        "blood letting",
+        "alcock",
+        "blood",
+        "leech",
+        "letting",
+        "type"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:jar"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "g3e2mrm4",
+          "score": 7,
+          "reasons": [
+            "keyword:blood",
+            "keyword:letting",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "v9f6eu54",
+          "score": 7,
+          "reasons": [
+            "keyword:jar",
+            "keyword:leech",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bk7ftdcu",
+      "workId": "p7b37v5u",
+      "title": "Zahnfeige, mounted as a pendant, for infants when teething (?orris root).",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016858/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016858/info.json",
+      "averageColor": "#b5b5b5",
+      "aspectRatio": 0.61,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "infants",
+        "mounted",
+        "orris",
+        "pendant",
+        "root",
+        "teething",
+        "when",
+        "zahnfeige"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "c6qkg6gp",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vnnjbk8g",
+      "workId": "zw68zkze",
+      "title": "Japanese anatomical figure covered with human skin.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0020049/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0020049/info.json",
+      "averageColor": "#dcdcdc",
+      "aspectRatio": 0.5025,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Chinese medicine",
+        "Japanese medicine",
+        "Anatomical figures",
+        "Diagnostic instruments"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical figure",
+        "figure",
+        "chinese medicine",
+        "japanese medicine",
+        "anatomical figures",
+        "diagnostic instruments",
+        "japanese",
+        "chinese",
+        "covered",
+        "diagnostic",
+        "figures",
+        "human",
+        "instruments",
+        "skin"
+      ],
+      "curation": {
+        "score": 15,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical figure",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "r9kfwdbn",
+          "score": 53,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:chinese medicine",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures"
+          ]
+        },
+        {
+          "targetId": "sm6ruvr9",
+          "score": 30,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures",
+            "keyword:japanese"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:chinese",
+            "keyword:diagnostic",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m2hrbmbd",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:human",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "wd5phauq",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n8rjajh7",
+      "workId": "nkdnnsaf",
+      "title": "Monaural stethoscope designed by Roberts.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014330ED/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014330ED/info.json",
+      "averageColor": "#b7b7b7",
+      "aspectRatio": 1.2269939,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "designed",
+        "monaural",
+        "roberts"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fb2a26mw",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "jjm9xdx7",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "m7jdsc36",
+          "score": 20,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:designed",
+            "keyword:monaural",
+            "subject:stethoscope 19th century"
+          ]
+        },
+        {
+          "targetId": "f4f9estf",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m85zayyx",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wuxdm3ez",
+      "workId": "ehux2ae8",
+      "title": "Statuette of Aristotle",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0007222/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0007222/info.json",
+      "averageColor": "#2d2d2d",
+      "aspectRatio": 0.5425,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statuette",
+        "aristotle"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statuette"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "h7dt3qs3",
+      "workId": "a9wvs3j4",
+      "title": "Ancient Egyptian Kohl pot minature pestle and mortar",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016473/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016473/info.json",
+      "averageColor": "#d0d0d0",
+      "aspectRatio": 1.3986014,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Egypt",
+        "Pestle and Mortar"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "pot",
+        "ancient egypt",
+        "pestle and mortar",
+        "ancient",
+        "mortar",
+        "pestle",
+        "egypt",
+        "egyptian",
+        "kohl",
+        "minature"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:pot"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "d2cqpuhr",
+          "score": 10,
+          "reasons": [
+            "keyword:pot",
+            "keyword:egyptian",
+            "keyword:kohl",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "yh29ejjz",
+          "score": 7,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:egyptian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n8899k8a",
+      "workId": "j9ab94db",
+      "title": "Bridal costume from La Alberca, Salamanca Province. Photograph property of Hispanic Society of America.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016752/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016752/info.json",
+      "averageColor": "#5f5f5f",
+      "aspectRatio": 0.6975,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "costume",
+        "alberca",
+        "america",
+        "bridal",
+        "hispanic",
+        "province",
+        "salamanca",
+        "society"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:costume"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "s5fxu5q2",
+      "workId": "v3zyrxkn",
+      "title": "Terracotta representation of a kneeling peasant, Africa.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0019217EA/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0019217EA/info.json",
+      "averageColor": "#292929",
+      "aspectRatio": 0.8075,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Indigenous medicine",
+        "Non-European medicine"
+      ],
+      "contributors": [
+        "S. Ntiro"
+      ],
+      "objectKinds": [],
+      "linkKeywords": [
+        "indigenous medicine",
+        "non european medicine",
+        "africa",
+        "european",
+        "indigenous",
+        "kneeling",
+        "peasant",
+        "representation",
+        "terracotta"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "rxmzc5g5",
+          "score": 24,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:africa",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 21,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine",
+            "subject:non european medicine"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 21,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine",
+            "subject:non european medicine"
+          ]
+        },
+        {
+          "targetId": "nrgg7juz",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pcmq4577",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g4gkqkah",
+      "workId": "pbna97zk",
+      "title": "Ivory anatomical model of a a pregnant female",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0034187/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0034187/info.json",
+      "averageColor": "#a8978d",
+      "aspectRatio": 1.532567,
+      "license": {
+        "id": "pdm",
+        "label": "Public Domain Mark",
+        "url": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Anatomical model"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical model",
+        "model",
+        "female",
+        "ivory",
+        "pregnant"
+      ],
+      "curation": {
+        "score": 16,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical model",
+          "keyword:model",
+          "license:pdm"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "h4j8yf6n",
+          "score": 23,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:female",
+            "keyword:ivory",
+            "keyword:pregnant"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 17,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "keyword:ivory",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjbevs6y",
+          "score": 14,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "subject:anatomical model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m2hrbmbd",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical model",
+            "keyword:model",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t8f2955q",
+      "workId": "f26h4eut",
+      "title": "\"Pearce\" obstetrical forceps",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008315/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008315/info.json",
+      "averageColor": "#c8c8c8",
+      "aspectRatio": 0.9625,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "forceps",
+        "obstetrical",
+        "pearce"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:forceps"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "v9fsh9ef",
+      "workId": "kzsrbvwd",
+      "title": "Statuette of Aesculapius and Statuette of Hygeia",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0007223/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0007223/info.json",
+      "averageColor": "#3c3c3c",
+      "aspectRatio": 1.010101,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statuette",
+        "aesculapius",
+        "hygeia"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statuette"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "dw32bcjd",
+          "score": 7,
+          "reasons": [
+            "keyword:statuette",
+            "keyword:aesculapius",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "h6xguu26",
+      "workId": "dnp49ye6",
+      "title": "Folding balance and weights, with case.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0012712/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0012712/info.json",
+      "averageColor": "#c8c8c8",
+      "aspectRatio": 0.7525,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Scales"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "scales",
+        "balance",
+        "folding",
+        "weights"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "yeugakgc",
+          "score": 17,
+          "reasons": [
+            "keyword:case",
+            "keyword:scales",
+            "keyword:balance",
+            "keyword:weights",
+            "subject:scales",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fqzygw6m",
+      "workId": "p2kpnera",
+      "title": "Amulet in the form of a fish, ...Aboriginal peoples.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017947/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017947/info.json",
+      "averageColor": "#cdcdcd",
+      "aspectRatio": 0.87,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Charms and amulets",
+        "Indigenous medicine",
+        "Non-European medicine"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charms and amulets",
+        "indigenous medicine",
+        "non european medicine",
+        "aboriginal",
+        "amulets",
+        "charms",
+        "european",
+        "fish",
+        "form",
+        "indigenous",
+        "peoples"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "rxmzc5g5",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 37,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms and amulets",
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:amulets",
+            "keyword:charms"
+          ]
+        },
+        {
+          "targetId": "s5fxu5q2",
+          "score": 21,
+          "reasons": [
+            "keyword:indigenous medicine",
+            "keyword:non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous medicine",
+            "subject:non european medicine"
+          ]
+        },
+        {
+          "targetId": "pcmq4577",
+          "score": 13,
+          "reasons": [
+            "keyword:aboriginal",
+            "keyword:european",
+            "keyword:indigenous",
+            "keyword:peoples",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "c6qkg6gp",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nrgg7juz",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nzug2uaj",
+          "score": 7,
+          "reasons": [
+            "keyword:amulets",
+            "keyword:charms",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yh29ejjz",
+      "workId": "rc7tj7hm",
+      "title": "Imhotep, six Ancient Egyptian figures, bronze",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017644/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017644/info.json",
+      "averageColor": "#cdcdcd",
+      "aspectRatio": 0.9275,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "ancient",
+        "bronze",
+        "egyptian",
+        "figures",
+        "imhotep"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "dsmbybrp",
+          "score": 7,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:bronze",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h7dt3qs3",
+          "score": 7,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:egyptian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sm6ruvr9",
+      "workId": "z42yvzqg",
+      "title": "Japanese anatomical figure.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0020062/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0020062/info.json",
+      "averageColor": "#a3a3a3",
+      "aspectRatio": 0.49,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Japanese medicine",
+        "Anatomical figures"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical figure",
+        "figure",
+        "japanese medicine",
+        "anatomical figures",
+        "japanese",
+        "figures"
+      ],
+      "curation": {
+        "score": 15,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical figure",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "r9kfwdbn",
+          "score": 30,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures",
+            "keyword:japanese"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 30,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures",
+            "keyword:japanese"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "wd5phauq",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pcmq4577",
+      "workId": "rtmv2btp",
+      "title": "Female effigy, Simbo Island, Solomon Islands. In the exhibition of The Medicine of Aboriginal Peoples in the British Commonwealth.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016047/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016047/info.json",
+      "averageColor": "#b5b5b5",
+      "aspectRatio": 0.4175,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Indigenous non-European medicine",
+        "Effigies"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "effigy",
+        "indigenous non european medicine",
+        "effigies",
+        "aboriginal",
+        "british",
+        "commonwealth",
+        "european",
+        "exhibition",
+        "female",
+        "indigenous",
+        "island",
+        "islands",
+        "peoples"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:effigy"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "nrgg7juz",
+          "score": 14,
+          "reasons": [
+            "keyword:indigenous non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous non european medicine",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 13,
+          "reasons": [
+            "keyword:aboriginal",
+            "keyword:european",
+            "keyword:indigenous",
+            "keyword:peoples",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s5fxu5q2",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spsn449k",
+      "workId": "nkf2g2h5",
+      "title": "Graeco-Italian ceramic; pendant semicircle cup",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0012776/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0012776/info.json",
+      "averageColor": "#c9c9c9",
+      "aspectRatio": 1.4814814,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "cup",
+        "ancient greece",
+        "ancient",
+        "ceramic",
+        "graeco",
+        "greece",
+        "italian",
+        "pendant",
+        "semicircle"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:cup"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "b9yugpsu",
+          "score": 16,
+          "reasons": [
+            "keyword:cup",
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "anyqvdxd",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "f22c9sjn",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g36fp9w8",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pbp5uz7k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qkze2uht",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amcbys66",
+      "workId": "kthxw8ta",
+      "title": "Spanish amulets; Cross of Caravaca.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016769/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016769/info.json",
+      "averageColor": "#cdcdcd",
+      "aspectRatio": 0.99,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Spanish Amulet"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "spanish amulet",
+        "spanish",
+        "amulets",
+        "caravaca",
+        "cross"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "sr6e95g8",
+          "score": 11,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:spanish amulet",
+            "subject:spanish amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:amulets",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "xsd75zmx",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:spanish",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "yj7g9gmc",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wkt9dge2",
+      "workId": "uny5wf4c",
+      "title": "Saint Anne with Mary as child, teaching her to read. Here only the book and scroll are shown.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014134/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014134/info.json",
+      "averageColor": "#cbcbcb",
+      "aspectRatio": 0.5775,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "anne",
+        "book",
+        "child",
+        "mary",
+        "only",
+        "read",
+        "saint",
+        "scroll",
+        "teaching"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "h2hs32m9",
+      "workId": "zg53me3f",
+      "title": "Head of goddess Hygiea from whole figure.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0007390/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0007390/info.json",
+      "averageColor": "#afafaf",
+      "aspectRatio": 0.6425,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "head",
+        "figure",
+        "goddess",
+        "hygiea",
+        "whole"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:head",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "svu67wxz",
+          "score": 7,
+          "reasons": [
+            "keyword:head",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gfjpueja",
+      "workId": "v2gvqey9",
+      "title": "Ultra-violet treatment apparatus, devised by N. R. Finsen",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0011638/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0011638/info.json",
+      "averageColor": "#7e7e7e",
+      "aspectRatio": 0.625,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [
+        "Niels Ryberg Finsen"
+      ],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "apparatus",
+        "devised",
+        "finsen",
+        "treatment",
+        "ultra",
+        "violet"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:apparatus"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "pbp5uz7k",
+      "workId": "wxswew4s",
+      "title": "Statue of Hygeia, copy of orginal in vatican.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0015423/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0015423/info.json",
+      "averageColor": "#444444",
+      "aspectRatio": 0.62,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statue",
+        "ancient greece",
+        "ancient",
+        "copy",
+        "greece",
+        "hygeia",
+        "orginal",
+        "vatican"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statue"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "anyqvdxd",
+          "score": 20,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:copy",
+            "keyword:greece",
+            "subject:ancient greece"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 20,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "keyword:hygeia",
+            "subject:ancient greece"
+          ]
+        },
+        {
+          "targetId": "g36fp9w8",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "f22c9sjn",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v9f6eu54",
+      "workId": "wzhjxynx",
+      "title": "Markings on a leech jar.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017498EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017498EB/info.json",
+      "averageColor": "#9d9d9d",
+      "aspectRatio": 0.87,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "jar",
+        "leech",
+        "markings"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:jar"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "vvee3weq",
+          "score": 7,
+          "reasons": [
+            "keyword:jar",
+            "keyword:leech",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xsd75zmx",
+      "workId": "rerdner8",
+      "title": "Spanish amulet; shells.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016774/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016774/info.json",
+      "averageColor": "#c3c3c3",
+      "aspectRatio": 1.061008,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "shells",
+        "spanish"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:spanish",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qkze2uht",
+      "workId": "gycky5jm",
+      "title": "Ancient Graeco-Italian ceramic; Daunian bird strainer",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0012536/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0012536/info.json",
+      "averageColor": "#c2c2c2",
+      "aspectRatio": 1.1976048,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "ancient",
+        "bird",
+        "ceramic",
+        "daunian",
+        "graeco",
+        "italian",
+        "strainer"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "b9yugpsu",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s8227xzh",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 13,
+          "reasons": [
+            "keyword:ancient",
+            "keyword:ceramic",
+            "keyword:graeco",
+            "keyword:italian",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eht5swwb",
+      "workId": "vepvvdch",
+      "title": "White ceramic eye baths and beside open case, painted ceramic",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008397/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008397/info.json",
+      "averageColor": "#d4d4d4",
+      "aspectRatio": 1.5748031,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "container"
+      ],
+      "linkKeywords": [
+        "eye",
+        "case",
+        "ceramic",
+        "baths",
+        "beside",
+        "open",
+        "painted",
+        "white"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:eye",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "u676fx8r",
+      "workId": "apnkkupu",
+      "title": "\"Burton\" obstetical forceps",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0008317/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0008317/info.json",
+      "averageColor": "#dcdcdc",
+      "aspectRatio": 0.7125,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "forceps",
+        "burton",
+        "obstetical"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:forceps"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "yeugakgc",
+      "workId": "kv9vfx99",
+      "title": "Balance and Weights, in case.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0011932/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0011932/info.json",
+      "averageColor": "#999999",
+      "aspectRatio": 1.5444015,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Scales"
+      ],
+      "contributors": [
+        "Matthias Medtmann"
+      ],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "scales",
+        "balance",
+        "weights"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "h6xguu26",
+          "score": 17,
+          "reasons": [
+            "keyword:case",
+            "keyword:scales",
+            "keyword:balance",
+            "keyword:weights",
+            "subject:scales",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pf3qe22k",
+      "workId": "dxh27vcp",
+      "title": "Walpurgis oil, amulet.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016839/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016839/info.json",
+      "averageColor": "#c3c3c3",
+      "aspectRatio": 0.9875,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet",
+        "Charm"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charm",
+        "walpurgis"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "c6qkg6gp",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "twpspnm4",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ugndrz5u",
+      "workId": "ptbabnkr",
+      "title": "Stone relief",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013597/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013597/info.json",
+      "averageColor": "#b0b0b0",
+      "aspectRatio": 1.0335917,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "relief",
+        "stone"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "zkntx6mj",
+      "workId": "a8x7enbh",
+      "title": "Phrenological snuff-box. The lid bears different views of the skull (anterior and lateral) with the Gall-Spurzheim areas marked out into 27 organs, each numbered. The key to these numbers is on the bottom of the box.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0004146/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0004146/info.json",
+      "averageColor": "#6d6d6d",
+      "aspectRatio": 1.7621145,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "container"
+      ],
+      "linkKeywords": [
+        "skull",
+        "box",
+        "anterior",
+        "areas",
+        "bears",
+        "bottom",
+        "different",
+        "each",
+        "gall",
+        "lateral",
+        "marked",
+        "numbered",
+        "numbers",
+        "organs"
+      ],
+      "curation": {
+        "score": 13,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:skull",
+          "keyword:box"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "vn8dcndy",
+      "workId": "j43sddv8",
+      "title": "The short form or 3rd type of Laennec stethoscope.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014324/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014324/info.json",
+      "averageColor": "#b2b2b2",
+      "aspectRatio": 0.95,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "form",
+        "laennec",
+        "short",
+        "type"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fb2a26mw",
+          "score": 7,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:laennec",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rtqngg2j",
+      "workId": "tzjnk3pp",
+      "title": "Ivory figure from Luba, Congo",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0011484/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0011484/info.json",
+      "averageColor": "#c8c8c8",
+      "aspectRatio": 0.5575,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "figure",
+        "congo",
+        "ivory",
+        "luba"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "ddk47scm",
+      "workId": "n8s6ssyf",
+      "title": "Case containing leather rimmed metal bridged glasses.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017198EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017198EB/info.json",
+      "averageColor": "#bfbfbf",
+      "aspectRatio": 1.1527377,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ophthalmics"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "case",
+        "ophthalmics",
+        "bridged",
+        "containing",
+        "glasses",
+        "leather",
+        "metal",
+        "rimmed"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:case"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "aqgcup84",
+          "score": 7,
+          "reasons": [
+            "keyword:case",
+            "keyword:leather",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "twpspnm4",
+      "workId": "hh2w5g6j",
+      "title": "Zachariah's cross. A double cross, on one side side Zacharias and his blessing, on the other St. Benedict and the lettering of the cross of St. Benedict. Protection against the plague.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0016846/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0016846/info.json",
+      "averageColor": "#e0e0e0",
+      "aspectRatio": 0.5,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Amulet",
+        "Charm"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "wearable"
+      ],
+      "linkKeywords": [
+        "amulet",
+        "charm",
+        "cross",
+        "benedict",
+        "side",
+        "against",
+        "blessing",
+        "double",
+        "lettering",
+        "plague",
+        "protection",
+        "zachariah"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:amulet"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "c6qkg6gp",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "hwkehbys",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "nryg63kc",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pf3qe22k",
+          "score": 15,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:charm",
+            "subject:amulet",
+            "subject:charm",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "qtmfdf7p",
+          "score": 14,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "keyword:double",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "bk7ftdcu",
+          "score": 8,
+          "reasons": [
+            "keyword:amulet",
+            "subject:amulet",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "amcbys66",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "yj7g9gmc",
+          "score": 7,
+          "reasons": [
+            "keyword:amulet",
+            "keyword:cross",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nrgg7juz",
+      "workId": "fwx8rreh",
+      "title": "Divination plaques of wood, Mashona, Southern Zimbabwe.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0017880/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0017880/info.json",
+      "averageColor": "#808080",
+      "aspectRatio": 1.7391304,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Indigenous non-European medicine"
+      ],
+      "contributors": [],
+      "objectKinds": [],
+      "linkKeywords": [
+        "indigenous non european medicine",
+        "divination",
+        "european",
+        "indigenous",
+        "mashona",
+        "plaques",
+        "southern",
+        "wood",
+        "zimbabwe"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "pcmq4577",
+          "score": 14,
+          "reasons": [
+            "keyword:indigenous non european medicine",
+            "keyword:european",
+            "keyword:indigenous",
+            "subject:indigenous non european medicine",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fqzygw6m",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "rxmzc5g5",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s5fxu5q2",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "s7stznep",
+          "score": 7,
+          "reasons": [
+            "keyword:european",
+            "keyword:indigenous",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "r9kfwdbn",
+      "workId": "ngp9ampd",
+      "title": "Chinese anatomical figure of a reclining woman.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0020057/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0020057/info.json",
+      "averageColor": "#8e8e8e",
+      "aspectRatio": 1.3377926,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Chinese medicine",
+        "Japanese medicine",
+        "Anatomical figures",
+        "Diagnostic instruments"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy",
+        "figure"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "anatomical figure",
+        "figure",
+        "chinese medicine",
+        "japanese medicine",
+        "anatomical figures",
+        "diagnostic instruments",
+        "chinese",
+        "diagnostic",
+        "figures",
+        "instruments",
+        "japanese",
+        "reclining",
+        "woman"
+      ],
+      "curation": {
+        "score": 15,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical",
+          "keyword:anatomical figure",
+          "keyword:figure"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "vnnjbk8g",
+          "score": 53,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:chinese medicine",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures"
+          ]
+        },
+        {
+          "targetId": "sm6ruvr9",
+          "score": 30,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:anatomical figure",
+            "keyword:figure",
+            "keyword:japanese medicine",
+            "keyword:anatomical figures",
+            "keyword:figures"
+          ]
+        },
+        {
+          "targetId": "fj96j3vx",
+          "score": 10,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:chinese",
+            "keyword:diagnostic",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "gg9dk9t8",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "wd5phauq",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figure",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m85zayyx",
+      "workId": "pf659ghm",
+      "title": "Monaural stethoscope; French (?).",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0014336ED/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0014336ED/info.json",
+      "averageColor": "#c2c2c2",
+      "aspectRatio": 0.3175,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Stethoscope; 19th century"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "stethoscope",
+        "stethoscope 19th century",
+        "19th",
+        "french",
+        "monaural"
+      ],
+      "curation": {
+        "score": 10,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:stethoscope"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "f4f9estf",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "fb2a26mw",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "jjm9xdx7",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m7jdsc36",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "n8rjajh7",
+          "score": 17,
+          "reasons": [
+            "keyword:stethoscope",
+            "keyword:stethoscope 19th century",
+            "keyword:19th",
+            "keyword:monaural",
+            "subject:stethoscope 19th century",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "guqmtzwk",
+          "score": 7,
+          "reasons": [
+            "keyword:19th",
+            "keyword:french",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g36fp9w8",
+      "workId": "suabn7mf",
+      "title": "Headless statue of Aesculapius",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013561EB/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013561EB/info.json",
+      "averageColor": "#c3c3c3",
+      "aspectRatio": 0.7225,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statue",
+        "ancient greece",
+        "aesculapius",
+        "ancient",
+        "greece",
+        "headless"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statue"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "anyqvdxd",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "f22c9sjn",
+          "score": 17,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "keyword:headless",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "m3qeb3gy",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "pbp5uz7k",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d2cqpuhr",
+      "workId": "wavyfczc",
+      "title": "Egyptian alabaster kohl pot. From a 12th dynasty tomb. Number 516 at Abydos. Professor Garstang's excavations, 1908. From the collection of the Reverend William MacGregor, Tamworth.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0019317/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0019317/info.json",
+      "averageColor": "#6e6e6e",
+      "aspectRatio": 0.8225,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Egyptology"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "container"
+      ],
+      "linkKeywords": [
+        "pot",
+        "egyptology",
+        "12th",
+        "abydos",
+        "alabaster",
+        "collection",
+        "dynasty",
+        "egyptian",
+        "excavations",
+        "garstang",
+        "kohl",
+        "macgregor",
+        "professor"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:pot"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "gw84d9nt",
+          "score": 11,
+          "reasons": [
+            "keyword:egyptology",
+            "keyword:egyptian",
+            "subject:egyptology",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h7dt3qs3",
+          "score": 10,
+          "reasons": [
+            "keyword:pot",
+            "keyword:egyptian",
+            "keyword:kohl",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m3n6xcqy",
+      "workId": "smaded65",
+      "title": "Pill making machine",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0007321/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0007321/info.json",
+      "averageColor": "#c2c2c2",
+      "aspectRatio": 1.6528926,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Pharmaceutical"
+      ],
+      "contributors": [
+        "S Maw , Son and Sons"
+      ],
+      "objectKinds": [],
+      "linkKeywords": [
+        "pharmaceutical",
+        "machine",
+        "making",
+        "pill"
+      ],
+      "curation": {
+        "score": 9,
+        "reasons": [
+          "genre:Museum object"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": []
+    },
+    {
+      "id": "gg9dk9t8",
+      "workId": "fttajvvp",
+      "title": "Anatomical figures in ivory; 2 females",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/M0018658EA/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/M0018658EA/info.json",
+      "averageColor": "#9a9a9a",
+      "aspectRatio": 0.73,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [],
+      "contributors": [],
+      "objectKinds": [
+        "anatomy"
+      ],
+      "linkKeywords": [
+        "anatomical",
+        "females",
+        "figures",
+        "ivory"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:anatomical"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "fj96j3vx",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g4gkqkah",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "h4j8yf6n",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:ivory",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "r9kfwdbn",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sm6ruvr9",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "vnnjbk8g",
+          "score": 7,
+          "reasons": [
+            "keyword:anatomical",
+            "keyword:figures",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dz4fasgs",
+      "workId": "ueavj5rx",
+      "title": "Apparatus for producing a vapour bath.",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0001582/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0001582/info.json",
+      "averageColor": "#c8c8c8",
+      "aspectRatio": 0.78,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Vapour barth, instruments an apparatus"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "instrument"
+      ],
+      "linkKeywords": [
+        "apparatus",
+        "vapour barth instruments an apparatus",
+        "vapour",
+        "barth",
+        "bath",
+        "instruments",
+        "producing"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:apparatus"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "j52w942v",
+          "score": 7,
+          "reasons": [
+            "keyword:apparatus",
+            "keyword:instruments",
+            "genre:museum object"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m3qeb3gy",
+      "workId": "bvwx64tb",
+      "title": "Statue of Hygeia",
+      "type": "Image",
+      "imageUrl": "https://iiif.wellcomecollection.org/image/L0013585/full/700,/0/default.jpg",
+      "iiifInfoUrl": "https://iiif.wellcomecollection.org/image/L0013585/info.json",
+      "averageColor": "#c5c5c5",
+      "aspectRatio": 0.61,
+      "license": {
+        "id": "cc-by",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+      },
+      "genres": [
+        "Museum object"
+      ],
+      "subjects": [
+        "Ancient Greece"
+      ],
+      "contributors": [],
+      "objectKinds": [
+        "figure"
+      ],
+      "linkKeywords": [
+        "statue",
+        "ancient greece",
+        "ancient",
+        "greece",
+        "hygeia"
+      ],
+      "curation": {
+        "score": 11,
+        "reasons": [
+          "genre:Museum object",
+          "keyword:statue"
+        ],
+        "needsHumanReview": true,
+        "modelPath": ""
+      },
+      "connections": [
+        {
+          "targetId": "pbp5uz7k",
+          "score": 20,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "keyword:hygeia",
+            "subject:ancient greece"
+          ]
+        },
+        {
+          "targetId": "anyqvdxd",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "g36fp9w8",
+          "score": 17,
+          "reasons": [
+            "keyword:statue",
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "f22c9sjn",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "spsn449k",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        },
+        {
+          "targetId": "sy7z62jq",
+          "score": 14,
+          "reasons": [
+            "keyword:ancient greece",
+            "keyword:ancient",
+            "keyword:greece",
+            "subject:ancient greece",
+            "genre:museum object"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -49,7 +49,20 @@ npm run dev
 npm run build
 npm run start
 npm run lint
+npm run data:curate -- --limit 100 --seed 42
 ```
+
+## Curating Cabinet Data
+
+The demo can build a smaller 3D-candidate dataset from the large root-level `images.json` file:
+
+```bash
+npm run data:curate -- --limit 100 --seed 42
+```
+
+This writes `src/data/curatedCabinetItems.json`. The script streams `../images.json`, keeps likely 3D-able works using `source.genres`, object-related keywords, subjects, and titles, then adds `connections` between items that share concepts such as anatomy, eyes, instruments, containers, figures, or other metadata terms.
+
+Use `--limit 50` for a smaller set. Change `--seed` to get a different repeatable random selection.
 
 ## Learn More
 
