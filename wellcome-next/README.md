@@ -1,24 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wellcome Next Demo
 
-## Getting Started
+Interactive Next.js demo for exploring Wellcome Collection items in a 3D cabinet panorama.
 
-First, run the development server:
+## Requirements
+
+- Node.js `22.12.0` as specified in `.nvmrc`
+- npm, included with Node.js
+
+If you use `nvm`, switch to the expected Node version before installing dependencies:
+
+```bash
+nvm use
+```
+
+If that version is not installed yet:
+
+```bash
+nvm install
+nvm use
+```
+
+Using the Node version from `.nvmrc` avoids engine warnings and npm failures from unsupported Node releases.
+
+## Setup
+
+Install dependencies from the committed lockfile:
+
+```bash
+npm ci
+```
+
+This creates `node_modules` and installs the local `next` binary used by the npm scripts. If `npm run dev` prints `sh: next: command not found`, run `npm ci` first.
+
+## Development
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Useful Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
 ## Learn More
 
