@@ -1,5 +1,5 @@
 images.json
-*.json
+works.json
 .env
 __pycache__/
 *.pyc
