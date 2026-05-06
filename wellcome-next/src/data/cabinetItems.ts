@@ -46,7 +46,7 @@ type CuratedCabinetPayload = {
 };
 
 const curatedPayload = curatedCabinetItems as CuratedCabinetPayload;
-const minimumLinkKeywordOccurrences = 2;
+const minimumLinkKeywordOccurrences = 3;
 const linkKeywordCounts = curatedPayload.items.reduce((counts, item) => {
   for (const keyword of item.linkKeywords ?? []) {
     counts.set(keyword, (counts.get(keyword) ?? 0) + 1);
@@ -76,6 +76,10 @@ const modelWorkIds = new Set([
   "z7vcgdkz",
 ]);
 
+function getLocalCabinetImageUrl(itemId: string) {
+  return `/cabinet-images/${itemId}.jpg`;
+}
+
 export const cabinetItems: CabinetItem[] = curatedPayload.items
   .map((item) => ({
     id: item.id,
@@ -83,7 +87,7 @@ export const cabinetItems: CabinetItem[] = curatedPayload.items
     title: item.title,
     theme: item.subjects?.[0] ?? item.genres?.[0] ?? "Cabinet Curiosities",
     year: "date unknown",
-    imageUrl: item.imageUrl,
+    imageUrl: getLocalCabinetImageUrl(item.id),
     color: item.averageColor ?? "#8f7f6a",
     type: item.type,
     modelUrl: modelWorkIds.has(item.workId) ? `/models_3d/${item.workId}.glb` : undefined,
