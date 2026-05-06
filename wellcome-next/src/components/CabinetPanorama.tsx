@@ -66,9 +66,15 @@ type FurniturePlacement = {
 };
 
 const playerRadius = 0.28;
-const roomRadius = 5.2;
-const itemsPerCabinet = 4;
-const doorsPerCabinet = 16;
+const roomRadius = 6;
+const itemsPerCabinet = 8;
+const doorsPerCabinet = 8;
+const cabinetsPerRow = 13;
+const rowsPerCabinet = 4;
+const columnsPerCabinet = 2;
+const chronologyStartYear = 1500;
+const chronologyEndYear = 2020;
+const chronologyBandSize = 5;
 const forceNeutralModelPreviewMaterial = false;
 // Preview tuning: adjust these to make neutral preview less bright
 const previewMaterialColor = "#c0b9ad";
@@ -99,7 +105,7 @@ function chunkItems(items: CabinetItem[]): CabinetGroup[] {
     return [];
   }
 
-  const numCabinets = 9;
+  const numCabinets = 13;
   return Array.from({ length: numCabinets }, (_, cabinetIndex) => {
     const cabinetItems = Array.from({ length: itemsPerCabinet }, (_, itemIndex) => {
       const sourceIndex = (cabinetIndex * itemsPerCabinet + itemIndex) % items.length;
@@ -113,18 +119,8 @@ function chunkItems(items: CabinetItem[]): CabinetGroup[] {
   });
 }
 
-function getUnifiedCabinetWidth(totalGroups: number) {
-  const depth = 0.6;
-  const radius = roomRadius - depth * 0.5 + 0.3;
-
-  if (totalGroups === 1) {
-    return Math.max(3.8, Math.min(4.4, radius * 0.8));
-  }
-
-  const span = (Math.PI * 2) / Math.max(totalGroups, 1);
-  const outerWidth = 2 * radius * Math.sin(span / 2);
-
-  return Math.max(1.18, outerWidth);
+function getUnifiedCabinetWidth(_totalGroups: number) {
+  return 3;
 }
 
 function getCabinetStyle(group: CabinetGroup, index: number, totalGroups: number): CabinetStyle {
@@ -146,7 +142,7 @@ function getCabinetStyle(group: CabinetGroup, index: number, totalGroups: number
 function getCompartmentSpecs(style: CabinetStyle, count: number, _seed: number): CompartmentSpec[] {
   const innerWidth = style.width - 0.02;
   const innerHeight = style.height - 0.02;
-  const columns = 4;
+  const columns = 2;
   const rows = 4;
   const gap = 0.002;
   const specs: CompartmentSpec[] = [];
@@ -197,13 +193,123 @@ function getDoorIdsForGroups(groups: CabinetGroup[]) {
   });
 }
 
+function inferItemYear(item: CabinetItem) {
+  const explicitYear = item.year.match(/\b(1[5-9]\d{2}|20[0-2]\d)\b/);
+  if (explicitYear) {
+    return Number(explicitYear[1]);
+  }
+
+  const titleYear = item.title.match(/\b(1[5-9]\d{2}|20[0-2]\d)\b/);
+  if (titleYear) {
+    return Number(titleYear[1]);
+  }
+
+  const centuryMatch = item.title.match(/\b(early|mid|late)?\s*(1[5-9]|20)(?:th|st|nd|rd)\s+century\b/i);
+  if (!centuryMatch) {
+    return null;
+  }
+
+  const modifier = centuryMatch[1]?.toLowerCase();
+  const century = Number(centuryMatch[2]);
+  const centuryStart = (century - 1) * 100;
+
+  if (modifier === "early") return centuryStart + 10;
+  if (modifier === "late") return centuryStart + 80;
+  if (modifier === "mid") return centuryStart + 50;
+
+  return centuryStart + 50;
+}
+
+function getChronologySlotIndex(cabinetIndex: number, specIndex: number) {
+  const row = specIndex % rowsPerCabinet;
+  const column = Math.floor(specIndex / rowsPerCabinet);
+  return row * (cabinetsPerRow * columnsPerCabinet) + cabinetIndex * columnsPerCabinet + column;
+}
+
+function getChronologyBandForSlot(slotIndex: number) {
+  const start = chronologyStartYear + slotIndex * chronologyBandSize;
+  const end = slotIndex === doorsPerCabinet * cabinetsPerRow - 1
+    ? chronologyEndYear
+    : Math.min(chronologyEndYear, start + chronologyBandSize - 1);
+
+  return { start, end };
+}
+
+function chooseDoorPool(
+  bandIndex: number,
+  itemsByBand: Map<number, CabinetItem[]>,
+  knownYearItems: CabinetItem[],
+  fallbackItems: CabinetItem[],
+) {
+  const exact = itemsByBand.get(bandIndex);
+  if (exact?.length) {
+    return exact;
+  }
+
+  const availableBands = [...itemsByBand.keys()];
+  if (availableBands.length > 0) {
+    const nearestBand = availableBands.sort((left, right) => Math.abs(left - bandIndex) - Math.abs(right - bandIndex))[0];
+    const nearestItems = nearestBand === undefined ? undefined : itemsByBand.get(nearestBand);
+    if (nearestItems?.length) {
+      return nearestItems;
+    }
+  }
+
+  if (knownYearItems.length > 0) {
+    return knownYearItems;
+  }
+
+  return fallbackItems;
+}
+
+function buildDoorItemPools(groups: CabinetGroup[], items: CabinetItem[]) {
+  const knownYearItems = items
+    .map((item) => ({ item, year: inferItemYear(item) }))
+    .filter((entry): entry is { item: CabinetItem; year: number } => entry.year !== null)
+    .sort((left, right) => left.year - right.year);
+
+  const itemsByBand = new Map<number, CabinetItem[]>();
+  knownYearItems.forEach(({ item, year }) => {
+    if (year < chronologyStartYear || year > chronologyEndYear) {
+      return;
+    }
+
+    const bandIndex = Math.min(
+      doorsPerCabinet * cabinetsPerRow - 1,
+      Math.floor((year - chronologyStartYear) / chronologyBandSize),
+    );
+    const current = itemsByBand.get(bandIndex) ?? [];
+    current.push(item);
+    itemsByBand.set(bandIndex, current);
+  });
+
+  const fallbackItems = knownYearItems.map(({ item }) => item).concat(
+    items.filter((item) => inferItemYear(item) === null),
+  );
+
+  return Object.fromEntries(
+    groups.flatMap((group, groupIndex) => {
+      const style = getCabinetStyle(group, groupIndex, groups.length);
+      const seed = hashSeed(`${group.id}-${groupIndex}-layout`);
+      const specs = getCompartmentSpecs(style, doorsPerCabinet, seed);
+
+      return specs.map((_, specIndex) => {
+        const doorId = `${group.id}-${specIndex}`;
+        const slotIndex = getChronologySlotIndex(groupIndex, specIndex);
+        const pool = chooseDoorPool(slotIndex, itemsByBand, knownYearItems.map(({ item }) => item), fallbackItems);
+        return [doorId, pool.map((item) => item.id)];
+      });
+    }),
+  ) as Record<string, string[]>;
+}
+
 function getUniqueDoorItemId(
-  items: CabinetItem[],
+  candidateItems: CabinetItem[],
   currentDoorItems: Record<string, string>,
   doorId: string,
   offset: number,
 ) {
-  if (items.length === 0) {
+  if (candidateItems.length === 0) {
     return "";
   }
 
@@ -213,15 +319,15 @@ function getUniqueDoorItemId(
       .map(([, itemId]) => itemId),
   );
 
-  for (let index = 0; index < items.length; index += 1) {
-    const candidate = items[(hashSeed(doorId) + offset + index) % items.length];
+  for (let index = 0; index < candidateItems.length; index += 1) {
+    const candidate = candidateItems[(hashSeed(doorId) + offset + index) % candidateItems.length];
 
     if (!usedItemIds.has(candidate.id)) {
       return candidate.id;
     }
   }
 
-  return items[(hashSeed(doorId) + offset) % items.length]?.id ?? "";
+  return candidateItems[(hashSeed(doorId) + offset) % candidateItems.length]?.id ?? "";
 }
 
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
@@ -938,7 +1044,7 @@ function CabinetPanel({
   index,
   totalGroups,
   placement,
-  focusedDoorId,
+  openedDoorId,
   allItems,
   doorItemIds,
   interactionLocked,
@@ -949,7 +1055,7 @@ function CabinetPanel({
   index: number;
   totalGroups: number;
   placement: FurniturePlacement;
-  focusedDoorId: string;
+  openedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
   interactionLocked: boolean;
@@ -974,7 +1080,7 @@ function CabinetPanel({
       rotation={[0, placement.rotationY, 0]}
     >
       <mesh position={[0, 0, -style.depth * 0.4]} receiveShadow castShadow>
-        <boxGeometry args={[style.width * 0.995, style.height, 0.08]} />
+        <boxGeometry args={[style.width * 1.0, style.height, 0.08]} />
         <meshStandardMaterial {...woodMaterialProps} />
       </mesh>
 
@@ -994,7 +1100,7 @@ function CabinetPanel({
               spec={spec}
               style={style}
               woodTexture={cabinetWoodTexture}
-              open={focusedDoorId === doorId}
+              open={openedDoorId === doorId}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1126,7 +1232,7 @@ function CabinetRoom({
   allItems,
   groups,
   placements,
-  focusedDoorId,
+  openedDoorId,
   doorItemIds,
   interactionLocked,
   woodTextures,
@@ -1142,7 +1248,7 @@ function CabinetRoom({
   allItems: CabinetItem[];
   groups: CabinetGroup[];
   placements: FurniturePlacement[];
-  focusedDoorId: string;
+  openedDoorId: string;
   doorItemIds: Record<string, string>;
   interactionLocked: boolean;
   woodTextures: Texture[];
@@ -1197,7 +1303,7 @@ function CabinetRoom({
               index={index}
               totalGroups={groups.length}
               placement={placements[index]}
-              focusedDoorId={focusedDoorId}
+              openedDoorId={openedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
               interactionLocked={interactionLocked}
@@ -1222,6 +1328,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const groups = useMemo(() => chunkItems(items), [items]);
   const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
   const placements = useMemo(() => getFurniturePlacements(groups), [groups]);
+  const doorItemPools = useMemo(() => buildDoorItemPools(groups, items), [groups, items]);
   const initialDoorItemIds = useMemo(() => {
     const nextDoorItemIds: Record<string, string> = {};
 
@@ -1230,16 +1337,19 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     }
 
     doorIds.forEach((doorId, index) => {
-      const item = items[index % items.length];
-      nextDoorItemIds[doorId] = item.id;
+      const pool = doorItemPools[doorId] ?? [];
+      nextDoorItemIds[doorId] = pool.length > 0
+        ? pool[hashSeed(`${doorId}-initial`) % pool.length]
+        : items[index % items.length]?.id ?? "";
     });
 
     return nextDoorItemIds;
-  }, [doorIds, items]);
+  }, [doorIds, doorItemPools, items]);
   const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
   const [doorOpenCounts, setDoorOpenCounts] = useState<Record<string, number>>({});
   const [selectedItemId, setSelectedItemId] = useState("");
   const [focusedDoorId, setFocusedDoorId] = useState("");
+  const [openedDoorId, setOpenedDoorId] = useState("");
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const selectedItem = items.find((item) => item.id === selectedItemId);
@@ -1259,6 +1369,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     setDoorOpenCounts({});
     setSelectedItemId("");
     setFocusedDoorId("");
+    setOpenedDoorId("");
     setReturnPose(null);
     setInteractionLocked(false);
   }, [initialDoorItemIds]);
@@ -1411,6 +1522,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
 
         setReturnPose(roamPoseRef.current);
         setFocusedDoorId("");
+        setOpenedDoorId("");
         setSelectedItemId("");
       }
 
@@ -1420,7 +1532,11 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     if (focusedDoorId === doorId) {
       if (items.length > 0) {
         const nextCount = (doorOpenCounts[doorId] ?? 0) + 1;
-        const nextItemId = getUniqueDoorItemId(items, doorItemIds, doorId, nextCount * 7);
+        const poolIds = doorItemPools[doorId] ?? [];
+        const poolItems = poolIds
+          .map((itemId) => items.find((candidate) => candidate.id === itemId))
+          .filter((candidate): candidate is CabinetItem => Boolean(candidate));
+        const nextItemId = getUniqueDoorItemId(poolItems, doorItemIds, doorId, nextCount * 7);
 
         setDoorOpenCounts((currentCounts) => ({ ...currentCounts, [doorId]: nextCount }));
         setDoorItemIds((currentItems) => ({ ...currentItems, [doorId]: nextItemId }));
@@ -1428,6 +1544,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
 
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
+      setOpenedDoorId("");
       setSelectedItemId("");
       return;
     }
@@ -1444,6 +1561,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
 
       setSelectedItemId(currentItem.id);
       setFocusedDoorId(doorId);
+      setOpenedDoorId(doorId);
       setReturnPose(null);
     }
   };
@@ -1473,7 +1591,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
                 allItems={items}
                 groups={groups}
                 placements={placements}
-                focusedDoorId={focusedDoorId}
+                openedDoorId={openedDoorId}
                 doorItemIds={doorItemIds}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}
