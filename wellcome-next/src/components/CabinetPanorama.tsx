@@ -404,7 +404,7 @@ function getCabinetStyle(): CabinetStyle {
     height: 4.02,
     depth: 1.2, // Increased depth to ensure full wall coverage
     y: 0,
-    wood: "#4a2b1a",
+    wood: "#6a4128",
     woodTextureIndex: 0,
   };
 }
@@ -1079,8 +1079,8 @@ function ClickableFront({
     roughness: 0.78,
     metalness: 0.04,
   };
-  const glassInsetWidth = Math.max(0.12, spec.width - 0.22);
-  const glassInsetHeight = Math.max(0.16, spec.height - 0.22);
+  const panelInsetWidth = Math.max(0.12, spec.width - 0.22);
+  const panelInsetHeight = Math.max(0.16, spec.height - 0.22);
 
   useFrame((_, delta) => {
     if (!frontRef.current) return;
@@ -1125,26 +1125,8 @@ function ClickableFront({
         <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.068 + arcDepth]} renderOrder={16}>
-        <boxGeometry args={[glassInsetWidth, glassInsetHeight, 0.012]} />
-        <meshPhysicalMaterial
-          color="#f2d7aa"
-          transparent
-          opacity={0.16}
-          roughness={0.08}
-          metalness={0.04}
-          transmission={0.82}
-          ior={1.5}
-          thickness={0.08}
-          clearcoat={0.72}
-          clearcoatRoughness={0.12}
-          attenuationColor="#c98b43"
-          attenuationDistance={1.6}
-          depthWrite={false}
-        />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, 0.04, 0.076 + arcDepth]} renderOrder={17}>
-        <planeGeometry args={[glassInsetWidth * 0.92, glassInsetHeight * 0.92]} />
-        <meshBasicMaterial color="#f4c987" transparent opacity={0.08} depthWrite={false} />
+        <boxGeometry args={[panelInsetWidth, panelInsetHeight, 0.03]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} color="#5a321d" roughness={0.86} metalness={0.02} />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.26, 0.095 + arcDepth]}>
         <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
