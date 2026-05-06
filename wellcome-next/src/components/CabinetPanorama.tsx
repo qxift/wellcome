@@ -24,6 +24,7 @@ type CabinetPanoramaProps = {
 
 type CabinetGroup = {
   id: string;
+  keyword: string;
   items: CabinetItem[];
 };
 
@@ -72,9 +73,6 @@ const doorsPerCabinet = 8;
 const cabinetsPerRow = 13;
 const rowsPerCabinet = 4;
 const columnsPerCabinet = 2;
-const chronologyStartYear = 1500;
-const chronologyEndYear = 2020;
-const chronologyBandSize = 5;
 const forceNeutralModelPreviewMaterial = false;
 // Preview tuning: adjust these to make neutral preview less bright
 const previewMaterialColor = "#c0b9ad";
@@ -100,21 +98,84 @@ function hashSeed(value: string) {
   return hash >>> 0;
 }
 
+function buildLinkKeywordCounts(items: CabinetItem[]) {
+  const keywordCounts = new Map<string, number>();
+
+  for (const item of items) {
+    for (const keyword of item.linkKeywords ?? []) {
+      keywordCounts.set(keyword, (keywordCounts.get(keyword) ?? 0) + 1);
+    }
+  }
+
+  return keywordCounts;
+}
+
+function getItemDistinctivenessScore(item: CabinetItem, keywordCounts: Map<string, number>) {
+  const keywords = item.linkKeywords ?? [];
+
+  if (keywords.length === 0) {
+    return 0;
+  }
+
+  return keywords.reduce((score, keyword) => {
+    const count = keywordCounts.get(keyword) ?? 1;
+    return score + 1 / count;
+  }, 0);
+}
+
 function chunkItems(items: CabinetItem[]): CabinetGroup[] {
   if (items.length === 0) {
     return [];
   }
 
-  const numCabinets = 13;
-  return Array.from({ length: numCabinets }, (_, cabinetIndex) => {
-    const cabinetItems = Array.from({ length: itemsPerCabinet }, (_, itemIndex) => {
-      const sourceIndex = (cabinetIndex * itemsPerCabinet + itemIndex) % items.length;
-      return items[sourceIndex];
+  const keywordCounts = buildLinkKeywordCounts(items);
+
+  const keywordGroups = [...keywordCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .map(([keyword]) => ({
+      keyword,
+      items: items
+        .filter((item) => item.linkKeywords?.includes(keyword))
+        .sort((left, right) => {
+          const scoreDifference =
+            getItemDistinctivenessScore(right, keywordCounts) - getItemDistinctivenessScore(left, keywordCounts);
+
+          if (scoreDifference !== 0) {
+            return scoreDifference;
+          }
+
+          const keywordCountDifference = (right.linkKeywords?.length ?? 0) - (left.linkKeywords?.length ?? 0);
+          if (keywordCountDifference !== 0) {
+            return keywordCountDifference;
+          }
+
+          return left.title.localeCompare(right.title);
+        }),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  if (keywordGroups.length === 0) {
+    return Array.from({ length: cabinetsPerRow }, (_, cabinetIndex) => {
+      const cabinetItems = Array.from({ length: itemsPerCabinet }, (_, itemIndex) => {
+        const sourceIndex = (cabinetIndex * itemsPerCabinet + itemIndex) % items.length;
+        return items[sourceIndex];
+      });
+
+      return {
+        id: `cabinet-${cabinetIndex}-misc`,
+        keyword: "misc",
+        items: cabinetItems,
+      };
     });
+  }
+
+  return Array.from({ length: cabinetsPerRow }, (_, cabinetIndex) => {
+    const group = keywordGroups[cabinetIndex % keywordGroups.length];
 
     return {
-      id: `cabinet-${cabinetIndex}-${cabinetItems.map((item) => item.id).join("-")}`,
-      items: cabinetItems,
+      id: `cabinet-${cabinetIndex}-${group.keyword.replace(/\s+/g, "-")}`,
+      keyword: group.keyword,
+      items: group.items,
     };
   });
 }
@@ -129,8 +190,8 @@ function getCabinetStyle(group: CabinetGroup, index: number, totalGroups: number
     height: 4.02,
     depth: 1.2, // Increased depth to ensure full wall coverage
     y: 0,
-    wood: "#2c1408",
-    woodTextureIndex: 1,
+    wood: "#4a2b1a",
+    woodTextureIndex: 0,
     trim: "#d3a95f",
     back: group.items[0]?.color ?? "#7b5732",
     crown: "flat",
@@ -193,141 +254,59 @@ function getDoorIdsForGroups(groups: CabinetGroup[]) {
   });
 }
 
-function inferItemYear(item: CabinetItem) {
-  const explicitYear = item.year.match(/\b(1[5-9]\d{2}|20[0-2]\d)\b/);
-  if (explicitYear) {
-    return Number(explicitYear[1]);
-  }
-
-  const titleYear = item.title.match(/\b(1[5-9]\d{2}|20[0-2]\d)\b/);
-  if (titleYear) {
-    return Number(titleYear[1]);
-  }
-
-  const centuryMatch = item.title.match(/\b(early|mid|late)?\s*(1[5-9]|20)(?:th|st|nd|rd)\s+century\b/i);
-  if (!centuryMatch) {
-    return null;
-  }
-
-  const modifier = centuryMatch[1]?.toLowerCase();
-  const century = Number(centuryMatch[2]);
-  const centuryStart = (century - 1) * 100;
-
-  if (modifier === "early") return centuryStart + 10;
-  if (modifier === "late") return centuryStart + 80;
-  if (modifier === "mid") return centuryStart + 50;
-
-  return centuryStart + 50;
-}
-
-function getChronologySlotIndex(cabinetIndex: number, specIndex: number) {
-  const row = specIndex % rowsPerCabinet;
-  const column = Math.floor(specIndex / rowsPerCabinet);
-  return row * (cabinetsPerRow * columnsPerCabinet) + cabinetIndex * columnsPerCabinet + column;
-}
-
-function getChronologyBandForSlot(slotIndex: number) {
-  const start = chronologyStartYear + slotIndex * chronologyBandSize;
-  const end = slotIndex === doorsPerCabinet * cabinetsPerRow - 1
-    ? chronologyEndYear
-    : Math.min(chronologyEndYear, start + chronologyBandSize - 1);
-
-  return { start, end };
-}
-
-function chooseDoorPool(
-  bandIndex: number,
-  itemsByBand: Map<number, CabinetItem[]>,
-  knownYearItems: CabinetItem[],
-  fallbackItems: CabinetItem[],
-) {
-  const exact = itemsByBand.get(bandIndex);
-  if (exact?.length) {
-    return exact;
-  }
-
-  const availableBands = [...itemsByBand.keys()];
-  if (availableBands.length > 0) {
-    const nearestBand = availableBands.sort((left, right) => Math.abs(left - bandIndex) - Math.abs(right - bandIndex))[0];
-    const nearestItems = nearestBand === undefined ? undefined : itemsByBand.get(nearestBand);
-    if (nearestItems?.length) {
-      return nearestItems;
-    }
-  }
-
-  if (knownYearItems.length > 0) {
-    return knownYearItems;
-  }
-
-  return fallbackItems;
-}
-
 function buildDoorItemPools(groups: CabinetGroup[], items: CabinetItem[]) {
-  const knownYearItems = items
-    .map((item) => ({ item, year: inferItemYear(item) }))
-    .filter((entry): entry is { item: CabinetItem; year: number } => entry.year !== null)
-    .sort((left, right) => left.year - right.year);
-
-  const itemsByBand = new Map<number, CabinetItem[]>();
-  knownYearItems.forEach(({ item, year }) => {
-    if (year < chronologyStartYear || year > chronologyEndYear) {
-      return;
-    }
-
-    const bandIndex = Math.min(
-      doorsPerCabinet * cabinetsPerRow - 1,
-      Math.floor((year - chronologyStartYear) / chronologyBandSize),
-    );
-    const current = itemsByBand.get(bandIndex) ?? [];
-    current.push(item);
-    itemsByBand.set(bandIndex, current);
-  });
-
-  const fallbackItems = knownYearItems.map(({ item }) => item).concat(
-    items.filter((item) => inferItemYear(item) === null),
-  );
-
   return Object.fromEntries(
     groups.flatMap((group, groupIndex) => {
       const style = getCabinetStyle(group, groupIndex, groups.length);
       const seed = hashSeed(`${group.id}-${groupIndex}-layout`);
       const specs = getCompartmentSpecs(style, doorsPerCabinet, seed);
+      const pool = group.items.length > 0 ? group.items : items;
 
       return specs.map((_, specIndex) => {
         const doorId = `${group.id}-${specIndex}`;
-        const slotIndex = getChronologySlotIndex(groupIndex, specIndex);
-        const pool = chooseDoorPool(slotIndex, itemsByBand, knownYearItems.map(({ item }) => item), fallbackItems);
         return [doorId, pool.map((item) => item.id)];
       });
     }),
   ) as Record<string, string[]>;
 }
 
-function getUniqueDoorItemId(
-  candidateItems: CabinetItem[],
-  currentDoorItems: Record<string, string>,
-  doorId: string,
-  offset: number,
+function chooseNextPoolItem(
+  pool: string[],
+  currentItemId: string | undefined,
+  seenItemIds: Record<string, boolean>,
+  itemsById: Map<string, CabinetItem>,
 ) {
-  if (candidateItems.length === 0) {
+  if (pool.length === 0) {
     return "";
   }
 
-  const usedItemIds = new Set(
-    Object.entries(currentDoorItems)
-      .filter(([candidateDoorId]) => candidateDoorId !== doorId)
-      .map(([, itemId]) => itemId),
-  );
-
-  for (let index = 0; index < candidateItems.length; index += 1) {
-    const candidate = candidateItems[(hashSeed(doorId) + offset + index) % candidateItems.length];
-
-    if (!usedItemIds.has(candidate.id)) {
-      return candidate.id;
+  const unseen3dItemId = pool.find((itemId) => {
+    if (seenItemIds[itemId]) {
+      return false;
     }
+
+    return Boolean(itemsById.get(itemId)?.modelUrl);
+  });
+  if (unseen3dItemId) {
+    return unseen3dItemId;
   }
 
-  return candidateItems[(hashSeed(doorId) + offset) % candidateItems.length]?.id ?? "";
+  const unseenImageItemId = pool.find((itemId) => !seenItemIds[itemId]);
+  if (unseenImageItemId) {
+    return unseenImageItemId;
+  }
+
+  const seen3dItemId = pool.find((itemId) => Boolean(itemsById.get(itemId)?.modelUrl));
+  if (seen3dItemId) {
+    return seen3dItemId;
+  }
+
+  if (pool.length === 1) {
+    return pool[0];
+  }
+
+  const currentIndex = currentItemId ? pool.indexOf(currentItemId) : -1;
+  return pool[currentIndex === -1 ? 0 : (currentIndex + 1) % pool.length] ?? pool[0];
 }
 
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
@@ -596,11 +575,13 @@ function ItemDisplay({
   spec,
   style,
   open,
+  active,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
+  active: boolean;
 }) {
   const objectRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
@@ -635,20 +616,21 @@ function ItemDisplay({
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = open ? Math.sin(state.clock.elapsedTime * 1.3) * 0.012 : 0;
-    const targetRotationY = open ? Math.sin(state.clock.elapsedTime * 0.7) * 0.08 : 0;
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.012 : 0;
+    const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.08 : 0;
 
     objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
     objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
-    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, open ? -0.04 : 0, 4, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.04 : 0, 4, delta);
   });
 
   const objectDepth = Math.min(0.16, Math.max(0.07, Math.min(imageWidth, imageHeight) * 0.18));
   const bodyColor = item.color || "#8a7a68";
-  const displayZ = open ? -style.depth * 0.24 : style.depth * 0.22;
+  const displayZ = open ? style.depth * 0.38 : style.depth * 0.1;
+  const displayY = spec.y - spec.height * 0.04;
 
   return (
-    <group position={[spec.x, spec.y, displayZ]} visible={open}>
+    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
       <group ref={objectRef} scale={open ? 1.04 : 1}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[imageWidth, imageHeight, objectDepth]} />
@@ -674,11 +656,13 @@ function ModelDisplay({
   spec,
   style,
   open,
+  active,
 }: {
   modelUrl: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
+  active: boolean;
 }) {
   const gltf = useLoader(GLTFLoader, modelUrl);
   const scene = useMemo(() => {
@@ -744,15 +728,15 @@ function ModelDisplay({
   const objectRef = useRef<Group>(null);
   const spinXRef = useRef(0);
   const spinYRef = useRef(0);
-  const displayZ = open ? style.depth * 0.44 : -style.depth * 0.2;
+  const displayZ = open ? style.depth * 0.44 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = open ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
 
-    if (open) {
+    if (active) {
       spinXRef.current += delta * 0.7;
       spinYRef.current += delta * 1.05;
     } else {
@@ -766,7 +750,7 @@ function ModelDisplay({
   });
 
   return (
-    <group position={[spec.x, displayY, displayZ]} visible={open} renderOrder={11}>
+    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
       <ambientLight intensity={1.0} />
       <pointLight position={[0, spec.height * 0.15, 0.4]} intensity={2.2} color="#fff4d8" distance={2.4} />
       <group ref={objectRef}>
@@ -798,12 +782,26 @@ function ClickableFront({
   const frontZ = style.depth * 0.15; // Adjusted for new depth
   const hingeDirection = spec.type === "door-left" ? -1 : 1;
   const arcDepth = spec.width * 0.04;
+  const doorFrameTexture = useMemo(() => {
+    if (!woodTexture) {
+      return null;
+    }
+
+    const texture = woodTexture.clone();
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+    texture.repeat.set(0.45, 1.4);
+    texture.needsUpdate = true;
+    return texture;
+  }, [woodTexture]);
   const doorWoodMaterialProps = {
-    map: woodTexture ?? undefined,
-    color: woodTexture ? "#ffffff" : style.wood,
+    map: doorFrameTexture ?? woodTexture ?? undefined,
+    color: style.wood,
     roughness: 0.78,
     metalness: 0.04,
   };
+  const glassInsetWidth = Math.max(0.12, spec.width - 0.22);
+  const glassInsetHeight = Math.max(0.16, spec.height - 0.22);
 
   useFrame((_, delta) => {
     if (!frontRef.current) return;
@@ -831,9 +829,43 @@ function ClickableFront({
       position={[spec.x + hingeDirection * spec.width * 0.5, spec.y, frontZ]}
       onClick={handleClick}
     >
-      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[spec.width + 0.02, spec.height + 0.02, 0.08]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.78} />
+      <mesh position={[-hingeDirection * 0.05, 0, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[0.1, spec.height + 0.02, 0.08]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
+      </mesh>
+      <mesh position={[-hingeDirection * (spec.width - 0.05), 0, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[0.1, spec.height + 0.02, 0.08]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
+      </mesh>
+      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.5 - 0.045, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[spec.width + 0.02, 0.1, 0.08]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
+      </mesh>
+      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.5 + 0.045, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[spec.width + 0.02, 0.1, 0.08]} />
+        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
+      </mesh>
+      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.068 + arcDepth]} renderOrder={16}>
+        <boxGeometry args={[glassInsetWidth, glassInsetHeight, 0.012]} />
+        <meshPhysicalMaterial
+          color="#bdd1de"
+          transparent
+          opacity={0.34}
+          roughness={0.08}
+          metalness={0.08}
+          transmission={0.72}
+          ior={1.5}
+          thickness={0.12}
+          clearcoat={1}
+          clearcoatRoughness={0.06}
+          attenuationColor="#c9deea"
+          attenuationDistance={0.9}
+          depthWrite={false}
+        />
+      </mesh>
+      <mesh position={[-hingeDirection * spec.width * 0.5, 0.04, 0.076 + arcDepth]} renderOrder={17}>
+        <planeGeometry args={[glassInsetWidth * 0.92, glassInsetHeight * 0.92]} />
+        <meshBasicMaterial color="#f3fbff" transparent opacity={0.12} depthWrite={false} />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.26, 0.095 + arcDepth]}>
         <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
@@ -859,6 +891,7 @@ function CabinetCompartment({
   style,
   woodTexture,
   open,
+  active,
   interactionLocked,
   onToggle,
 }: {
@@ -869,6 +902,7 @@ function CabinetCompartment({
   style: CabinetStyle;
   woodTexture?: Texture | null;
   open: boolean;
+  active: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -878,7 +912,7 @@ function CabinetCompartment({
   const wallThickness = 0.035;
   const frontLipDepth = 0.08;
   const interiorWood = woodTexture
-    ? "#ffffff"
+    ? style.wood
     : "#4a2411";
 
   return (
@@ -958,13 +992,14 @@ function CabinetCompartment({
         </mesh>
       </group>
       {modelUrl ? (
-        <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} />
+        <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} />
       ) : (
         <ItemDisplay
           item={item}
           spec={spec}
           style={style}
           open={open}
+          active={active}
         />
       )}
       <ClickableFront
@@ -1044,7 +1079,8 @@ function CabinetPanel({
   index,
   totalGroups,
   placement,
-  openedDoorId,
+  openedDoorIds,
+  focusedDoorId,
   allItems,
   doorItemIds,
   interactionLocked,
@@ -1055,7 +1091,8 @@ function CabinetPanel({
   index: number;
   totalGroups: number;
   placement: FurniturePlacement;
-  openedDoorId: string;
+  openedDoorIds: Record<string, boolean>;
+  focusedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
   interactionLocked: boolean;
@@ -1069,7 +1106,7 @@ function CabinetPanel({
   const cabinetWoodTexture = woodTextures[style.woodTextureIndex];
   const woodMaterialProps = {
     map: cabinetWoodTexture ?? undefined,
-    color: "#ffffff",
+    color: style.wood,
     roughness: 0.82,
     metalness: 0.08,
   };
@@ -1100,7 +1137,8 @@ function CabinetPanel({
               spec={spec}
               style={style}
               woodTexture={cabinetWoodTexture}
-              open={openedDoorId === doorId}
+              open={Boolean(openedDoorIds[doorId])}
+              active={focusedDoorId === doorId}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1232,7 +1270,8 @@ function CabinetRoom({
   allItems,
   groups,
   placements,
-  openedDoorId,
+  openedDoorIds,
+  focusedDoorId,
   doorItemIds,
   interactionLocked,
   woodTextures,
@@ -1248,7 +1287,8 @@ function CabinetRoom({
   allItems: CabinetItem[];
   groups: CabinetGroup[];
   placements: FurniturePlacement[];
-  openedDoorId: string;
+  openedDoorIds: Record<string, boolean>;
+  focusedDoorId: string;
   doorItemIds: Record<string, string>;
   interactionLocked: boolean;
   woodTextures: Texture[];
@@ -1303,7 +1343,8 @@ function CabinetRoom({
               index={index}
               totalGroups={groups.length}
               placement={placements[index]}
-              openedDoorId={openedDoorId}
+              openedDoorIds={openedDoorIds}
+              focusedDoorId={focusedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
               interactionLocked={interactionLocked}
@@ -1318,13 +1359,14 @@ function CabinetRoom({
 }
 
 const cabinetWoodTextureFiles = [
-  "/wood-surface.jpg",
+  // "/wood-surface.jpg",
   "/dark_wood.jpg",
-  "/light_wood.jpg",
-  "/medium_light_wood.jpg",
+  // "/light_wood.jpg",
+  // "/medium_light_wood.jpg",
 ];
 
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
+  const itemsById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
   const groups = useMemo(() => chunkItems(items), [items]);
   const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
   const placements = useMemo(() => getFurniturePlacements(groups), [groups]);
@@ -1339,17 +1381,17 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     doorIds.forEach((doorId, index) => {
       const pool = doorItemPools[doorId] ?? [];
       nextDoorItemIds[doorId] = pool.length > 0
-        ? pool[hashSeed(`${doorId}-initial`) % pool.length]
+        ? pool[index % pool.length]
         : items[index % items.length]?.id ?? "";
     });
 
     return nextDoorItemIds;
   }, [doorIds, doorItemPools, items]);
   const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
-  const [doorOpenCounts, setDoorOpenCounts] = useState<Record<string, number>>({});
+  const [seenItemIds, setSeenItemIds] = useState<Record<string, boolean>>({});
   const [selectedItemId, setSelectedItemId] = useState("");
   const [focusedDoorId, setFocusedDoorId] = useState("");
-  const [openedDoorId, setOpenedDoorId] = useState("");
+  const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const selectedItem = items.find((item) => item.id === selectedItemId);
@@ -1365,14 +1407,38 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const narrationDoorIdRef = useRef("");
 
   useEffect(() => {
-    setDoorItemIds(initialDoorItemIds);
-    setDoorOpenCounts({});
+    setDoorItemIds((currentDoorItemIds) => {
+      const nextDoorItemIds: Record<string, string> = {};
+
+      doorIds.forEach((doorId, index) => {
+        const pool = doorItemPools[doorId] ?? [];
+        const existingItemId = currentDoorItemIds[doorId];
+
+        nextDoorItemIds[doorId] =
+          existingItemId && pool.includes(existingItemId)
+            ? existingItemId
+            : initialDoorItemIds[doorId] || items[index % items.length]?.id || "";
+      });
+
+      const currentDoorKeys = Object.keys(currentDoorItemIds);
+      const nextDoorKeys = Object.keys(nextDoorItemIds);
+
+      if (
+        currentDoorKeys.length === nextDoorKeys.length &&
+        nextDoorKeys.every((doorId) => currentDoorItemIds[doorId] === nextDoorItemIds[doorId])
+      ) {
+        return currentDoorItemIds;
+      }
+
+      return nextDoorItemIds;
+    });
+    setSeenItemIds({});
     setSelectedItemId("");
     setFocusedDoorId("");
-    setOpenedDoorId("");
+    setOpenedDoorIds({});
     setReturnPose(null);
     setInteractionLocked(false);
-  }, [initialDoorItemIds]);
+  }, [doorIds, doorItemPools, initialDoorItemIds, items]);
 
   const cabinetFocusTarget = useMemo(() => {
     if (!focusedDoorId) {
@@ -1514,56 +1580,88 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   }, [focusedDoorId, selectedItem]);
 
   const toggleDoor = (doorId: string) => {
-    if (interactionLocked) {
-      if (focusedDoorId === doorId) {
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-        }
-
-        setReturnPose(roamPoseRef.current);
-        setFocusedDoorId("");
-        setOpenedDoorId("");
-        setSelectedItemId("");
-      }
-
+    if (interactionLocked && focusedDoorId !== doorId) {
       return;
     }
 
-    if (focusedDoorId === doorId) {
-      if (items.length > 0) {
-        const nextCount = (doorOpenCounts[doorId] ?? 0) + 1;
-        const poolIds = doorItemPools[doorId] ?? [];
-        const poolItems = poolIds
-          .map((itemId) => items.find((candidate) => candidate.id === itemId))
-          .filter((candidate): candidate is CabinetItem => Boolean(candidate));
-        const nextItemId = getUniqueDoorItemId(poolItems, doorItemIds, doorId, nextCount * 7);
+    if (items.length === 0) {
+      return;
+    }
 
-        setDoorOpenCounts((currentCounts) => ({ ...currentCounts, [doorId]: nextCount }));
-        setDoorItemIds((currentItems) => ({ ...currentItems, [doorId]: nextItemId }));
+    const pool = doorItemPools[doorId] ?? [];
+    const currentItemId = doorItemIds[doorId];
+    const preferredItemId = pool.length > 0
+      ? chooseNextPoolItem(pool, currentItemId, seenItemIds, itemsById)
+      : currentItemId;
+    const resolvedItemId = !openedDoorIds[doorId] && preferredItemId
+      ? preferredItemId
+      : currentItemId;
+    const currentItem =
+      items.find((candidate) => candidate.id === resolvedItemId) ??
+      items[hashSeed(doorId) % Math.max(items.length, 1)];
+
+    if (!currentItem) {
+      return;
+    }
+
+    if (!openedDoorIds[doorId]) {
+      if (resolvedItemId && resolvedItemId !== currentItemId) {
+        setDoorItemIds((currentDoorItemIds) => ({
+          ...currentDoorItemIds,
+          [doorId]: resolvedItemId,
+        }));
       }
+      setOpenedDoorIds((currentDoors) => ({ ...currentDoors, [doorId]: true }));
+    }
 
+    if (focusedDoorId === doorId) {
+      setDoorItemIds((currentDoorItemIds) => {
+        if (pool.length === 0) {
+          return currentDoorItemIds;
+        }
+
+        const nextItemId = chooseNextPoolItem(pool, currentDoorItemIds[doorId], {
+          ...seenItemIds,
+          [currentDoorItemIds[doorId] ?? ""]: true,
+        }, itemsById);
+
+        if (!nextItemId || nextItemId === currentDoorItemIds[doorId]) {
+          return currentDoorItemIds;
+        }
+
+        return {
+          ...currentDoorItemIds,
+          [doorId]: nextItemId,
+        };
+      });
+      setOpenedDoorIds((currentDoors) => {
+        if (!currentDoors[doorId]) {
+          return currentDoors;
+        }
+
+        return { ...currentDoors, [doorId]: false };
+      });
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
-      setOpenedDoorId("");
       setSelectedItemId("");
       return;
     }
 
-    if (items.length > 0) {
-      const currentItemId = doorItemIds[doorId];
-      const currentItem =
-        items.find((candidate) => candidate.id === currentItemId) ??
-        items[hashSeed(doorId) % Math.max(items.length, 1)];
+    setSeenItemIds((currentSeenItemIds) => ({
+      ...currentSeenItemIds,
+      [currentItem.id]: true,
+    }));
 
-      if (!currentItem) {
-        return;
-      }
-
+    if (openedDoorIds[doorId] && !focusedDoorId) {
       setSelectedItemId(currentItem.id);
       setFocusedDoorId(doorId);
-      setOpenedDoorId(doorId);
       setReturnPose(null);
+      return;
     }
+
+    setSelectedItemId(currentItem.id);
+    setFocusedDoorId(doorId);
+    setReturnPose(null);
   };
 
   const handleRoamPoseChange = useCallback((pose: CameraPose) => {
@@ -1591,7 +1689,8 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
                 allItems={items}
                 groups={groups}
                 placements={placements}
-                openedDoorId={openedDoorId}
+                openedDoorIds={openedDoorIds}
+                focusedDoorId={focusedDoorId}
                 doorItemIds={doorItemIds}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}

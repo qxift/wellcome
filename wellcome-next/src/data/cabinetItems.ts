@@ -46,6 +46,19 @@ type CuratedCabinetPayload = {
 };
 
 const curatedPayload = curatedCabinetItems as CuratedCabinetPayload;
+const minimumLinkKeywordOccurrences = 2;
+const linkKeywordCounts = curatedPayload.items.reduce((counts, item) => {
+  for (const keyword of item.linkKeywords ?? []) {
+    counts.set(keyword, (counts.get(keyword) ?? 0) + 1);
+  }
+
+  return counts;
+}, new Map<string, number>());
+const eligibleLinkKeywords = new Set(
+  [...linkKeywordCounts.entries()]
+    .filter(([, count]) => count >= minimumLinkKeywordOccurrences)
+    .map(([keyword]) => keyword),
+);
 
 const modelWorkIds = new Set([
   "az6qx7eu",
@@ -64,7 +77,6 @@ const modelWorkIds = new Set([
 ]);
 
 export const cabinetItems: CabinetItem[] = curatedPayload.items
-  .filter((item) => modelWorkIds.has(item.workId))
   .map((item) => ({
     id: item.id,
     workId: item.workId,
@@ -74,11 +86,11 @@ export const cabinetItems: CabinetItem[] = curatedPayload.items
     imageUrl: item.imageUrl,
     color: item.averageColor ?? "#8f7f6a",
     type: item.type,
-    modelUrl: `/models_3d/${item.workId}.glb`,
+    modelUrl: modelWorkIds.has(item.workId) ? `/models_3d/${item.workId}.glb` : undefined,
     subjects: item.subjects ?? [],
     genres: item.genres ?? [],
     contributors: item.contributors ?? [],
     objectKinds: item.objectKinds ?? [],
-    linkKeywords: item.linkKeywords ?? [],
+    linkKeywords: (item.linkKeywords ?? []).filter((keyword) => eligibleLinkKeywords.has(keyword)),
     license: item.license,
   }));
