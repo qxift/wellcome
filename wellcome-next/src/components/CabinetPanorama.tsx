@@ -69,7 +69,7 @@ const playerRadius = 0.28;
 const roomRadius = 5.2;
 const itemsPerCabinet = 4;
 const doorsPerCabinet = 16;
-const forceNeutralModelPreviewMaterial = true;
+const forceNeutralModelPreviewMaterial = false;
 // Preview tuning: adjust these to make neutral preview less bright
 const previewMaterialColor = "#c0b9ad";
 const previewMaterialRoughness = 0.7;
@@ -100,22 +100,17 @@ function chunkItems(items: CabinetItem[]): CabinetGroup[] {
   }
 
   const numCabinets = 9;
-  const groups: CabinetGroup[] = [];
+  return Array.from({ length: numCabinets }, (_, cabinetIndex) => {
+    const cabinetItems = Array.from({ length: itemsPerCabinet }, (_, itemIndex) => {
+      const sourceIndex = (cabinetIndex * itemsPerCabinet + itemIndex) % items.length;
+      return items[sourceIndex];
+    });
 
-  for (let i = 0; i < numCabinets; i++) {
-    const startIndex = i * itemsPerCabinet;
-    const endIndex = Math.min(startIndex + itemsPerCabinet, items.length);
-    const cabinetItems = items.slice(startIndex, endIndex);
-
-    if (cabinetItems.length > 0) {
-      groups.push({
-        id: cabinetItems.map((item) => item.id).join("-"),
-        items: cabinetItems,
-      });
-    }
-  }
-
-  return groups;
+    return {
+      id: `cabinet-${cabinetIndex}-${cabinetItems.map((item) => item.id).join("-")}`,
+      items: cabinetItems,
+    };
+  });
 }
 
 function getUnifiedCabinetWidth(totalGroups: number) {
@@ -294,8 +289,8 @@ function getDoorFocusTarget(
     placement.position[1] + style.y,
     placement.position[2],
   ];
-  const localLookAt: [number, number, number] = [spec.x, spec.y, style.depth * 0.28];
-  const localCamera: [number, number, number] = [spec.x, spec.y + 0.02, style.depth * 2.2];
+  const localLookAt: [number, number, number] = [spec.x, spec.y, style.depth * 0.42];
+  const localCamera: [number, number, number] = [spec.x, spec.y + 0.02, style.depth * 1.45];
   const worldLookAt = addVec3(basePosition, rotateY(localLookAt, placement.rotationY));
   const worldCamera = addVec3(basePosition, rotateY(localCamera, placement.rotationY));
 
@@ -369,56 +364,6 @@ function chooseNarrationVoice(voices: SpeechSynthesisVoice[]) {
 
       return scoreVoice(right) - scoreVoice(left);
     })[0];
-}
-
-function playCabinetShakeSound() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const AudioContextClass = window.AudioContext ?? (window as typeof window & {
-    webkitAudioContext?: typeof AudioContext;
-  }).webkitAudioContext;
-
-  if (!AudioContextClass) {
-    return;
-  }
-
-  const audioContext = new AudioContextClass();
-  const startAt = audioContext.currentTime + 0.02;
-  const burstDurations = [0.12, 0.11, 0.13, 0.1];
-  let cursor = startAt;
-
-  burstDurations.forEach((duration, index) => {
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    const filter = audioContext.createBiquadFilter();
-
-    oscillator.type = "square";
-    oscillator.frequency.setValueAtTime(92 + index * 10, cursor);
-    oscillator.frequency.linearRampToValueAtTime(138 + index * 8, cursor + duration);
-
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(620, cursor);
-    filter.Q.setValueAtTime(2.8, cursor);
-
-    gain.gain.setValueAtTime(0.0001, cursor);
-    gain.gain.linearRampToValueAtTime(0.06, cursor + 0.018);
-    gain.gain.exponentialRampToValueAtTime(0.0001, cursor + duration);
-
-    oscillator.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioContext.destination);
-
-    oscillator.start(cursor);
-    oscillator.stop(cursor + duration);
-    cursor += duration + 0.045;
-  });
-
-  void audioContext.resume();
-  window.setTimeout(() => {
-    void audioContext.close().catch(() => undefined);
-  }, 900);
 }
 
 type FloorRect = {
@@ -665,40 +610,8 @@ function ModelDisplay({
         materials.forEach((material) => {
           if (!material) return;
 
-          if ("toneMapped" in material) {
-            material.toneMapped = false;
-          }
-
-          const hasBaseColorMap = "map" in material && !!material.map;
-
-          if (hasBaseColorMap && "map" in material && material.map) {
+          if ("map" in material && material.map) {
             material.map.colorSpace = SRGBColorSpace;
-          }
-
-          if ("color" in material && material.color) {
-            const luminance =
-              material.color.r * 0.2126 +
-              material.color.g * 0.7152 +
-              material.color.b * 0.0722;
-
-            if (!hasBaseColorMap && luminance < 0.08) {
-              material.color.setRGB(0.86, 0.83, 0.76);
-            } else {
-              material.color.multiplyScalar(1.12);
-            }
-          }
-
-          if ("emissive" in material && material.emissive) {
-            if ("color" in material && material.color) {
-              material.emissive.copy(material.color);
-            }
-            if ("emissiveIntensity" in material) {
-              material.emissiveIntensity = hasBaseColorMap ? 0.15 : 0.2;
-            }
-          }
-
-          if ("roughness" in material) {
-            material.roughness = Math.min(material.roughness ?? 0.8, 0.75);
           }
 
           material.needsUpdate = true;
@@ -718,19 +631,41 @@ function ModelDisplay({
     const target = Math.min(spec.width, spec.height) * 1.02;
 
     return {
-      scale: target / maxDim,
+      scale: (target / maxDim) * 0.78,
       center: centerVec,
     };
   }, [scene, spec.height, spec.width]);
+  const objectRef = useRef<Group>(null);
+  const spinXRef = useRef(0);
+  const spinYRef = useRef(0);
+  const displayZ = open ? style.depth * 0.44 : -style.depth * 0.2;
+  const displayY = spec.y - spec.height * 0.04;
 
-  const displayZ = open ? -style.depth * 0.2 : style.depth * 0.3;
-  const displayY = spec.y - spec.height * 0.05;
+  useFrame((state, delta) => {
+    if (!objectRef.current) return;
+
+    const targetFloatY = open ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
+
+    if (open) {
+      spinXRef.current += delta * 0.7;
+      spinYRef.current += delta * 1.05;
+    } else {
+      spinXRef.current = MathUtils.damp(spinXRef.current, 0, 8, delta);
+      spinYRef.current = MathUtils.damp(spinYRef.current, 0, 8, delta);
+    }
+
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4.5, delta);
+    objectRef.current.rotation.x = spinXRef.current;
+    objectRef.current.rotation.y = spinYRef.current;
+  });
 
   return (
     <group position={[spec.x, displayY, displayZ]} visible={open} renderOrder={11}>
       <ambientLight intensity={1.0} />
       <pointLight position={[0, spec.height * 0.15, 0.4]} intensity={2.2} color="#fff4d8" distance={2.4} />
-      <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
+      <group ref={objectRef}>
+        <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
+      </group>
     </group>
   );
 }
@@ -741,7 +676,6 @@ function ClickableFront({
   spec,
   style,
   open,
-  shaking,
   interactionLocked,
   onToggle,
   woodTexture,
@@ -750,7 +684,6 @@ function ClickableFront({
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
-  shaking: boolean;
   interactionLocked: boolean;
   woodTexture?: Texture | null;
   onToggle: (doorId: string) => void;
@@ -770,13 +703,12 @@ function ClickableFront({
     if (!frontRef.current) return;
 
     const openAngle = hingeDirection * (Math.PI * 110 / 180);
-    const shakeOffset = shaking ? Math.sin(performance.now() * 0.035) * 0.16 : 0;
-    const targetRotation = (open ? openAngle : 0) + shakeOffset;
+    const targetRotation = open ? openAngle : 0;
 
     frontRef.current.rotation.y = MathUtils.damp(
       frontRef.current.rotation.y,
       targetRotation,
-      shaking ? 18 : 10,
+      10,
       delta,
     );
   });
@@ -821,7 +753,6 @@ function CabinetCompartment({
   style,
   woodTexture,
   open,
-  shaking,
   interactionLocked,
   onToggle,
 }: {
@@ -832,7 +763,6 @@ function CabinetCompartment({
   style: CabinetStyle;
   woodTexture?: Texture | null;
   open: boolean;
-  shaking: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -929,7 +859,6 @@ function CabinetCompartment({
           spec={spec}
           style={style}
           open={open}
-          interactionLocked={interactionLocked}
         />
       )}
       <ClickableFront
@@ -937,7 +866,6 @@ function CabinetCompartment({
         spec={spec}
         style={style}
         open={open}
-        shaking={shaking}
         interactionLocked={interactionLocked}
         woodTexture={woodTexture}
         onToggle={onToggle}
@@ -1013,7 +941,6 @@ function CabinetPanel({
   focusedDoorId,
   allItems,
   doorItemIds,
-  shakingDoorId,
   interactionLocked,
   woodTextures,
   onToggleDoor,
@@ -1025,7 +952,6 @@ function CabinetPanel({
   focusedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
-  shakingDoorId: string;
   interactionLocked: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
@@ -1059,21 +985,16 @@ function CabinetPanel({
           const item =
             allItems.find((candidate) => candidate.id === doorItemIds[doorId]) ??
             allItems[(index * doorsPerCabinet + specIndex) % allItems.length];
-          const demoModelUrl = index === 0 && specIndex < demoModelUrls.length
-            ? demoModelUrls[specIndex]
-            : undefined;
-
           return (
             <CabinetCompartment
               key={doorId}
               doorId={doorId}
               item={item}
-              modelUrl={demoModelUrl}
+              modelUrl={item.modelUrl}
               spec={spec}
               style={style}
               woodTexture={cabinetWoodTexture}
               open={focusedDoorId === doorId}
-              shaking={shakingDoorId === doorId}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1207,7 +1128,6 @@ function CabinetRoom({
   placements,
   focusedDoorId,
   doorItemIds,
-  shakingDoorId,
   interactionLocked,
   woodTextures,
   wallpaperTexture,
@@ -1224,7 +1144,6 @@ function CabinetRoom({
   placements: FurniturePlacement[];
   focusedDoorId: string;
   doorItemIds: Record<string, string>;
-  shakingDoorId: string;
   interactionLocked: boolean;
   woodTextures: Texture[];
   wallpaperTexture?: Texture | null;
@@ -1281,7 +1200,6 @@ function CabinetRoom({
               focusedDoorId={focusedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
-              shakingDoorId={shakingDoorId}
               interactionLocked={interactionLocked}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
@@ -1298,14 +1216,6 @@ const cabinetWoodTextureFiles = [
   "/dark_wood.jpg",
   "/light_wood.jpg",
   "/medium_light_wood.jpg",
-];
-
-const demoModelUrls = [
-  "/models_3d/3D-demo-1.glb",
-  "/models_3d/3D-demo-2.glb",
-  "/models_3d/3D-demo-3.glb",
-  "/models_3d/3D-demo-4.glb",
-  "/models_3d/3D-demo-5.glb",
 ];
 
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
@@ -1331,7 +1241,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const [selectedItemId, setSelectedItemId] = useState("");
   const [focusedDoorId, setFocusedDoorId] = useState("");
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
-  const [shakingDoorId, setShakingDoorId] = useState("");
   const [interactionLocked, setInteractionLocked] = useState(false);
   const selectedItem = items.find((item) => item.id === selectedItemId);
   const [woodTextures, setWoodTextures] = useState<Texture[]>([]);
@@ -1344,8 +1253,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     yaw: 0,
   });
   const narrationDoorIdRef = useRef("");
-  const pendingPostStoryShakeRef = useRef(false);
-  const shakeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setDoorItemIds(initialDoorItemIds);
@@ -1353,9 +1260,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     setSelectedItemId("");
     setFocusedDoorId("");
     setReturnPose(null);
-    setShakingDoorId("");
     setInteractionLocked(false);
-    pendingPostStoryShakeRef.current = false;
   }, [initialDoorItemIds]);
 
   const cabinetFocusTarget = useMemo(() => {
@@ -1479,7 +1384,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     utterance.pitch = 0.88;
     utterance.volume = 1;
     utterance.onend = () => {
-      pendingPostStoryShakeRef.current = true;
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
       setSelectedItemId("");
@@ -1498,14 +1402,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     };
   }, [focusedDoorId, selectedItem]);
 
-  useEffect(() => {
-    return () => {
-      if (shakeTimeoutRef.current !== null) {
-        window.clearTimeout(shakeTimeoutRef.current);
-      }
-    };
-  }, []);
-
   const toggleDoor = (doorId: string) => {
     if (interactionLocked) {
       if (focusedDoorId === doorId) {
@@ -1513,7 +1409,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
           window.speechSynthesis.cancel();
         }
 
-        pendingPostStoryShakeRef.current = false;
         setReturnPose(roamPoseRef.current);
         setFocusedDoorId("");
         setSelectedItemId("");
@@ -1531,7 +1426,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
         setDoorItemIds((currentItems) => ({ ...currentItems, [doorId]: nextItemId }));
       }
 
-      pendingPostStoryShakeRef.current = false;
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
       setSelectedItemId("");
@@ -1561,30 +1455,9 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const handleTargetReached = useCallback((mode: "focus" | "return") => {
     if (mode === "return") {
       setReturnPose(null);
-
-      if (pendingPostStoryShakeRef.current && groups.length > 0) {
-        const groupIndex = Math.floor(Math.random() * groups.length);
-        const doorIndex = Math.floor(Math.random() * doorsPerCabinet);
-        const nextDoorId = `${groups[groupIndex].id}-${doorIndex}`;
-
-        pendingPostStoryShakeRef.current = false;
-        setShakingDoorId(nextDoorId);
-        playCabinetShakeSound();
-
-        if (shakeTimeoutRef.current !== null) {
-          window.clearTimeout(shakeTimeoutRef.current);
-        }
-
-        shakeTimeoutRef.current = window.setTimeout(() => {
-          setShakingDoorId("");
-          setInteractionLocked(false);
-          shakeTimeoutRef.current = null;
-        }, 1200);
-      } else {
-        setInteractionLocked(false);
-      }
+      setInteractionLocked(false);
     }
-  }, [groups]);
+  }, []);
 
   return (
     <section className="panorama-shell" aria-label="Cabinet of curiosities panorama">
@@ -1602,7 +1475,6 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
                 placements={placements}
                 focusedDoorId={focusedDoorId}
                 doorItemIds={doorItemIds}
-                shakingDoorId={shakingDoorId}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}
                 wallpaperTexture={wallpaperTexture}
