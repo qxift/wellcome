@@ -536,14 +536,13 @@ function ItemDisplay({
   spec,
   style,
   open,
-  interactionLocked,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
-  interactionLocked: boolean;
 }) {
+  const objectRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
     loader.crossOrigin = "anonymous";
   });
@@ -572,15 +571,40 @@ function ItemDisplay({
       imageHeight: maxHeight,
     };
   }, [spec.height, spec.width, texture.image]);
-  const displayZ = open ? -style.depth * 0.5 : style.depth * 0.3; // Adjusted for deeper cabinets
-  const displayY = spec.y;
+
+  useFrame((state, delta) => {
+    if (!objectRef.current) return;
+
+    const targetFloatY = open ? Math.sin(state.clock.elapsedTime * 1.3) * 0.012 : 0;
+    const targetRotationY = open ? Math.sin(state.clock.elapsedTime * 0.7) * 0.08 : 0;
+
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
+    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, open ? -0.04 : 0, 4, delta);
+  });
+
+  const objectDepth = Math.min(0.16, Math.max(0.07, Math.min(imageWidth, imageHeight) * 0.18));
+  const bodyColor = item.color || "#8a7a68";
+  const displayZ = open ? -style.depth * 0.24 : style.depth * 0.22;
 
   return (
-    <group position={[spec.x, displayY, displayZ]}>
-      <mesh raycast={() => null} scale={open ? 1.06 : 1} visible={open} renderOrder={10}>
-        <planeGeometry args={[imageWidth, imageHeight]} />
-        <meshBasicMaterial map={displayTexture} transparent side={DoubleSide} depthTest={!open} depthWrite={!open} />
-      </mesh>
+    <group position={[spec.x, spec.y, displayZ]} visible={open}>
+      <group ref={objectRef} scale={open ? 1.04 : 1}>
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[imageWidth, imageHeight, objectDepth]} />
+          <meshStandardMaterial attach="material-0" color={bodyColor} roughness={0.7} />
+          <meshStandardMaterial attach="material-1" color={bodyColor} roughness={0.7} />
+          <meshStandardMaterial attach="material-2" color={bodyColor} roughness={0.66} />
+          <meshStandardMaterial attach="material-3" color={bodyColor} roughness={0.72} />
+          <meshBasicMaterial
+            attach="material-4"
+            map={displayTexture}
+            transparent
+            side={DoubleSide}
+          />
+          <meshStandardMaterial attach="material-5" color={bodyColor} roughness={0.74} />
+        </mesh>
+      </group>
     </group>
   );
 }
