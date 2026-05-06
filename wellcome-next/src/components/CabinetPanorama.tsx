@@ -3,8 +3,10 @@
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Box3,
   DoubleSide,
   MathUtils,
+  Mesh,
   RepeatWrapping,
   Vector3,
   TextureLoader,
@@ -12,6 +14,7 @@ import {
   SRGBColorSpace,
   type Group,
 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { CabinetItem } from "@/data/cabinetItems";
 
 type CabinetPanoramaProps = {
@@ -585,6 +588,56 @@ function ItemDisplay({
   );
 }
 
+function ModelDisplay({
+  modelUrl,
+  spec,
+  style,
+  open,
+}: {
+  modelUrl: string;
+  spec: CompartmentSpec;
+  style: CabinetStyle;
+  open: boolean;
+}) {
+  const gltf = useLoader(GLTFLoader, modelUrl);
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true);
+
+    cloned.traverse((child) => {
+      if (child instanceof Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.frustumCulled = false;
+      }
+    });
+
+    return cloned;
+  }, [gltf]);
+  const { scale, center } = useMemo(() => {
+    const box = new Box3().setFromObject(scene);
+    const size = new Vector3();
+    const centerVec = new Vector3();
+    box.getSize(size);
+    box.getCenter(centerVec);
+    const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+    const target = Math.min(spec.width, spec.height) * 0.55;
+
+    return {
+      scale: target / maxDim,
+      center: centerVec,
+    };
+  }, [scene, spec.height, spec.width]);
+
+  const displayZ = open ? -style.depth * 0.2 : style.depth * 0.3;
+  const displayY = spec.y - spec.height * 0.05;
+
+  return (
+    <group position={[spec.x, displayY, displayZ]} visible={open} renderOrder={11}>
+      <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
+    </group>
+  );
+}
+
 
 function ClickableFront({
   doorId,
@@ -666,6 +719,7 @@ function ClickableFront({
 function CabinetCompartment({
   doorId,
   item,
+  modelUrl,
   spec,
   style,
   woodTexture,
@@ -676,6 +730,7 @@ function CabinetCompartment({
 }: {
   doorId: string;
   item: CabinetItem;
+  modelUrl?: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   woodTexture?: Texture | null;
@@ -769,13 +824,17 @@ function CabinetCompartment({
           />
         </mesh>
       </group>
-      <ItemDisplay
-        item={item}
-        spec={spec}
-        style={style}
-        open={open}
-        interactionLocked={interactionLocked}
-      />
+      {modelUrl ? (
+        <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} />
+      ) : (
+        <ItemDisplay
+          item={item}
+          spec={spec}
+          style={style}
+          open={open}
+          interactionLocked={interactionLocked}
+        />
+      )}
       <ClickableFront
         doorId={doorId}
         spec={spec}
@@ -903,12 +962,16 @@ function CabinetPanel({
           const item =
             allItems.find((candidate) => candidate.id === doorItemIds[doorId]) ??
             allItems[(index * doorsPerCabinet + specIndex) % allItems.length];
+          const demoModelUrl = index === 0 && specIndex < demoModelUrls.length
+            ? demoModelUrls[specIndex]
+            : undefined;
 
           return (
             <CabinetCompartment
               key={doorId}
               doorId={doorId}
               item={item}
+              modelUrl={demoModelUrl}
               spec={spec}
               style={style}
               woodTexture={cabinetWoodTexture}
@@ -1138,6 +1201,13 @@ const cabinetWoodTextureFiles = [
   "/dark_wood.jpg",
   "/light_wood.jpg",
   "/medium_light_wood.jpg",
+];
+
+const demoModelUrls = [
+  "/models_3d/3D-demo-1.glb",
+  "/models_3d/3D-demo-2.glb",
+  "/models_3d/3D-demo-3.glb",
+  "/models_3d/3D-demo-4.glb",
 ];
 
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
