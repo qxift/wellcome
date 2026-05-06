@@ -555,6 +555,28 @@ function chooseInitialDoorItem(
   return nextItemId;
 }
 
+function isDemoModelDoor(doorId: string, groups: CabinetGroup[]) {
+  if (!doorId) {
+    return false;
+  }
+
+  const specSeparatorIndex = doorId.lastIndexOf("-");
+
+  if (specSeparatorIndex === -1) {
+    return false;
+  }
+
+  const groupId = doorId.slice(0, specSeparatorIndex);
+  const specIndex = Number(doorId.slice(specSeparatorIndex + 1));
+  const groupIndex = groups.findIndex((group) => group.id === groupId);
+
+  if (groupIndex !== 0 || Number.isNaN(specIndex)) {
+    return false;
+  }
+
+  return specIndex >= 0 && specIndex < demoModelUrls.length;
+}
+
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
   if (groups.length === 0) {
     return [];
@@ -1583,6 +1605,15 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const selectedItem = items.find((item) => item.id === selectedItemId);
+  const focusedItem = useMemo(() => {
+    if (!focusedDoorId) {
+      return undefined;
+    }
+
+    const focusedItemId = doorItemIds[focusedDoorId];
+
+    return items.find((item) => item.id === focusedItemId);
+  }, [doorItemIds, focusedDoorId, items]);
   const [woodTextures, setWoodTextures] = useState<Texture[]>([]);
   const [rugTexture, setRugTexture] = useState<Texture | null>(null);
   const [floorTexture, setFloorTexture] = useState<Texture | null>(null);
@@ -1679,6 +1710,22 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
+    if (!focusedDoorId) {
+      return;
+    }
+
+    if (isDemoModelDoor(focusedDoorId, groups)) {
+      return;
+    }
+
+    const focusedItemId = doorItemIds[focusedDoorId];
+
+    if (focusedItemId && focusedItemId !== selectedItemId) {
+      setSelectedItemId(focusedItemId);
+    }
+  }, [doorItemIds, focusedDoorId, groups, selectedItemId]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       return;
     }
@@ -1686,11 +1733,15 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     const speech = window.speechSynthesis;
     speech.cancel();
 
-    if (!selectedItem || !focusedDoorId) {
+    if (!focusedDoorId || !focusedItem) {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(buildBackstory(selectedItem));
+    if (isDemoModelDoor(focusedDoorId, groups)) {
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
     const applyVoice = () => {
       const preferredVoice = chooseNarrationVoice(speech.getVoices());
 
@@ -1720,7 +1771,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       speech.removeEventListener("voiceschanged", handleVoicesChanged);
       speech.cancel();
     };
-  }, [focusedDoorId, selectedItem]);
+  }, [focusedDoorId, focusedItem, groups]);
 
   useEffect(() => {
     return () => {
