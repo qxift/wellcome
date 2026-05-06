@@ -7,6 +7,7 @@ import {
   DoubleSide,
   MathUtils,
   Mesh,
+  MeshStandardMaterial,
   RepeatWrapping,
   Vector3,
   TextureLoader,
@@ -68,6 +69,11 @@ const playerRadius = 0.28;
 const roomRadius = 5.2;
 const itemsPerCabinet = 4;
 const doorsPerCabinet = 16;
+const forceNeutralModelPreviewMaterial = true;
+// Preview tuning: adjust these to make neutral preview less bright
+const previewMaterialColor = "#c0b9ad";
+const previewMaterialRoughness = 0.7;
+const previewMaterialMetalness = 0.02;
 
 function trimTitle(title: string) {
   return title.replace(/^\[/, "").replace(/\]\.?$/, "");
@@ -608,6 +614,71 @@ function ModelDisplay({
         child.castShadow = true;
         child.receiveShadow = true;
         child.frustumCulled = false;
+
+        if (forceNeutralModelPreviewMaterial) {
+          if (Array.isArray(child.material)) {
+            child.material = child.material.map(
+              () =>
+                new MeshStandardMaterial({
+                  color: previewMaterialColor,
+                  roughness: previewMaterialRoughness,
+                  metalness: previewMaterialMetalness,
+                }),
+            );
+          } else {
+            child.material = new MeshStandardMaterial({
+              color: previewMaterialColor,
+              roughness: previewMaterialRoughness,
+              metalness: previewMaterialMetalness,
+            });
+          }
+
+          return;
+        }
+
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+
+        materials.forEach((material) => {
+          if (!material) return;
+
+          if ("toneMapped" in material) {
+            material.toneMapped = false;
+          }
+
+          const hasBaseColorMap = "map" in material && !!material.map;
+
+          if (hasBaseColorMap && "map" in material && material.map) {
+            material.map.colorSpace = SRGBColorSpace;
+          }
+
+          if ("color" in material && material.color) {
+            const luminance =
+              material.color.r * 0.2126 +
+              material.color.g * 0.7152 +
+              material.color.b * 0.0722;
+
+            if (!hasBaseColorMap && luminance < 0.08) {
+              material.color.setRGB(0.86, 0.83, 0.76);
+            } else {
+              material.color.multiplyScalar(1.12);
+            }
+          }
+
+          if ("emissive" in material && material.emissive) {
+            if ("color" in material && material.color) {
+              material.emissive.copy(material.color);
+            }
+            if ("emissiveIntensity" in material) {
+              material.emissiveIntensity = hasBaseColorMap ? 0.15 : 0.2;
+            }
+          }
+
+          if ("roughness" in material) {
+            material.roughness = Math.min(material.roughness ?? 0.8, 0.75);
+          }
+
+          material.needsUpdate = true;
+        });
       }
     });
 
@@ -620,7 +691,7 @@ function ModelDisplay({
     box.getSize(size);
     box.getCenter(centerVec);
     const maxDim = Math.max(size.x, size.y, size.z, 0.001);
-    const target = Math.min(spec.width, spec.height) * 0.55;
+    const target = Math.min(spec.width, spec.height) * 1.02;
 
     return {
       scale: target / maxDim,
@@ -633,6 +704,8 @@ function ModelDisplay({
 
   return (
     <group position={[spec.x, displayY, displayZ]} visible={open} renderOrder={11}>
+      <ambientLight intensity={1.0} />
+      <pointLight position={[0, spec.height * 0.15, 0.4]} intensity={2.2} color="#fff4d8" distance={2.4} />
       <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
     </group>
   );
@@ -1208,6 +1281,7 @@ const demoModelUrls = [
   "/models_3d/3D-demo-2.glb",
   "/models_3d/3D-demo-3.glb",
   "/models_3d/3D-demo-4.glb",
+  "/models_3d/3D-demo-5.glb",
 ];
 
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
