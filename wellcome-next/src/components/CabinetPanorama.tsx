@@ -66,7 +66,7 @@ type FurniturePlacement = {
 };
 
 const playerRadius = 0.28;
-const roomRadius = 6;
+const roomRadius = 6.27;
 const itemsPerCabinet = 8;
 const doorsPerCabinet = 8;
 const cabinetsPerRow = 13;
