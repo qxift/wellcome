@@ -797,9 +797,9 @@ function RoomArchitecture({
       </mesh>
       <mesh position={[0, 1.9, 0]}>
         <sphereGeometry args={[0.18, 24, 24]} />
-        <meshStandardMaterial color="#ffe0ad" emissive="#d38a3d" emissiveIntensity={1.5} />
+        <meshStandardMaterial color="#ffe6a6" emissive="#f0a42f" emissiveIntensity={2.1} />
       </mesh>
-      <pointLight position={[0, 1.8, 0]} intensity={4.5} color="#ffd49b" distance={7} />
+      <pointLight position={[0, 1.8, 0]} intensity={5.2} color="#ffcc58" distance={7.5} />
 
       {Array.from({ length: 10 }, (_, index) => {
         const angle = (index / 10) * Math.PI * 2;
@@ -811,7 +811,7 @@ function RoomArchitecture({
             </mesh>
             <mesh position={[0, -0.24, 0]}>
               <octahedronGeometry args={[0.07]} />
-              <meshPhysicalMaterial color="#fff7dc" transparent opacity={0.62} roughness={0.03} transmission={0.35} />
+              <meshPhysicalMaterial color="#ffe09a" transparent opacity={0.72} roughness={0.12} transmission={0.18} />
             </mesh>
           </group>
         );
@@ -820,8 +820,8 @@ function RoomArchitecture({
       {[0.9, 2.7, 4.5].map((angle, index) => (
         <group key={`lamp-${index}`} position={[Math.sin(angle) * 2.8, 1.7, -Math.cos(angle) * 2.8]}>
           <sphereGeometry args={[0.1, 20, 20]} />
-          <meshStandardMaterial color="#ffe0ad" emissive="#d38a3d" emissiveIntensity={1.1} />
-          <pointLight intensity={2.2} color="#ffd49b" distance={4.5} />
+          <meshStandardMaterial color="#ffe09a" emissive="#e29a2a" emissiveIntensity={1.45} />
+          <pointLight intensity={2.4} color="#ffca63" distance={4.8} />
         </group>
       ))}
     </group>
@@ -891,7 +891,7 @@ function ItemDisplay({
     objectRef.current.scale.setScalar(scale);
 
     if (materialRef.current) {
-      materialRef.current.opacity = dissolve;
+      materialRef.current.opacity = dissolve * 0.9;
     }
   });
 
@@ -903,7 +903,14 @@ function ItemDisplay({
       <group ref={objectRef}>
         <mesh position={[0, 0, 0.002]} renderOrder={12}>
           <planeGeometry args={[imageWidth, imageHeight]} />
-          <meshBasicMaterial ref={materialRef} map={displayTexture} transparent side={DoubleSide} opacity={0} />
+          <meshBasicMaterial
+            ref={materialRef}
+            map={displayTexture}
+            color="#dbc7a3"
+            transparent
+            side={DoubleSide}
+            opacity={0}
+          />
         </mesh>
       </group>
     </group>
@@ -959,17 +966,17 @@ function ModelDisplay({
     box.getSize(size);
     box.getCenter(centerVec);
     const maxDim = Math.max(size.x, size.y, size.z, 0.001);
-    const target = Math.min(spec.width, spec.height) * 1.02;
+    const target = Math.min(spec.width, spec.height) * 0.82;
 
     return {
-      scale: (target / maxDim) * 0.78,
+      scale: (target / maxDim) * 0.72,
       center: centerVec,
     };
   }, [scene, spec.height, spec.width]);
   const objectRef = useRef<Group>(null);
   const spinXRef = useRef(0);
   const spinYRef = useRef(0);
-  const displayZ = open ? style.depth * 0.44 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.26 : style.depth * 0.04;
   const displayY = spec.y - spec.height * 0.04;
 
   useEffect(() => {
@@ -993,10 +1000,15 @@ function ModelDisplay({
     }
 
     objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4.5, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, (1 - dissolve) * -0.1, 6, delta);
+    objectRef.current.position.z = MathUtils.damp(
+      objectRef.current.position.z,
+      -0.16 + (1 - dissolve) * -0.08,
+      6,
+      delta,
+    );
     objectRef.current.rotation.x = spinXRef.current;
     objectRef.current.rotation.y = spinYRef.current;
-    objectRef.current.scale.setScalar(0.93 + dissolve * 0.07);
+    objectRef.current.scale.setScalar(0.88 + dissolve * 0.06);
 
     scene.traverse((child) => {
       if (!(child instanceof Mesh)) {
@@ -1019,7 +1031,7 @@ function ModelDisplay({
   return (
     <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
       <ambientLight intensity={1.0} />
-      <pointLight position={[0, spec.height * 0.15, 0.4]} intensity={2.2} color="#fff4d8" distance={2.4} />
+      <pointLight position={[0, spec.height * 0.12, 0.22]} intensity={1.8} color="#ffd39a" distance={2.1} />
       <group ref={objectRef}>
         <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
       </group>
@@ -1115,24 +1127,24 @@ function ClickableFront({
       <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.068 + arcDepth]} renderOrder={16}>
         <boxGeometry args={[glassInsetWidth, glassInsetHeight, 0.012]} />
         <meshPhysicalMaterial
-          color="#dbe8ef"
+          color="#f2d7aa"
           transparent
-          opacity={0.18}
-          roughness={0.025}
+          opacity={0.16}
+          roughness={0.08}
           metalness={0.04}
-          transmission={0.9}
+          transmission={0.82}
           ior={1.5}
           thickness={0.08}
-          clearcoat={1}
-          clearcoatRoughness={0.03}
-          attenuationColor="#e6f1f7"
-          attenuationDistance={2.4}
+          clearcoat={0.72}
+          clearcoatRoughness={0.12}
+          attenuationColor="#c98b43"
+          attenuationDistance={1.6}
           depthWrite={false}
         />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, 0.04, 0.076 + arcDepth]} renderOrder={17}>
         <planeGeometry args={[glassInsetWidth * 0.92, glassInsetHeight * 0.92]} />
-        <meshBasicMaterial color="#eef7fb" transparent opacity={0.05} depthWrite={false} />
+        <meshBasicMaterial color="#f4c987" transparent opacity={0.08} depthWrite={false} />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.26, 0.095 + arcDepth]}>
         <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
@@ -1520,17 +1532,17 @@ function CabinetRoom({
     <>
       <color attach="background" args={["#24140b"]} />
       <fog attach="fog" args={["#24140b", 6.5, 15]} />
-      <ambientLight intensity={1.55} />
-      <hemisphereLight args={["#ffe0ad", "#6b3a1d", 1.25]} />
-      <pointLight position={[0, 2.6, 0]} intensity={10} color="#ffe0ad" />
-      <pointLight position={[-2.8, 1.7, -1.5]} intensity={4.5} color="#fff1cf" />
-      <pointLight position={[2.8, 1.7, 1.5]} intensity={4.5} color="#ffd09a" />
+      <ambientLight intensity={1.45} color="#ffdfb8" />
+      <hemisphereLight args={["#ffd4a0", "#5c2f16", 1.25]} />
+      <pointLight position={[0, 2.6, 0]} intensity={10} color="#ffbf78" />
+      <pointLight position={[-2.8, 1.7, -1.5]} intensity={4.5} color="#ffd6a6" />
+      <pointLight position={[2.8, 1.7, 1.5]} intensity={4.5} color="#ffb56c" />
       <spotLight
         position={[0, 2.8, 1.2]}
         angle={0.7}
         penumbra={0.75}
         intensity={12}
-        color="#ffe2b8"
+        color="#ffc98a"
         castShadow
       />
 
