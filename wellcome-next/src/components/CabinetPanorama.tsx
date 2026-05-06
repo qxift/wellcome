@@ -229,6 +229,28 @@ function getUniqueDoorItemId(
   return items[(hashSeed(doorId) + offset) % items.length]?.id ?? "";
 }
 
+function isDemoModelDoor(doorId: string, groups: CabinetGroup[]) {
+  if (!doorId) {
+    return false;
+  }
+
+  const specSeparatorIndex = doorId.lastIndexOf("-");
+
+  if (specSeparatorIndex === -1) {
+    return false;
+  }
+
+  const groupId = doorId.slice(0, specSeparatorIndex);
+  const specIndex = Number(doorId.slice(specSeparatorIndex + 1));
+  const groupIndex = groups.findIndex((group) => group.id === groupId);
+
+  if (groupIndex !== 0 || Number.isNaN(specIndex)) {
+    return false;
+  }
+
+  return specIndex >= 0 && specIndex < demoModelUrls.length;
+}
+
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
   if (groups.length === 0) {
     return [];
@@ -929,7 +951,6 @@ function CabinetCompartment({
           spec={spec}
           style={style}
           open={open}
-          interactionLocked={interactionLocked}
         />
       )}
       <ClickableFront
@@ -1334,6 +1355,15 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const [shakingDoorId, setShakingDoorId] = useState("");
   const [interactionLocked, setInteractionLocked] = useState(false);
   const selectedItem = items.find((item) => item.id === selectedItemId);
+  const focusedItem = useMemo(() => {
+    if (!focusedDoorId) {
+      return undefined;
+    }
+
+    const focusedItemId = doorItemIds[focusedDoorId];
+
+    return items.find((item) => item.id === focusedItemId);
+  }, [doorItemIds, focusedDoorId, items]);
   const [woodTextures, setWoodTextures] = useState<Texture[]>([]);
   const [wallpaperTexture, setWallpaperTexture] = useState<Texture | null>(null);
   const [rugTexture, setRugTexture] = useState<Texture | null>(null);
@@ -1452,6 +1482,22 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
+    if (!focusedDoorId) {
+      return;
+    }
+
+    if (isDemoModelDoor(focusedDoorId, groups)) {
+      return;
+    }
+
+    const focusedItemId = doorItemIds[focusedDoorId];
+
+    if (focusedItemId && focusedItemId !== selectedItemId) {
+      setSelectedItemId(focusedItemId);
+    }
+  }, [doorItemIds, focusedDoorId, groups, selectedItemId]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       return;
     }
@@ -1459,11 +1505,15 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
     const speech = window.speechSynthesis;
     speech.cancel();
 
-    if (!selectedItem || !focusedDoorId) {
+    if (!focusedDoorId || !focusedItem) {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(buildBackstory(selectedItem));
+    if (isDemoModelDoor(focusedDoorId, groups)) {
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
     const applyVoice = () => {
       const preferredVoice = chooseNarrationVoice(speech.getVoices());
 
@@ -1496,7 +1546,7 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
       speech.removeEventListener("voiceschanged", handleVoicesChanged);
       speech.cancel();
     };
-  }, [focusedDoorId, selectedItem]);
+  }, [focusedDoorId, focusedItem, groups]);
 
   useEffect(() => {
     return () => {
@@ -1548,7 +1598,17 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
         return;
       }
 
-      setSelectedItemId(currentItem.id);
+      if (isDemoModelDoor(doorId, groups)) {
+        const specIndex = Number(doorId.split("-").pop() ?? "0");
+        console.log("Opened demo 3D door", {
+          doorId,
+          modelIndex: specIndex,
+        });
+        setSelectedItemId("");
+      } else {
+        console.log("Opened 2D door", { doorId, itemId: currentItem.id });
+        setSelectedItemId(currentItem.id);
+      }
       setFocusedDoorId(doorId);
       setReturnPose(null);
     }
