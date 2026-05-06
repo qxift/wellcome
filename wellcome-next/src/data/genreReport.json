@@ -1,0 +1,3343 @@
+{
+  "generatedAt": "2026-04-30T10:15:21.498Z",
+  "source": "../images.json",
+  "uniqueGenreCount": 543,
+  "categories": {
+    "strong3d": [
+      "amulets",
+      "badges",
+      "bags",
+      "boxes",
+      "bronze sculpture",
+      "chessmen",
+      "clocks and watches",
+      "condoms",
+      "medal",
+      "medals",
+      "museum object",
+      "plaster sculpture",
+      "portrait sculpture",
+      "powders",
+      "sandals",
+      "sculpture",
+      "shelf clocks",
+      "stereoscopes",
+      "tiles",
+      "tusks",
+      "votive offerings",
+      "wax-modeling",
+      "wood sculpture",
+      "wood-carving"
+    ],
+    "supporting3d": [
+      "cloth prints",
+      "clothing",
+      "coats",
+      "costumes",
+      "painted signs and signboards",
+      "samples",
+      "scientific illustrations",
+      "signs (notices)",
+      "still life drawings",
+      "still life paintings",
+      "still life photographs",
+      "still life prints",
+      "still lifes",
+      "textile fabrics",
+      "trade cards",
+      "trade catalogues",
+      "wooden signs and signboards"
+    ],
+    "mostly2d": [
+      "advertisements",
+      "book",
+      "book illustrations",
+      "broadsides",
+      "cards",
+      "caricatures",
+      "clippings",
+      "drawings",
+      "engravings",
+      "ephemera",
+      "etchings",
+      "gouaches",
+      "handbills",
+      "intaglio prints",
+      "leaflets",
+      "lithographs",
+      "manuscript",
+      "oil paintings",
+      "paintings",
+      "pamphlets",
+      "periodicals",
+      "photographic prints",
+      "photographs",
+      "postcards",
+      "posters",
+      "prints",
+      "watercolors",
+      "wood engravings",
+      "woodcuts"
+    ]
+  },
+  "genres": [
+    {
+      "label": "Ephemera",
+      "count": 20118,
+      "category": "mostly-2d",
+      "exampleTitle": "An important consideration for the family doctor : Famicillin CAPS brand of ampicillin."
+    },
+    {
+      "label": "Engravings",
+      "count": 12667,
+      "category": "mostly-2d",
+      "exampleTitle": "Hydraulics: a lever-operated pump. Engraving by J. Cleghorn after C. Varley."
+    },
+    {
+      "label": "Lithographs",
+      "count": 10677,
+      "category": "mostly-2d",
+      "exampleTitle": "Guru Gobind Singh mixing nectar for his disciples at the birth of Khalsa. Coloured transfer lithograph."
+    },
+    {
+      "label": "Leaflets",
+      "count": 10505,
+      "category": "mostly-2d",
+      "exampleTitle": "An important consideration for the family doctor : Famicillin CAPS brand of ampicillin."
+    },
+    {
+      "label": "Portrait prints",
+      "count": 9286,
+      "category": "unclassified",
+      "exampleTitle": "John Armstrong. Mezzotint by E. Fisher after Sir J. Reynolds."
+    },
+    {
+      "label": "Photographs",
+      "count": 9115,
+      "category": "mostly-2d",
+      "exampleTitle": "University Children's Hospital, Vienna: children and nurses in a line, fronted by the doctor in the roof garden. Photograph, 1921."
+    },
+    {
+      "label": "Etchings",
+      "count": 8799,
+      "category": "mostly-2d",
+      "exampleTitle": "Saint Francis of Assisi having a vision of an angel playing the violin. Etching by A. Baratti after L. Lorenzi, 17--."
+    },
+    {
+      "label": "Paintings",
+      "count": 6801,
+      "category": "mostly-2d",
+      "exampleTitle": "Interior with a surgeon attending to a man's foot, and three other figures. Oil painting by a German (?) follower of David Teniers the younger."
+    },
+    {
+      "label": "Posters",
+      "count": 6711,
+      "category": "mostly-2d",
+      "exampleTitle": "AIDS prevention advert from Venezuela"
+    },
+    {
+      "label": "Photographic prints",
+      "count": 5218,
+      "category": "mostly-2d",
+      "exampleTitle": "Patton village, Chiengmai Leper Asylum, Thailand: view of cottages with mountains in the background. Photograph, 1921."
+    },
+    {
+      "label": "Watercolors",
+      "count": 3691,
+      "category": "mostly-2d",
+      "exampleTitle": "Muscles of the human body. Watercolour drawing by a Persian artist."
+    },
+    {
+      "label": "Portrait photographs",
+      "count": 3388,
+      "category": "unclassified",
+      "exampleTitle": "Holmes Coote. Photograph by Ernest Edwards, 1868."
+    },
+    {
+      "label": "Prints",
+      "count": 2987,
+      "category": "mostly-2d",
+      "exampleTitle": "A dentist scaring a patient by telling how painful the drill he is going to use is. Reproduction of a drawing after A. Yeoman, 1940."
+    },
+    {
+      "label": "Wood engravings",
+      "count": 2539,
+      "category": "mostly-2d",
+      "exampleTitle": "A Dayak shaman or medicine man holding a flaming torch and some charms. Wood engraving."
+    },
+    {
+      "label": "Oil paintings",
+      "count": 2341,
+      "category": "mostly-2d",
+      "exampleTitle": "Interior with a surgeon attending to a man's foot, and three other figures. Oil painting by a German (?) follower of David Teniers the younger."
+    },
+    {
+      "label": "Stipple engravings",
+      "count": 2288,
+      "category": "unclassified",
+      "exampleTitle": "Human skulls: three figures showing the skulls of an African, a Native American and a Chinese. Stipple engraving, 1843."
+    },
+    {
+      "label": "Drawings",
+      "count": 2256,
+      "category": "mostly-2d",
+      "exampleTitle": "A man deemed by Lavater to be sage, profound, and clear sighted. Drawing, c. 1793."
+    },
+    {
+      "label": "Caricatures",
+      "count": 2103,
+      "category": "mostly-2d",
+      "exampleTitle": "Two witches tell Macbeth (representing the Earl of Bute) that he will be king and another, holding a noose, says he will be \"Knight - the first that ever graced the Scottish annals\". Etching, 1762."
+    },
+    {
+      "label": "Intaglio prints",
+      "count": 2073,
+      "category": "mostly-2d",
+      "exampleTitle": "Oak (Quercus species): six leaves showing large variation in size. Colour nature print by A. Auer, c. 1853."
+    },
+    {
+      "label": "Gouaches",
+      "count": 2023,
+      "category": "mostly-2d",
+      "exampleTitle": "Ganga and her transport. Gouache drawing."
+    },
+    {
+      "label": "Book illustrations",
+      "count": 1939,
+      "category": "mostly-2d",
+      "exampleTitle": "Locating the 'Four Flower Points' for women with bound feet"
+    },
+    {
+      "label": "Photomechanical prints",
+      "count": 1692,
+      "category": "unclassified",
+      "exampleTitle": "Boer War: a wounded Boer General prisoner being taken off the ship at Cape Town. Process print after F. de Haenen after Fyne."
+    },
+    {
+      "label": "Gelatin silver prints",
+      "count": 1579,
+      "category": "unclassified",
+      "exampleTitle": "University Children's Hospital, Vienna: children and nurses in a line, fronted by the doctor in the roof garden. Photograph, 1921."
+    },
+    {
+      "label": "Photographic postcards",
+      "count": 1506,
+      "category": "unclassified",
+      "exampleTitle": "Two of the Raicevich brothers, wrestlers. Photographic postcard, 19--."
+    },
+    {
+      "label": "Postcards",
+      "count": 1423,
+      "category": "mostly-2d",
+      "exampleTitle": "Think, understand, act / Black HIV Forum, part of the HIV Network ; designed by Kulwant Dhaliwal at Depot Studios, Coventry."
+    },
+    {
+      "label": "Wet collodion negatives",
+      "count": 1358,
+      "category": "unclassified",
+      "exampleTitle": "Larnaca, Cyprus. Photograph by John Thomson, 1878."
+    },
+    {
+      "label": "Ink drawings",
+      "count": 1259,
+      "category": "unclassified",
+      "exampleTitle": "The muscles, bones and tendons of the arm and hand. Pen and ink, with pink, brown and blue watercolour washes, by C. Landseer, ca. 1815."
+    },
+    {
+      "label": "Broadsides",
+      "count": 1246,
+      "category": "mostly-2d",
+      "exampleTitle": "Croce : Li San Zaccaria vescovo di Gerusalemme, al quale facendo orazione a pro quella città devastata della peste, fu inspirato il presente mistero col quale restò placata sua Divina Maestà facendo cessare il sopraccennato castigo."
+    },
+    {
+      "label": "Museum object",
+      "count": 1224,
+      "category": "strong-3d",
+      "exampleTitle": "Bridal costume from La Alberca, Salamanca Province. Photograph property of Hispanic Society of America."
+    },
+    {
+      "label": "Mezzotints",
+      "count": 1158,
+      "category": "unclassified",
+      "exampleTitle": "John Armstrong. Mezzotint by E. Fisher after Sir J. Reynolds."
+    },
+    {
+      "label": "Advertising cards",
+      "count": 1152,
+      "category": "unclassified",
+      "exampleTitle": "Piriex eases a cough ... : \"The Hay-Wain\"."
+    },
+    {
+      "label": "Cards",
+      "count": 1134,
+      "category": "mostly-2d",
+      "exampleTitle": "Choose safer sex : relationships and sexual health / Health Education Authority ; photography by Cameron Spencer."
+    },
+    {
+      "label": "Aquatints",
+      "count": 986,
+      "category": "unclassified",
+      "exampleTitle": "Two sections of diseased brain. Coloured aquatint by W. Say after F. R. Say for Richard Bright, 1829."
+    },
+    {
+      "label": "Collotypes",
+      "count": 960,
+      "category": "unclassified",
+      "exampleTitle": "A clothed woman sits on a chair then stands. Collotype after Eadweard Muybridge, 1887."
+    },
+    {
+      "label": "Portrait paintings",
+      "count": 914,
+      "category": "unclassified",
+      "exampleTitle": "A man with a cutaneous horn-like growth on the scalp. Gouache, 18--, after Lam Qua, ca. 1837."
+    },
+    {
+      "label": "Motion study photographs",
+      "count": 906,
+      "category": "unclassified",
+      "exampleTitle": "A clothed woman sits on a chair then stands. Collotype after Eadweard Muybridge, 1887."
+    },
+    {
+      "label": "Periodicals",
+      "count": 850,
+      "category": "mostly-2d",
+      "exampleTitle": "Proceedings of the Royal Society of Medicine, March 1934"
+    },
+    {
+      "label": "Art brut",
+      "count": 849,
+      "category": "unclassified",
+      "exampleTitle": "A green and blue face with a downturned mouth. Watercolour by M. Bishop, 1964 (?)."
+    },
+    {
+      "label": "Chromolithographs",
+      "count": 820,
+      "category": "unclassified",
+      "exampleTitle": "Krishna as an infant on Yasoda's lap playing with a cow and a calf. Chromolithograph by R. Varma, 1896."
+    },
+    {
+      "label": "Woodcuts",
+      "count": 804,
+      "category": "mostly-2d",
+      "exampleTitle": "A Lohan (disciple of Buddha), seated on a rock, holding prayer beads. Woodcut in the manner of an ink stone rubbing, China, 18--?."
+    },
+    {
+      "label": "Advertisements",
+      "count": 791,
+      "category": "mostly-2d",
+      "exampleTitle": "An ornamental liqueur label for \"ratafia de cassis\". Engraving, 19th century."
+    },
+    {
+      "label": "Book",
+      "count": 774,
+      "category": "mostly-2d",
+      "exampleTitle": "F. Hernandez, 1517-1587, Rerum Medicarum..., 1651"
+    },
+    {
+      "label": "Albumen prints",
+      "count": 719,
+      "category": "unclassified",
+      "exampleTitle": "Srinagar, Kashmir: a large rowing boat proceeding along an inland waterway. Photograph by Samuel Bourne."
+    },
+    {
+      "label": "Humorous pictures",
+      "count": 701,
+      "category": "unclassified",
+      "exampleTitle": "A dentist scaring a patient by telling how painful the drill he is going to use is. Reproduction of a drawing after A. Yeoman, 1940."
+    },
+    {
+      "label": "Manuscript",
+      "count": 683,
+      "category": "mostly-2d",
+      "exampleTitle": "Shah Nameh, the Persian Epic of the Kings"
+    },
+    {
+      "label": "Group portraits",
+      "count": 675,
+      "category": "unclassified",
+      "exampleTitle": "King's College Medical School students visiting the Parke, Davis & Co. Laboratories, Hounslow. Photograph, 1924."
+    },
+    {
+      "label": "Allegorical prints",
+      "count": 669,
+      "category": "unclassified",
+      "exampleTitle": "Allegorical figures, including Apollo: one supports a portrait roundel of Karl Theodor, Elector Palatine, with attributes of the fine arts and of war; a view of a city beyond. Engraving by B. Hübner, 1776, after N. Guibal."
+    },
+    {
+      "label": "Periodical illustrations",
+      "count": 655,
+      "category": "unclassified",
+      "exampleTitle": "An English iris (Iris latifolia): flower and leaf. Coloured engraving by F. Sansom, c. 1803, after S. Edwards."
+    },
+    {
+      "label": "Archives",
+      "count": 639,
+      "category": "unclassified",
+      "exampleTitle": "Letter from J. Broadbent to Dr. Snipe re. supply of lemons"
+    },
+    {
+      "label": "Pencil works",
+      "count": 627,
+      "category": "unclassified",
+      "exampleTitle": "A man deemed by Lavater to be sage, profound, and clear sighted. Drawing, c. 1793."
+    },
+    {
+      "label": "Photograph albums",
+      "count": 598,
+      "category": "unclassified",
+      "exampleTitle": "Archaeological excavations at Gebel Moya (Jebel Moya), Sudan: season of 1910-1911, and Segadi, Sudan, 1912-1925. Photographs, 19--."
+    },
+    {
+      "label": "Blotting paper",
+      "count": 460,
+      "category": "unclassified",
+      "exampleTitle": "Bynin Amara : as a tonic for administration after influenza : February, March, April."
+    },
+    {
+      "label": "Pamphlets",
+      "count": 396,
+      "category": "mostly-2d",
+      "exampleTitle": "Are you afraid to laugh? / Goodall's Dental Institute."
+    },
+    {
+      "label": "Panoramic views",
+      "count": 388,
+      "category": "unclassified",
+      "exampleTitle": "Matlock Bath, Derbyshire: panoramic view. Tinted lithograph by G. Rowe."
+    },
+    {
+      "label": "Allegorical drawings",
+      "count": 387,
+      "category": "unclassified",
+      "exampleTitle": "Allegory of water: a woman holding a ship on her shoulders; Moses leading Israelites out of Egypt while Pharaoh and the Egyptians drown. Drawing, ca. 1740."
+    },
+    {
+      "label": "Woodcuts - Japan",
+      "count": 366,
+      "category": "unclassified",
+      "exampleTitle": "Four actors as ruffians against a check background. Colour woodcut by Kunisada I, 1858."
+    },
+    {
+      "label": "Labels",
+      "count": 344,
+      "category": "unclassified",
+      "exampleTitle": "An ornamental liqueur label for \"ratafia de cassis\". Engraving, 19th century."
+    },
+    {
+      "label": "Portrait drawings",
+      "count": 344,
+      "category": "unclassified",
+      "exampleTitle": "Giuseppe Gazzeri. Pencil drawing by C. E. Liverati."
+    },
+    {
+      "label": "Landscape prints",
+      "count": 337,
+      "category": "unclassified",
+      "exampleTitle": "Pyramids at Gîza, Egypt. Coloured lithograph by Louis Haghe after David Roberts, 1848."
+    },
+    {
+      "label": "Handbills",
+      "count": 332,
+      "category": "mostly-2d",
+      "exampleTitle": "[Undated handbill (November 1889?) advertising an exhibition of Elizabeth Lyska, a Russian giantess over 7 feet tall, at the South London Palace]."
+    },
+    {
+      "label": "Landscape photographs",
+      "count": 328,
+      "category": "unclassified",
+      "exampleTitle": "Srinagar, Kashmir: a large rowing boat proceeding along an inland waterway. Photograph by Samuel Bourne."
+    },
+    {
+      "label": "Calendars",
+      "count": 324,
+      "category": "unclassified",
+      "exampleTitle": "A skeleton dressed as a gentleman holding a letter and a bag which identify him as a door-to-door salesman of poor-quality drugs. Lithograph by L. Crusius, 1899."
+    },
+    {
+      "label": "Cityscape photographs",
+      "count": 321,
+      "category": "unclassified",
+      "exampleTitle": "Larnaca, Cyprus. Photograph by John Thomson, 1878."
+    },
+    {
+      "label": "Clippings",
+      "count": 311,
+      "category": "mostly-2d",
+      "exampleTitle": "[Newspaper cutting about an appearance by a giant in London on 12 May 1716: \"A chronicle of curious events\"]."
+    },
+    {
+      "label": "Genre photographs",
+      "count": 304,
+      "category": "unclassified",
+      "exampleTitle": "China: a dealer in curiosities"
+    },
+    {
+      "label": "Travel sketches",
+      "count": 292,
+      "category": "unclassified",
+      "exampleTitle": "Pyramids at Gîza, Egypt. Coloured lithograph by Louis Haghe after David Roberts, 1848."
+    },
+    {
+      "label": "Photogravures",
+      "count": 287,
+      "category": "unclassified",
+      "exampleTitle": "Saint Bonaventure. Colour photogravure, 1898."
+    },
+    {
+      "label": "Menus",
+      "count": 259,
+      "category": "unclassified",
+      "exampleTitle": "Blenheim Palace / Union-Castle."
+    },
+    {
+      "label": "Letter",
+      "count": 256,
+      "category": "unclassified",
+      "exampleTitle": "Letter from David Livingstone 1841 to 1865"
+    },
+    {
+      "label": "Song sheets",
+      "count": 246,
+      "category": "unclassified",
+      "exampleTitle": "Jonathan Jay : humorous patter song / written, composed and sung by Clifford Grey."
+    },
+    {
+      "label": "Waterscape photographs",
+      "count": 242,
+      "category": "unclassified",
+      "exampleTitle": "Foochow, Fukien province, China. Photograph, 1981, from a negative by John Thomson, 1870/1871."
+    },
+    {
+      "label": "Graphite drawings",
+      "count": 237,
+      "category": "unclassified",
+      "exampleTitle": "The shepherds adoring the Christ Child. Drawing by F. Rosaspina."
+    },
+    {
+      "label": "Incunabula",
+      "count": 232,
+      "category": "unclassified",
+      "exampleTitle": "Ortus sanitatis."
+    },
+    {
+      "label": "Novelty works",
+      "count": 220,
+      "category": "unclassified",
+      "exampleTitle": "Finest chocolate truffle : wir wünschen ihnen einen guten Flug! / Lufthansa CityLine ; DreiMeister Spezialitäten Hans Schröder GmbH."
+    },
+    {
+      "label": "Illustrated works",
+      "count": 218,
+      "category": "unclassified",
+      "exampleTitle": "Cascade du Rio de Vinegre"
+    },
+    {
+      "label": "Line photoengravings",
+      "count": 199,
+      "category": "unclassified",
+      "exampleTitle": "Left"
+    },
+    {
+      "label": "Chalk drawings",
+      "count": 197,
+      "category": "unclassified",
+      "exampleTitle": "Trunk and neck of an écorché figure (life-size), lying prone: the ribs and scapula are also visible. Red chalk and pencil drawing, with bodycolour, by C. Landseer, ca. 1815."
+    },
+    {
+      "label": "Cityscape prints",
+      "count": 196,
+      "category": "unclassified",
+      "exampleTitle": "Matlock Bath, Derbyshire: panoramic view. Tinted lithograph by G. Rowe."
+    },
+    {
+      "label": "Packaging",
+      "count": 193,
+      "category": "unclassified",
+      "exampleTitle": "Sutherland Lubricating Jelly : water soluble for general lubricating needs."
+    },
+    {
+      "label": "Cartes de visite",
+      "count": 183,
+      "category": "unclassified",
+      "exampleTitle": "A baby with an encephalocele lying on a bed. Photographs by F.A. Hudson, 1869."
+    },
+    {
+      "label": "Stickers",
+      "count": 178,
+      "category": "unclassified",
+      "exampleTitle": "Stop AIDS."
+    },
+    {
+      "label": "Albums",
+      "count": 176,
+      "category": "unclassified",
+      "exampleTitle": "Sketches in the Malay archipelago. Album of watercolours and photographs made and collected by J.E. Taylor."
+    },
+    {
+      "label": "Anatomical fugitive sheets",
+      "count": 175,
+      "category": "unclassified",
+      "exampleTitle": "Anatomical fugitive sheets"
+    },
+    {
+      "label": "Gameboards",
+      "count": 165,
+      "category": "unclassified",
+      "exampleTitle": "Choices : a game about H.I.V. & AIDS / produced by Lothian Regional Council Community Education Service."
+    },
+    {
+      "label": "Votive offerings",
+      "count": 165,
+      "category": "strong-3d",
+      "exampleTitle": "A boy falling off a building. Oil painting."
+    },
+    {
+      "label": "Bookmarks",
+      "count": 159,
+      "category": "unclassified",
+      "exampleTitle": "Genticin gentamicin sulphate."
+    },
+    {
+      "label": "Postal stationery",
+      "count": 159,
+      "category": "unclassified",
+      "exampleTitle": "Best for me best for you! : Beecham's Pills."
+    },
+    {
+      "label": "Stationery",
+      "count": 159,
+      "category": "unclassified",
+      "exampleTitle": "Asylums ephemera. Box 1."
+    },
+    {
+      "label": "Letterheads",
+      "count": 140,
+      "category": "unclassified",
+      "exampleTitle": "Lablogic : St Johns House, 131 Psalter Lane, Sheffield S11 8UX."
+    },
+    {
+      "label": "Title pages",
+      "count": 136,
+      "category": "unclassified",
+      "exampleTitle": "An anatomical dissection being carried out by Andreas Vesalius, attended by a large group of observers. Woodcut, 1543."
+    },
+    {
+      "label": "Manuscripts",
+      "count": 134,
+      "category": "unclassified",
+      "exampleTitle": "A copy of the tantric work Nihsvasatattvasamhita transcribed by Bauddhaesevita Vajracarya for Dr Paira Mall (1874 - 1957) in Katmandu, Nepal, c. 1912, from a palm-leaf manuscript."
+    },
+    {
+      "label": "Manufacturers' catalogues",
+      "count": 131,
+      "category": "unclassified",
+      "exampleTitle": "Aspirators. Manufacturer's catalogue, p. 286."
+    },
+    {
+      "label": "Tankas (Tibetan scrolls)",
+      "count": 131,
+      "category": "unclassified",
+      "exampleTitle": "Attributes of dPal-ldan Lha-mo in a \"rgyan tshogs\" banner. Distemper painting by a Tibetan painter."
+    },
+    {
+      "label": "Distemper painting",
+      "count": 126,
+      "category": "unclassified",
+      "exampleTitle": "Attributes of dPal-ldan Lha-mo in a \"rgyan tshogs\" banner. Distemper painting by a Tibetan painter."
+    },
+    {
+      "label": "Memento mori",
+      "count": 126,
+      "category": "unclassified",
+      "exampleTitle": "King Richard II as described by William Shakespeare. Drawing after J.H. Mortimer."
+    },
+    {
+      "label": "Trade cards",
+      "count": 117,
+      "category": "supporting-3d",
+      "exampleTitle": "Veduta di Tobolsk : accampamento di Kirghiz / Liebig's Extract of Meat Company Limited."
+    },
+    {
+      "label": "Bird's-eye view prints",
+      "count": 116,
+      "category": "unclassified",
+      "exampleTitle": "Matlock Bath, Derbyshire: from the Old Bath Terrace. Aquatint by H. Moore, 1831, after himself."
+    },
+    {
+      "label": "Letters",
+      "count": 116,
+      "category": "unclassified",
+      "exampleTitle": "Children and HIV : Rome symposium / Symposium on the needs of children and familes affected by HIV - a European perspective, National Children's Bureau, The Institute of Health ; sponsored by the Wellcome Foundation Ltd. as part of its international Positive Action programme of HIV education, care and community support."
+    },
+    {
+      "label": "Self-portraits",
+      "count": 116,
+      "category": "unclassified",
+      "exampleTitle": "16th self-portrait."
+    },
+    {
+      "label": "Waterscape prints",
+      "count": 115,
+      "category": "unclassified",
+      "exampleTitle": "The hypaethral, or roofless, temple on the island of Philae, Egypt. Coloured lithograph by Louis Haghe after David Roberts, 1849."
+    },
+    {
+      "label": "Wash drawings",
+      "count": 114,
+      "category": "unclassified",
+      "exampleTitle": "The muscles, bones and tendons of the arm and hand. Pen and ink, with pink, brown and blue watercolour washes, by C. Landseer, ca. 1815."
+    },
+    {
+      "label": "Condoms",
+      "count": 112,
+      "category": "strong-3d",
+      "exampleTitle": "Freedoms : pick one up / Pan-London HIV Prevention Programme."
+    },
+    {
+      "label": "Musical works",
+      "count": 111,
+      "category": "unclassified",
+      "exampleTitle": "Oversize ephemera : Medical songs 2."
+    },
+    {
+      "label": "Soft-ground etchings",
+      "count": 108,
+      "category": "unclassified",
+      "exampleTitle": "Mosque at Ghazipur, Uttar Pradesh. Etching by William Hodges, 1787."
+    },
+    {
+      "label": "Painting, Kalighat",
+      "count": 107,
+      "category": "unclassified",
+      "exampleTitle": "Two Europeans undress an Indian deity. Watercolour by an Indian artist, ca. 1890."
+    },
+    {
+      "label": "Platinum prints",
+      "count": 107,
+      "category": "unclassified",
+      "exampleTitle": "Sarawak: two Sea Dayaks at a cockfight. Photograph."
+    },
+    {
+      "label": "Halftone photomechanical prints",
+      "count": 104,
+      "category": "unclassified",
+      "exampleTitle": "Ferdinand Sauerbruch addressing a class in the new lecture hall: the University Surgical Clinic of the Charité Hospital, Berlin. Process print after M. Koser, ca. 1935."
+    },
+    {
+      "label": "Collected works",
+      "count": 103,
+      "category": "unclassified",
+      "exampleTitle": "Galeni Omnia quae extant opera ..."
+    },
+    {
+      "label": "Woodburytypes",
+      "count": 101,
+      "category": "unclassified",
+      "exampleTitle": "Natal, South Africa: the Town Hall in Durban. Woodburytype, 1888, after a photograph by Robert Harris."
+    },
+    {
+      "label": "Bird's-eye views",
+      "count": 98,
+      "category": "unclassified",
+      "exampleTitle": "Guy's Hospital, Southwark: an aerial view, with smaller scenes around three sides. Facsimile after T. Bowles, c.1724."
+    },
+    {
+      "label": "Songs",
+      "count": 98,
+      "category": "unclassified",
+      "exampleTitle": "Oversize ephemera : Medical songs 2."
+    },
+    {
+      "label": "Floor plans",
+      "count": 93,
+      "category": "unclassified",
+      "exampleTitle": "Parochial Schools, Isleworth, Middlesex: with floor plans and text. Wood engraving."
+    },
+    {
+      "label": "Music title pages",
+      "count": 93,
+      "category": "unclassified",
+      "exampleTitle": "Oversize ephemera : Medical songs 2."
+    },
+    {
+      "label": "Steel engravings",
+      "count": 92,
+      "category": "unclassified",
+      "exampleTitle": "A fox dressed as a monk is greeting a passing hare with a walking stick. Etching by A. Fox after J. Wolf."
+    },
+    {
+      "label": "Crayon manner prints",
+      "count": 89,
+      "category": "unclassified",
+      "exampleTitle": "An écorché figure lying prone on a table, with left arm extended and right hand clasping its head. Crayon manner print by Lavalée, after J. Gamelin, 1778/1779."
+    },
+    {
+      "label": "Maps",
+      "count": 89,
+      "category": "unclassified",
+      "exampleTitle": "Planning an accessible journey with Southeastern : station access guide / Southeastern."
+    },
+    {
+      "label": "Bags",
+      "count": 88,
+      "category": "strong-3d",
+      "exampleTitle": "Bile Beans keep you healthy, happy and slim ... keep you fit & well and are excellent for constipation, headaches and biliousness."
+    },
+    {
+      "label": "Periodical",
+      "count": 88,
+      "category": "unclassified",
+      "exampleTitle": "Cup and ring markings on rock, Luss, Probably Bronze Age."
+    },
+    {
+      "label": "Certificates",
+      "count": 85,
+      "category": "unclassified",
+      "exampleTitle": "1972 : Happy new year = Glückliches Neujahr = Bonne nouvelle année : [calendar] / [edited by Lajos Vörösházy ; contributor József Antall]."
+    },
+    {
+      "label": "Sketches",
+      "count": 83,
+      "category": "unclassified",
+      "exampleTitle": "Five flowering plants, two possibly Aquilegia species. Watercolour, c. 1870."
+    },
+    {
+      "label": "Charts",
+      "count": 81,
+      "category": "unclassified",
+      "exampleTitle": "Syphilis and gonorrhoea: graphs showing their increased incidence in Bavaria, and a woman in despair. Colour lithograph by H. Ehlers, 1946."
+    },
+    {
+      "label": "Satires",
+      "count": 80,
+      "category": "unclassified",
+      "exampleTitle": "Jonathan Jay : humorous patter song / written, composed and sung by Clifford Grey."
+    },
+    {
+      "label": "Travel literature",
+      "count": 80,
+      "category": "unclassified",
+      "exampleTitle": "The cruise of the \"Port Kingston\" / by W. Ralph Hall Caine."
+    },
+    {
+      "label": "Display cards",
+      "count": 78,
+      "category": "unclassified",
+      "exampleTitle": "Salvo Petrolio : the perfection of petroleum jelly : absolutely genuine parafinum molle of the purest form / The Dee Oil Company Ltd."
+    },
+    {
+      "label": "Forms (Documents)",
+      "count": 75,
+      "category": "unclassified",
+      "exampleTitle": "Analysis and enrolment form for the attention of Charles Atlas : 40-42, Chandos Street, London, W.CA."
+    },
+    {
+      "label": "Cut-paper works",
+      "count": 73,
+      "category": "unclassified",
+      "exampleTitle": "Saint Francis of Assisi receiving the stigmata of Christ. Gouache and cut-paper work."
+    },
+    {
+      "label": "Radiographs",
+      "count": 73,
+      "category": "unclassified",
+      "exampleTitle": "Foot of a Chinese woman, showing the effect of foot-binding. Photograph by (?) E.P. Minett, 192-."
+    },
+    {
+      "label": "Paper toys",
+      "count": 72,
+      "category": "unclassified",
+      "exampleTitle": "Carter's Little Liver Pills."
+    },
+    {
+      "label": "Allegorical paintings",
+      "count": 71,
+      "category": "unclassified",
+      "exampleTitle": "A surgeon in his workroom extracting stones from a man's head; symbolising the expulsion of 'folly' (insanity). Gouache painting by J. Einsle, 1806, after G. Dou."
+    },
+    {
+      "label": "Christmas cards",
+      "count": 69,
+      "category": "unclassified",
+      "exampleTitle": "Through the window / designed by Sarah Adams ; sold in aid of Blue Cross."
+    },
+    {
+      "label": "Photolithographs",
+      "count": 69,
+      "category": "unclassified",
+      "exampleTitle": "Men are performing a variety of gymnastic and physical exercises. Photolithograph."
+    },
+    {
+      "label": "Almanacs",
+      "count": 67,
+      "category": "unclassified",
+      "exampleTitle": "Frende. 1593. A new almanacke and prognostication, seruing for the yeere of our Lorde God. M.D. XCIII. : Composed according to lawfull and lawdable art, and referred specially to the meridian and eleuation of the northeren pole of Canterburie, but may serue vniuersally, without any great error, for most partes of Englande. / By Gabriell Frende, practitioner in Astrologie and phisicke."
+    },
+    {
+      "label": "Photocopies",
+      "count": 67,
+      "category": "unclassified",
+      "exampleTitle": "Evening event in 1994 for those with HIV and AIDS by Kursiv"
+    },
+    {
+      "label": "Account books",
+      "count": 64,
+      "category": "unclassified",
+      "exampleTitle": "Milk book / Camp & Co."
+    },
+    {
+      "label": "Erotica",
+      "count": 64,
+      "category": "unclassified",
+      "exampleTitle": "A silk handkerchief printed with a description of an erotic encounter with the words in the form of breasts. Mixed media, 1802, after E. Parny."
+    },
+    {
+      "label": "Genre prints",
+      "count": 63,
+      "category": "unclassified",
+      "exampleTitle": "A horse disturbs a dying bonfire with its hooves, ignoring its rider's whip and the angry shouts of two women whose laundry is being covered in ashes. Coloured lithograph by A. Strassgschwandtner after himself, ca. 1860."
+    },
+    {
+      "label": "Banners - Tibet",
+      "count": 62,
+      "category": "unclassified",
+      "exampleTitle": "Attributes of dPal-ldan Lha-mo in a \"rgyan tshogs\" banner. Distemper painting by a Tibetan painter."
+    },
+    {
+      "label": "Print",
+      "count": 60,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of George Field (1777-1854), by Lucas after Rothwell - sheet"
+    },
+    {
+      "label": "Envelopes",
+      "count": 59,
+      "category": "unclassified",
+      "exampleTitle": "Findus lean cuisine / Findus."
+    },
+    {
+      "label": "Silhouettes",
+      "count": 59,
+      "category": "unclassified",
+      "exampleTitle": "Heinrich Sander. Engraved silhouette."
+    },
+    {
+      "label": "Academic dissertations",
+      "count": 58,
+      "category": "unclassified",
+      "exampleTitle": "Chiropodologia, or, A scientific enquiry into the causes of corns, warts, onions, and other painful or offensive cutaneous excrescences : with a detail of the most successful methods of removing all deformities of the nails; and of preserving, or restoring, to the feet and hands their natural soundness and beauty. The whole ... systematically confirmed by the practice and experience of D. Low, chiropodist."
+    },
+    {
+      "label": "Devotional images",
+      "count": 56,
+      "category": "unclassified",
+      "exampleTitle": "Saint Benedict: his soul ascending to heaven as a sign of his patronage of the dying. Line engraving, 17--."
+    },
+    {
+      "label": "Biographies",
+      "count": 54,
+      "category": "unclassified",
+      "exampleTitle": "Life and letters of Dr. William Beaumont : including hitherto unpublished data concerning the case of Alexis St. Martin / by Jesse S. Myer ... with an introduction by Sir William Osler ... with fifty-eight illustrations."
+    },
+    {
+      "label": "Badges",
+      "count": 52,
+      "category": "strong-3d",
+      "exampleTitle": "[Rectangular Taking Care campaign symbol plastic badge]."
+    },
+    {
+      "label": "Parodies",
+      "count": 52,
+      "category": "unclassified",
+      "exampleTitle": "The Congress of Berlin: Disraeli as a tooth-drawer, assisted by Queen Victoria, operates on Sultan Abdul Hamid II of the Ottoman Empire, surrounded by political figures from France, Germany etc. Coloured lithograph by J.J. van Brederode after Jan Steen, 1878."
+    },
+    {
+      "label": "Pictorial envelopes",
+      "count": 52,
+      "category": "unclassified",
+      "exampleTitle": "Benecol : proven to reduce cholesterol / Benecol Information Service."
+    },
+    {
+      "label": "Screen prints",
+      "count": 52,
+      "category": "unclassified",
+      "exampleTitle": "A blind-folded man dressed in black stands in the corner of a room open to the sky; he looks down at a white skull, representing ignorance of the lethal effects of AIDS. Colour silk screen print after Moebius, 1993."
+    },
+    {
+      "label": "Greeting cards",
+      "count": 50,
+      "category": "unclassified",
+      "exampleTitle": "A young man holding flowers and smiling; with Happy Easter wishes in gold. Coloured photographic postcard, 192-."
+    },
+    {
+      "label": "Tempera paintings",
+      "count": 50,
+      "category": "unclassified",
+      "exampleTitle": "Saint Peter. Tempera painting by a Spanish painter, 14th century."
+    },
+    {
+      "label": "Billheads",
+      "count": 48,
+      "category": "unclassified",
+      "exampleTitle": "Bought of George Walker : florist, fruiterer & greengrocer : button holes, dress sprays, wreaths and crosses : families waited upon daily for orders."
+    },
+    {
+      "label": "Stereographs",
+      "count": 47,
+      "category": "unclassified",
+      "exampleTitle": "Anatomy: a dissection of the abdomen showing the abdominal cavity. Photograph, ca. 1900."
+    },
+    {
+      "label": "Tickets",
+      "count": 47,
+      "category": "unclassified",
+      "exampleTitle": "Retailer's sugar ticket / issued under the authority of the Food Controller."
+    },
+    {
+      "label": "Annual reports",
+      "count": 46,
+      "category": "unclassified",
+      "exampleTitle": "[Report] / Medical Officer of Health and School Medical Officer of Health, London County Council."
+    },
+    {
+      "label": "Quick Ref. Collection",
+      "count": 46,
+      "category": "unclassified",
+      "exampleTitle": "List of the members, etc. MDCCCXXII [1825, 1833, 1835, 1840]."
+    },
+    {
+      "label": "Pastels (Visual works)",
+      "count": 45,
+      "category": "unclassified",
+      "exampleTitle": "Head of a woman. Pastel drawing."
+    },
+    {
+      "label": "Prospectuses",
+      "count": 44,
+      "category": "unclassified",
+      "exampleTitle": "The Tavistock Clinic AIDS counselling course."
+    },
+    {
+      "label": "Scrapbooks",
+      "count": 44,
+      "category": "unclassified",
+      "exampleTitle": "Dental memoranda / collected by T. Purland (1844)."
+    },
+    {
+      "label": "Zincographs",
+      "count": 44,
+      "category": "unclassified",
+      "exampleTitle": "A pitcher plant (Sarracenia drummondii): two pitchers and a small depiction of an entire plant. Coloured zincograph by L. Constans, c. 1850, after himself."
+    },
+    {
+      "label": "Direct mail",
+      "count": 43,
+      "category": "unclassified",
+      "exampleTitle": "\"Il n'est que d'avoir la clef des champs\" : [Histantin] / Burroughs Wellcome and Co."
+    },
+    {
+      "label": "Newsletters",
+      "count": 43,
+      "category": "unclassified",
+      "exampleTitle": "Journal d'info Été 2011 : L'ANRS prépare un essai important pour l'avenir de la prévention chez les gays / ANRS, IPERGAY."
+    },
+    {
+      "label": "Plans",
+      "count": 43,
+      "category": "unclassified",
+      "exampleTitle": "The Natural History Museum, South Kensington: plan, above, and the street elevation, below. Photo-lithograph after M. B. Adams, 1879, after A. Waterhouse."
+    },
+    {
+      "label": "Crayon drawings",
+      "count": 42,
+      "category": "unclassified",
+      "exampleTitle": "Saint Pantaleon. Crayon drawing."
+    },
+    {
+      "label": "Glass negatives",
+      "count": 41,
+      "category": "unclassified",
+      "exampleTitle": "Gloucester smallpox epidemic, 1896: Kate Mills, a smallpox patient. Photograph by H.C.F., 1896."
+    },
+    {
+      "label": "Painting",
+      "count": 41,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of William Harvey [1578 - 1657], surgeon"
+    },
+    {
+      "label": "Atlases (Scientific)",
+      "count": 38,
+      "category": "unclassified",
+      "exampleTitle": "A course of operative surgery / with plates drawn from nature by M. Léveillé and coloured by hand under his direction ; by Christopher Heath."
+    },
+    {
+      "label": "Diagrams",
+      "count": 38,
+      "category": "unclassified",
+      "exampleTitle": "Head of \"a backward boy\" divided into four cerebral lobes: profile. Ink drawing with watercolour, c. 1900."
+    },
+    {
+      "label": "Puzzles",
+      "count": 38,
+      "category": "unclassified",
+      "exampleTitle": "Beechams \"B\" puzzle : \"B\" is for Beechams, and many other things. See who can count the greatest number ...  / Beechams."
+    },
+    {
+      "label": "Singerie (Art)",
+      "count": 37,
+      "category": "unclassified",
+      "exampleTitle": "A monkey holding a clyster in an apothecary's shop. Engraving after D. Teniers the younger."
+    },
+    {
+      "label": "Vanitas (Art)",
+      "count": 37,
+      "category": "unclassified",
+      "exampleTitle": "King Richard II as described by William Shakespeare. Drawing after J.H. Mortimer."
+    },
+    {
+      "label": "Bookplates",
+      "count": 32,
+      "category": "unclassified",
+      "exampleTitle": "Leh, the capital of Ladak, in western Tibet"
+    },
+    {
+      "label": "Engraving",
+      "count": 32,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of Theodor Billroth (1829-1894). Reproduction of engraving, half-length to left in oval, with signature"
+    },
+    {
+      "label": "Statistics",
+      "count": 32,
+      "category": "unclassified",
+      "exampleTitle": "A human figure erratically painted by Herman Brood, representing statistics of mental illness in the Netherlands for 1997. Colour lithograph for the Trimbos-instituut, 2000."
+    },
+    {
+      "label": "Business cards",
+      "count": 31,
+      "category": "unclassified",
+      "exampleTitle": "ASK : 48 Grafton Way, London W1, 020 7388 8108."
+    },
+    {
+      "label": "Price lists",
+      "count": 30,
+      "category": "unclassified",
+      "exampleTitle": "U.K. summary price list : November 1993 / Hybaid Limited."
+    },
+    {
+      "label": "Then & now comparisons",
+      "count": 30,
+      "category": "unclassified",
+      "exampleTitle": "Charles Bradlaugh being arrested by the police in 1881 for refusing to take the oath as a Member of Parliament, and subsequently rejoicing at the passage of his Oaths Bill in 1888. Colour lithograph by Tom Merry, 1888."
+    },
+    {
+      "label": "Cigarette cards",
+      "count": 29,
+      "category": "unclassified",
+      "exampleTitle": "Air raid wardens and civilian volunteer despatch-rider / W.D. & H.O. Wills."
+    },
+    {
+      "label": "Portrait sculpture",
+      "count": 29,
+      "category": "strong-3d",
+      "exampleTitle": "René Descartes. Ivory relief."
+    },
+    {
+      "label": "Protest posters",
+      "count": 28,
+      "category": "unclassified",
+      "exampleTitle": "President George H.W. Bush and Barbara Pierce Bush represented as members of \"the Rich White Penis Club\", with speech bubbles; anti-government protest about US AIDS policies by Enema Productions. Photocopy."
+    },
+    {
+      "label": "Composite photographs",
+      "count": 27,
+      "category": "unclassified",
+      "exampleTitle": "Two characters played by Shaun Glenville, one in male and one in female costume."
+    },
+    {
+      "label": "Daguerreotypes",
+      "count": 27,
+      "category": "unclassified",
+      "exampleTitle": "An elderly man after his death. Photograph, 1840/1855."
+    },
+    {
+      "label": "Magazine inserts",
+      "count": 27,
+      "category": "unclassified",
+      "exampleTitle": "Nature's gift to mankind / The Bile Bean Manufacturing Co."
+    },
+    {
+      "label": "Oil sketches",
+      "count": 27,
+      "category": "unclassified",
+      "exampleTitle": "John Hunter (1728-1793), surgeon and anatomist. Oil painting after Sir Joshua Reynolds."
+    },
+    {
+      "label": "Album",
+      "count": 26,
+      "category": "unclassified",
+      "exampleTitle": "Qilao. Three men from the Qilao ethnic group drinking"
+    },
+    {
+      "label": "Boxes",
+      "count": 26,
+      "category": "strong-3d",
+      "exampleTitle": "Bio-Light : the 3-day detox diet : lose weight, look good, feel great / Bioconcepts Limited."
+    },
+    {
+      "label": "Memoirs",
+      "count": 26,
+      "category": "unclassified",
+      "exampleTitle": "Missionary travels and researches in South Africa : including a sketch of sixteen years' residence in the interior of Africa ... / by David Livingstone."
+    },
+    {
+      "label": "Miniatures (Paintings)",
+      "count": 26,
+      "category": "unclassified",
+      "exampleTitle": "The presentation of Jesus at the Temple. Painting."
+    },
+    {
+      "label": "Postcard",
+      "count": 26,
+      "category": "unclassified",
+      "exampleTitle": "The Greenbier. White Sulpur Springs. West Virginia"
+    },
+    {
+      "label": "Electronic journals",
+      "count": 25,
+      "category": "unclassified",
+      "exampleTitle": "Two photographs showing primitive myopathy. Caption: 'Myopathie Primitive Generalisee'"
+    },
+    {
+      "label": "Frontispieces",
+      "count": 25,
+      "category": "unclassified",
+      "exampleTitle": "Surgery: a doctoral candidate defending a thesis in surgery at the Académie Royale de Chirurgie, Paris. Etching by P.F. Tardieu after C. Eisen, 1751."
+    },
+    {
+      "label": "Patents",
+      "count": 25,
+      "category": "unclassified",
+      "exampleTitle": "Patent for dental syringes, 1897."
+    },
+    {
+      "label": "Proclamations",
+      "count": 25,
+      "category": "unclassified",
+      "exampleTitle": "Ludwig Georg von Gottes Gnaden Marggraff zu Baaden und Hochberg ... : Demnach den letzt fürgewester Engen Grenz Versammlung in Ulm Occasione der in dem Bannat Temesvvar, Fürstenhum Siebengebürgen / und anderen Orthen im Königreich Hungarn / sich unter den Menschen hervorgethaner gefährlichen Seuche halber nachstehender Schluss abgefast worden : Welchergestalten sich vor einiger Zeit in dem Bannat Temesvvar, nicht weniger in dem Fürstenhum Siebengebürgen und andernandern Orten in dem Königreich Hungarn eine gefährliche Seuche unter denen Menschen hiervor gethan ... den allen Städten / flechen und Dörffern zu publiciren / und an denen Rath-häusern oder anderen gewöhnlichen Orten offentlich zu affigeren. Signatum in Ulm/ den 10. Novembr. 1738 / Der Fürsten und Stände des löbl. Schwäblichen Grenzes den gegenwärtig versammleten Engern Convent anwesende Räthe / Bottschaffter und Gesandte. (L.S.) ... Signatum Rastadt den 22ten Novembris 1738. Louis W. zu Baaden. Ad mandatum serenissimi Domini Marchionis proprium. Schmid de Wellenburg."
+    },
+    {
+      "label": "Programs",
+      "count": 25,
+      "category": "unclassified",
+      "exampleTitle": "[Programme of opening ceremony of the Hackney & Stoke Newington Red Cross Hospital, Downs Park Road, Clapton, London 29 January 1916]."
+    },
+    {
+      "label": "Catalogues",
+      "count": 24,
+      "category": "unclassified",
+      "exampleTitle": "Anzeigen."
+    },
+    {
+      "label": "Emblem pictures",
+      "count": 24,
+      "category": "unclassified",
+      "exampleTitle": "The soul being refined like metal in a crucible by an angel, Satan, Venus and Death; representing a test of faith. Etching by C. Murer, ca. 1600-1614."
+    },
+    {
+      "label": "Icons, Russian",
+      "count": 24,
+      "category": "unclassified",
+      "exampleTitle": "The Virgin and Child. Tempera painting."
+    },
+    {
+      "label": "Poems",
+      "count": 24,
+      "category": "unclassified",
+      "exampleTitle": "What is a horse? / with the compliments of Rob. V. Avezaat, exporter and importer of high class horses, 121, Elgin Avenue, London, W.9. who always uses and recommends Cupiss' Constitution Balls."
+    },
+    {
+      "label": "Architectural drawings",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "The lazaretto of Varignano at La Spezia: side view of the premises. Pen drawing by I. Cremona, c. 1825."
+    },
+    {
+      "label": "Collages",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "The Virgin of Loreto with a piece of the actual veil with which it was covered on Maundy Thursday and Good Friday of an unspecified year; attached with a paper seal. Woodcut with attached cloth."
+    },
+    {
+      "label": "Drypoints",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "An itinerant musician playing to an audience using an instrument that is partly made out of an animal's bladder. Drypoint by L. Flameng."
+    },
+    {
+      "label": "Landscape drawings",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "Cavalry marching through a mountain river, Afghanistan. Watercolour."
+    },
+    {
+      "label": "Newspapers",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "The Gloucester journal. Vol. LXXXVII. No. 4476, Monday, January 4, 1808 / printed and published by D. Walker, (successor to R. Raikes,) near the Cross, Westgate Street."
+    },
+    {
+      "label": "Postmortem photographs",
+      "count": 23,
+      "category": "unclassified",
+      "exampleTitle": "Santa Maria della Concezione, Rome: skulls and skeletons of the friars arranged in arches and columns around the walls of the Convento dei Cappuccini. Photograph."
+    },
+    {
+      "label": "Charcoal drawings",
+      "count": 22,
+      "category": "unclassified",
+      "exampleTitle": "World War I: stretcher bearers. Charcoal drawing."
+    },
+    {
+      "label": "Design drawings",
+      "count": 22,
+      "category": "unclassified",
+      "exampleTitle": "A design for a [ferry?] pier at Gravesend, Kent. Lithograph after J. B. Redman."
+    },
+    {
+      "label": "Exhibition posters",
+      "count": 22,
+      "category": "unclassified",
+      "exampleTitle": "Artwork exhibited at an AIDS painting workshop in Elmshorn, Germany. Photocopy, 1994."
+    },
+    {
+      "label": "Hold-to-light works",
+      "count": 22,
+      "category": "unclassified",
+      "exampleTitle": "Bovril : \"It's not the cowl that makes the monk\" but Bovril makes the man : made from prime fresh ox beef / Bovril Limited."
+    },
+    {
+      "label": "Sandals",
+      "count": 21,
+      "category": "strong-3d",
+      "exampleTitle": "Red and white sandals - HIV / AIDS awareness."
+    },
+    {
+      "label": "Letter pictures",
+      "count": 20,
+      "category": "unclassified",
+      "exampleTitle": "The Duke of Wellington, portrayed in words. Lithograph."
+    },
+    {
+      "label": "MOH reports",
+      "count": 20,
+      "category": "unclassified",
+      "exampleTitle": "[Report] / Medical Officer of Health and School Medical Officer of Health, London County Council."
+    },
+    {
+      "label": "Valentines",
+      "count": 20,
+      "category": "unclassified",
+      "exampleTitle": "My valentine : if you'll be mine, we'll never part for I'll be yours with all my heart."
+    },
+    {
+      "label": "Icons",
+      "count": 19,
+      "category": "unclassified",
+      "exampleTitle": "The fountain of life. Oil painting."
+    },
+    {
+      "label": "Membership cards",
+      "count": 19,
+      "category": "unclassified",
+      "exampleTitle": "[Membership form (Form D (8) - certificate of enrolment) for the British Red Cross Society. Issued in February 1938]."
+    },
+    {
+      "label": "Unfinished works of art",
+      "count": 19,
+      "category": "unclassified",
+      "exampleTitle": "Shepherds and shepherdesses with sheep in countryside by a river. Etching by J. Desaulx and F. Godefroy, ca. 180-, after P.P. Rubens."
+    },
+    {
+      "label": "Blank forms",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "Prevention of venereal diseases: the black silhouettes of a woman and a man approach each other, she from an orange ground, he standing on mauve letters VD on a red ground. Colour lithograph, ca. 1962."
+    },
+    {
+      "label": "Broadsheet",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "E. Chadwick, \"Dwellings characterised by cheapness...\", 1867"
+    },
+    {
+      "label": "Chiaroscuro woodcuts",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "Joseph sold by his brothers. Chiaroscuro woodcut by J. Skippe, 1783, after Raphael."
+    },
+    {
+      "label": "Perspective projections",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "The plague of insects. Coloured etching."
+    },
+    {
+      "label": "Predellas",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "Predella with three scenes of Saint Roch, and figures of Saint Peter, Christ as Salvator Mundi, Saint Laurence and Saint Paul. Oil painting by a French (?) painter."
+    },
+    {
+      "label": "Sheet music covers",
+      "count": 18,
+      "category": "unclassified",
+      "exampleTitle": "A disabled soldier has his wooden legs stolen by four Irishmen in a bar. Colour lithograph by H.G. Banks, ca. 1899."
+    },
+    {
+      "label": "Still lifes",
+      "count": 18,
+      "category": "supporting-3d",
+      "exampleTitle": "Still life of fruits, including gourds, cucumbers, figs and grapes. Engraving by J-B Haussard after Boisseau."
+    },
+    {
+      "label": "Anamorphoses",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "King Charles I: head and shoulders, anamorphic representation. Engraving, 1821."
+    },
+    {
+      "label": "Letterpress works",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "A silk handkerchief printed with a description of an erotic encounter with the words in the form of breasts. Mixed media, 1802, after E. Parny."
+    },
+    {
+      "label": "Magazine covers",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "A nutritious food-drink for all ages : Horlick's Malted Milk for the seven ages / Horlick's Food Company."
+    },
+    {
+      "label": "Pharmacopoeias",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "Pharmacopoea Londinensis, in qua medicamenta antiqua et nova usitatissima, sedulo collecta, accuratissime examinata, quotidiana experientia confirmata, describuntur."
+    },
+    {
+      "label": "Transparencies",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "Astrology: signs of the zodiac, Lynx. Coloured engraving by S. Hall."
+    },
+    {
+      "label": "Triptychs",
+      "count": 17,
+      "category": "unclassified",
+      "exampleTitle": "A native American grinding root vegetables to make the remedy marketed as Dr Morse's Indian Root Pills, and other native American activities. Colour lithographs, ca. 1900."
+    },
+    {
+      "label": "Herbals",
+      "count": 16,
+      "category": "unclassified",
+      "exampleTitle": "Herbier ou collection des plantes médicinales de la Chine. D'après un manuscrit peint et unique qui se trouve dans la bibliothèque de l'Empereur de la Chine, pour servir de suitte aux planches enluminées et non enluminées d'histoire naturelle et à la collection des fleurs qui se cultivent dans les jardins de la Chine et de l'Europe / Dirigé par les soins de Mr. Buc'hoz."
+    },
+    {
+      "label": "Icons, Greek",
+      "count": 16,
+      "category": "unclassified",
+      "exampleTitle": "Saint Cosmas, Saint Panteleimon and Saint Damian. Tempera painting."
+    },
+    {
+      "label": "Landscape paintings",
+      "count": 16,
+      "category": "unclassified",
+      "exampleTitle": "Amatikulu, Kwazulu-Natal, South Africa: a settlement for people with leprosy. Watercolour by E. Schwarz, 1920/1950 (?)."
+    },
+    {
+      "label": "Theater programs",
+      "count": 16,
+      "category": "unclassified",
+      "exampleTitle": "How to die of embarrassment : by Bill Dunlop and Catch Theatre Co. : unofficial programme / Catch Theatre Co."
+    },
+    {
+      "label": "Amulets",
+      "count": 15,
+      "category": "strong-3d",
+      "exampleTitle": "The Holy Cross with Saint Sebastian, Saint Roch and Saint John Nepomuk, serving as an amulet against plagues, witchcraft etc. Coloured woodcut."
+    },
+    {
+      "label": "Illustrations",
+      "count": 15,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of Samuel Thomas von Sommering [1755 - 1830], physician, anatomist, anthropologist, paleontologist and inventor, who discovered the macula in the retina of the human eye."
+    },
+    {
+      "label": "Lantern slides",
+      "count": 15,
+      "category": "unclassified",
+      "exampleTitle": "A woman of Martinique with her left breast greatly enlarged by disease. Photograph."
+    },
+    {
+      "label": "Acrylic paintings",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "Disease and organs treated by a vodoo practitioner in Benin. Acrylic paintings, 199-."
+    },
+    {
+      "label": "Case studies",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "Plate 1. An \"easy chair\" for pregnant and lying-in women"
+    },
+    {
+      "label": "Essays",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "Essays and observations, physical and literary : read before a society in Edinburgh, and published by them."
+    },
+    {
+      "label": "Goigs",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "Saint Cosmas and Saint Damian with Saint Mary (the Blessed Virgin) below. Woodcut and letterpress."
+    },
+    {
+      "label": "Montages",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "A French and a British sailor embrace, with their ships inset below; representing alliance between the French and British navies. Coloured photographic postcard, 191-."
+    },
+    {
+      "label": "Satires (Visual works)",
+      "count": 14,
+      "category": "unclassified",
+      "exampleTitle": "Les obus de Choumara / P. Lachambeaudie."
+    },
+    {
+      "label": "Cabinet photographs",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "A young Norwegian woman, posing in a photographic studio wearing peasant dress. Coloured photograph by S. Lund, 1903."
+    },
+    {
+      "label": "Editorial cartoons",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "The Panama Canal: Dr Cornelius Herz, having fled to Bournemouth, reads in a newspaper that he is being sought by the police for his part in the mismanagement of the canal's financing. Watercolour drawing by H.S. Robert, ca. 1897."
+    },
+    {
+      "label": "Elevations",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "The Arab Hospital, Granada, Spain. Steel engraving by Ribault and J. Sulpis after F. Enríquez y Ferrer."
+    },
+    {
+      "label": "Jigsaw puzzles",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "You should see me on Sunday! : John Knight's Family Health Soap / John Knight Ltd."
+    },
+    {
+      "label": "Lithographs - Japan",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "Two fish. Colour lithograph, 1884."
+    },
+    {
+      "label": "Mirrors",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "A mirror in which the surrounding world is copied by reflection, framed with formulae associated with the cloning of biological organisms. Mixed media by Sophie Dauvois, 1998."
+    },
+    {
+      "label": "Museum catalogues",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "Handbook of the Historical Medical Museum / organised by Henry S. Wellcome."
+    },
+    {
+      "label": "Photomicrographs",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "The sandfly Phlebotomus argentipes, the transmitter of kala-azar disease, feeding on a mammal. Photomicrograph, 1900/1950."
+    },
+    {
+      "label": "Plate",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "Poultry egg hatching process"
+    },
+    {
+      "label": "Postage stamps",
+      "count": 13,
+      "category": "unclassified",
+      "exampleTitle": "Darwin : Royal Mail first day cover / Royal Mail."
+    },
+    {
+      "label": "Sculpture",
+      "count": 13,
+      "category": "strong-3d",
+      "exampleTitle": "Winter: an old man warming his hands before a brazier. Wax sculpture."
+    },
+    {
+      "label": "Still life photographs",
+      "count": 13,
+      "category": "supporting-3d",
+      "exampleTitle": "Still life of fruit, Hong Kong. Photograph by John Thomson, 1868/1871."
+    },
+    {
+      "label": "Altarpieces",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "A verger's dream: Saints Cosmas and Damian performing a miraculous cure by transplantation of a leg. Oil painting attributed to the Master of Los Balbases, ca. 1495."
+    },
+    {
+      "label": "Bronze sculpture",
+      "count": 12,
+      "category": "strong-3d",
+      "exampleTitle": "Galileo contemplating the globe. Bronze."
+    },
+    {
+      "label": "Carbon prints",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "Abel sits distressed beside his thankless sacrifice. Autotype after F.J. Shields, 1877."
+    },
+    {
+      "label": "Composite drawings",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "An oryx whose body is formed of three pairs of copulating humans. Gouache painting."
+    },
+    {
+      "label": "Conference proceedings",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "Cover illustration of \"Psychosurgery and society\""
+    },
+    {
+      "label": "Keys (Legends)",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "Key to the Fellows of the Royal College of Surgeons. Print by Barclays Bros., 1902."
+    },
+    {
+      "label": "Mixed media",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "The Virgin of Mariazell protecting travellers. Mixed method."
+    },
+    {
+      "label": "Pamphlet",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "Report from Department to the Home Office"
+    },
+    {
+      "label": "Playing cards",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "Oxo."
+    },
+    {
+      "label": "Trade card",
+      "count": 12,
+      "category": "unclassified",
+      "exampleTitle": "John Sewers: artificial-leg maker's trade-card"
+    },
+    {
+      "label": "Bibliographies",
+      "count": 11,
+      "category": "unclassified",
+      "exampleTitle": "Bibliotheca medico-historica, sive catalogus librorum historicorum de re medica et scientia naturali systematicus / [Ludwig Choulant]."
+    },
+    {
+      "label": "Cloth prints",
+      "count": 11,
+      "category": "supporting-3d",
+      "exampleTitle": "The St. John Ambulance Association [bandage] : registered design no. 7764 / St. John Ambulance Association."
+    },
+    {
+      "label": "Dictionaries - English",
+      "count": 11,
+      "category": "unclassified",
+      "exampleTitle": "The Royal dictionary, in two parts. First, French and English. Secondly, English and French. The French taken out of the dictionaries of Richelet, Furetiere, Tachart, the great dictionary of the French-Academy and the remarks of Vaugelas, Menage, and Bouhours. And the English collected chiefly out of the best dictionaries and the works of the greatest masters of the English tongue such as Archbishop Tillotson, Bishop Sprat, Sir Roger L'Estrange, Mr. Dryden, Sir William Temple, &c. For the use of His Highness the Duke of Glocester / [Abel Boyer]."
+    },
+    {
+      "label": "Facsimiles",
+      "count": 11,
+      "category": "unclassified",
+      "exampleTitle": "The dissection of an emaciated, grey cadaver by an anatomist who is making an abdominal incision with a scalpel with his right hand while his left hand is placed on the cadaver's hip. Colour process print, 1926, after a manuscript illustration, 1345."
+    },
+    {
+      "label": "Process prints",
+      "count": 11,
+      "category": "unclassified",
+      "exampleTitle": "M. de Sternac in drag as a geisha. Process print, ca. 1901."
+    },
+    {
+      "label": "Sections",
+      "count": 11,
+      "category": "unclassified",
+      "exampleTitle": "A labelled plan and two sections through a London porter brewery. Engraving by J. Moffat, c. 1830, after J. Farey."
+    },
+    {
+      "label": "Still life prints",
+      "count": 11,
+      "category": "supporting-3d",
+      "exampleTitle": "Specimens of stone and volcanic matter found on Mount Vesuvius, including lava enclosed in marble. Coloured etching by Pietro Fabris, 1776."
+    },
+    {
+      "label": "Anatomical atlases",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Andreae Vesalii invictissimi Caroli V. Imperatoris medici Opera omnia anatomica & chirurgica / cura Hermanni Boerhaave ... & Bernhardi Siegfried Albini ... tomus primus [-secundus]."
+    },
+    {
+      "label": "Armorial bindings",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Black and white woodcut illustration, 1503."
+    },
+    {
+      "label": "Catechisms",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Six questions about drug abuse and six answers. Lithograph, ca. 2000."
+    },
+    {
+      "label": "Family trees",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Genealogical tables of Ephraim and David. Etching, c. 1700."
+    },
+    {
+      "label": "Flags",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Edinburgh's + week 1918 / [City of Edinburgh branch of the British Red Cross Society]."
+    },
+    {
+      "label": "Graphic talisman",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Medical talisman against miscarriage (Chinese MS)"
+    },
+    {
+      "label": "Ivory carving",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "René Descartes. Ivory relief."
+    },
+    {
+      "label": "Mural painting and decoration",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Disease and organs treated by a vodoo practitioner in Benin. Acrylic paintings, 199-."
+    },
+    {
+      "label": "Notebooks",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Flours and cereals / Farwell & Rhines."
+    },
+    {
+      "label": "Offset photomechanical prints",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Physical exercises recommended for Wednesday (recto) and Saturday (verso). Colour process print after Fougasse."
+    },
+    {
+      "label": "Papier-mâché",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "A mirror in which the surrounding world is copied by reflection, framed with formulae associated with the cloning of biological organisms. Mixed media by Sophie Dauvois, 1998."
+    },
+    {
+      "label": "Plaster sculpture",
+      "count": 10,
+      "category": "strong-3d",
+      "exampleTitle": "Peter Squire. Plaster relief."
+    },
+    {
+      "label": "Portraits",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Johann Förster, a German wine merchant, with his hand on a bible. Engraving by J. Sandrart, c. 1674, after H. Popp."
+    },
+    {
+      "label": "Prayers",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Croce : Li San Zaccaria vescovo di Gerusalemme, al quale facendo orazione a pro quella città devastata della peste, fu inspirato il presente mistero col quale restò placata sua Divina Maestà facendo cessare il sopraccennato castigo."
+    },
+    {
+      "label": "Puns (Visual works)",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "A woman with a very elaborate hair style and a rump extended with cork armatures is being pursued by winged uncorked bottles. Etching, 1777."
+    },
+    {
+      "label": "Scratchboard drawings",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "The family of Laocoön entwined in coils of DNA. Scraperboard drawing by Bill Sanderson, 1990."
+    },
+    {
+      "label": "Three-in-one pictures",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Saint Francis of Assisi, Saint Francis de Paul, and Saint Peter penitent. Oil painting by a Spanish painter, 17th (?) century."
+    },
+    {
+      "label": "Wax-modeling",
+      "count": 10,
+      "category": "unclassified",
+      "exampleTitle": "Richard Mead. Wax sculpture."
+    },
+    {
+      "label": "Cartoons (Working drawings)",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "A man carrying a man and a woman in panniers. Ink drawing."
+    },
+    {
+      "label": "Encyclopedias",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "Popular science, Arthur Mee, 1912."
+    },
+    {
+      "label": "Exploration literature",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "Exploration of the Red river of Louisiana, in the year 1852 / by Randolph B. Marcy, captain Fifth infantry U.S. Army ; assisted by George B. McClellan, brevet captain U.S. engineers ; with reports on the natural history of the country and numerous illustrations."
+    },
+    {
+      "label": "Motion picture posters",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "A coal mine in the human brain; representing medical assistance by Tomasz Judym to industrial workers. Colour lithograph by Wongel, 1976."
+    },
+    {
+      "label": "Relief etchings",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "The name \"H. Cline\"; the outline of a femur; and studs. Relief etchings by Henry Cline, 1784/1811."
+    },
+    {
+      "label": "Rubbings",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "Tomb effigy of William Bradbridge, his wife Alice, and their fourteen children. Brass rubbing."
+    },
+    {
+      "label": "Wet plate photonegatives",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "Street scene, Hong Kong."
+    },
+    {
+      "label": "Window cards",
+      "count": 9,
+      "category": "unclassified",
+      "exampleTitle": "Cétonia pencils for use against mosquito bites: advertisement. Colour lithograph, ca. 1912."
+    },
+    {
+      "label": "Cartoons (Commentary)",
+      "count": 8,
+      "category": "unclassified",
+      "exampleTitle": "A skeleton gentleman at a ball asks a skeleton lady to dance; representing the effect of arsenical dyes and pigments in clothing and accessories. Wood engraving, 1862."
+    },
+    {
+      "label": "Chessmen",
+      "count": 8,
+      "category": "strong-3d",
+      "exampleTitle": "Chessmen (chess pieces) in the form of Saracens and Crusaders."
+    },
+    {
+      "label": "Clocks and watches",
+      "count": 8,
+      "category": "strong-3d",
+      "exampleTitle": "A bracket clock (shelf clock, mantel clock). Construction and assembly by John Leroux, 177-."
+    },
+    {
+      "label": "Coats of arms",
+      "count": 8,
+      "category": "unclassified",
+      "exampleTitle": "William Harvey: Coat of arms. Reproduction of an engraving."
+    },
+    {
+      "label": "Dictionaries",
+      "count": 8,
+      "category": "unclassified",
+      "exampleTitle": "A dictionary of hygiène and public health : comprising sanitary chemistry, engineering, and legislation, the dietetic value of foods, and the detection of adulterations, on the plan of the \"Dictionnaire d'hygiène publique\" of Professor Ambroise Tardieu / by Alexander Wynter Blyth."
+    },
+    {
+      "label": "Samples",
+      "count": 8,
+      "category": "supporting-3d",
+      "exampleTitle": "Textiles: two fabric samples mounted on a printed background. Wood engraving with applied fabric, 1813."
+    },
+    {
+      "label": "Shelf clocks",
+      "count": 8,
+      "category": "strong-3d",
+      "exampleTitle": "A bracket clock (shelf clock, mantel clock). Construction and assembly by John Leroux, 177-."
+    },
+    {
+      "label": "Studies (Visual works)",
+      "count": 8,
+      "category": "unclassified",
+      "exampleTitle": "Design for a diploma awarded by the London School of Tropical Medicine: a young man is standing by a map of the world; a forest in the background. Drawing by A.J.E. Terzi."
+    },
+    {
+      "label": "Viewbooks",
+      "count": 8,
+      "category": "unclassified",
+      "exampleTitle": "London and its environs described. Containing an account of whatever is most remarkable for grandeur, elegance, curiosity or use, in the city and in the country twenty miles round it. Comprehending also whatever is most material in the history and anitquities of this great metropolis / Decorated and illustrated with a great number of views in perspective, engraved from original drawings, taken on purpose for this work. Together with a plan of London, a map of the environs, and several other useful cuts."
+    },
+    {
+      "label": "Closet doors",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "Robert Morison (1620-1683), botanist. Oil painting."
+    },
+    {
+      "label": "Dictionaries - French",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "The Royal dictionary, in two parts. First, French and English. Secondly, English and French. The French taken out of the dictionaries of Richelet, Furetiere, Tachart, the great dictionary of the French-Academy and the remarks of Vaugelas, Menage, and Bouhours. And the English collected chiefly out of the best dictionaries and the works of the greatest masters of the English tongue such as Archbishop Tillotson, Bishop Sprat, Sir Roger L'Estrange, Mr. Dryden, Sir William Temple, &c. For the use of His Highness the Duke of Glocester / [Abel Boyer]."
+    },
+    {
+      "label": "Embossed works",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "A cross-dressing man in a top hat; representing effeminate fashions for men. Colour process print, ca. 1910."
+    },
+    {
+      "label": "Festschriften",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "John Caius, master of Gonville and Caius College in the University of Cambridge, 1559-1573 : a biographical sketch written in commemoration of the Four-hundredth anniversary of his birth celebrated on the 6th day of October, 1910."
+    },
+    {
+      "label": "Inkjet prints",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "Memory Store."
+    },
+    {
+      "label": "Inscriptions",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "Temple of Aesculapius at Cos, with a key to the buildings and a fragment of the Stoa. Oil painting by R. Caton, ca. 1906."
+    },
+    {
+      "label": "Membership lists",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "A general list of the members of the Royal College of Surgeons in London : who reside or who have resided in or within seven miles of the City of London."
+    },
+    {
+      "label": "Protest works",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "A mother protecting her baby, representing an appeal for starving children. Photolithograph after K. Kollwitz."
+    },
+    {
+      "label": "Rebuses",
+      "count": 7,
+      "category": "unclassified",
+      "exampleTitle": "Two witches tell Macbeth (representing the Earl of Bute) that he will be king and another, holding a noose, says he will be \"Knight - the first that ever graced the Scottish annals\". Etching, 1762."
+    },
+    {
+      "label": "Autograph letter",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Autograph letter concerning the discovery of plesiosaurus, from Mary Anning; sketch of plesiosaurus."
+    },
+    {
+      "label": "Booksellers' advertisements",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Ferrites / Philips Technical Library."
+    },
+    {
+      "label": "Borders, Ornamental (Decorative arts)",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Four conversations in which one speaker annoys the other. Coloured etching, 1800."
+    },
+    {
+      "label": "Catalogue",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Orthopaedic instruments, 19th century."
+    },
+    {
+      "label": "Emblems",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "A sick old woman, sitting supported by pillows as a skeleton pounces aiming his spear at her eyes. Woodcut by Tobias Stimmer, 1580."
+    },
+    {
+      "label": "Exhibition catalogues",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Historische Abteilung mit ethnographischer Unterabteilung. I, Historische Abteilung."
+    },
+    {
+      "label": "Ironwork",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Marker for the grave of children. Oil painting on wrought iron."
+    },
+    {
+      "label": "Pattern sheets",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Two sprigs of flowers, including lilies, carnations and Auricula, meant as designs for embroidery. Etching with engraving after W. Kilburn, 1775."
+    },
+    {
+      "label": "Photograpic postcards",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Hermes. Photograpic postcard by W. Hege, 193-."
+    },
+    {
+      "label": "Portfolios",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "A French hospital for wounded soldiers, World War I: one nurse checks a patient's temperature, a second washes a black man's face. Colour lithograph after L. Ibels, 1916."
+    },
+    {
+      "label": "Questions and answers",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Women and AIDS / Health Education Authority."
+    },
+    {
+      "label": "Remarques",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Thomas Henry Huxley. Etching by L. Flameng after the Hon. J. Collier."
+    },
+    {
+      "label": "Sepulchral monuments",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Marker for the grave of children. Oil painting on wrought iron."
+    },
+    {
+      "label": "Signs (Notices)",
+      "count": 6,
+      "category": "unclassified",
+      "exampleTitle": "Saint Leopold: shop sign for St Leopold's pharmacy, Vienna. Oil painting by E. Nacht, 18--."
+    },
+    {
+      "label": "Still life paintings",
+      "count": 6,
+      "category": "supporting-3d",
+      "exampleTitle": "Still life with a ledger, a skull and other objects. Oil painting, 1766."
+    },
+    {
+      "label": "Aerial views",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "London: aerial view from east to west. Colour aquatint by R. Havell, 1836."
+    },
+    {
+      "label": "Cookbooks",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "The art of cookery, made plain and easy : which far exceeds any thing of the kind ever yet published ... / By a lady [Mrs. H. Glasse]."
+    },
+    {
+      "label": "Gazetteers",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "London and its environs described. Containing an account of whatever is most remarkable for grandeur, elegance, curiosity or use, in the city and in the country twenty miles round it. Comprehending also whatever is most material in the history and anitquities of this great metropolis / Decorated and illustrated with a great number of views in perspective, engraved from original drawings, taken on purpose for this work. Together with a plan of London, a map of the environs, and several other useful cuts."
+    },
+    {
+      "label": "Holograph letter",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "Address on letter from Volta, 1800 (?)"
+    },
+    {
+      "label": "Library catalogues",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "A catalogue of printed books in the Wellcome Historical Medical Library / with a foreword by Sir Henry Hallett Dale."
+    },
+    {
+      "label": "Lottery tickets",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "[1882 ten Gulden lottery ticket in aid of the Austrian Red Cross. Shoes horse-drawn ambulances and nurses in a ward of sick / wounded]."
+    },
+    {
+      "label": "Manuals (Handbooks)",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "Ausslegung und Beschreybung der Anatomi, oder, warhafften Abconterfetung eines inwendigen Cörpers des Manns und Weybes : mit Erklerung seiner innerlichen Gelider, wie und wo hyn ein yedes von Gott erschaffen un[d] geordnet, das menschlich Leben zu auffenthalten / [Attrib. to Heinrich Vogtherr]."
+    },
+    {
+      "label": "Map",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "Map of Russia lent by Dr. Schuster."
+    },
+    {
+      "label": "Money",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "[25 Øre note (onboard currency) as used on the hospital ship, Jutlandia during the Korean War]."
+    },
+    {
+      "label": "Picture puzzles",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "Carter's Backache Plasters for every ache or pain : puzzle card."
+    },
+    {
+      "label": "Tarot cards",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "The Tarot, in the form of leaves of the book of Thoth placed in the temple of Fire at Memphis, Egypt. Mixed media by J.B. Alliette (Etteilla), 178-."
+    },
+    {
+      "label": "War posters",
+      "count": 5,
+      "category": "unclassified",
+      "exampleTitle": "Children walking up a grassy knoll in the open air, taking healthy exercise. Colour lithograph after F. L. Mora. 1918."
+    },
+    {
+      "label": "Academic dissertations - Scotland - Edinburgh",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Epistola physiologica inauguralis de elementariis musicae sensationibus / [Louis Odier]."
+    },
+    {
+      "label": "Airbrush works",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "The four elements, four qualities, four humours, four seasons, and four ages of man. Airbrush by Lois Hague, 1991."
+    },
+    {
+      "label": "Allegories",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "The medical practitioner appearing as a mere human when he has succeeded in curing the sick. Photograph after Hendrick Goltzius, 1587."
+    },
+    {
+      "label": "Anecdotes",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Wonderful adventures : a series of narratives of personal experiences among the native tribes of America."
+    },
+    {
+      "label": "Clothing",
+      "count": 4,
+      "category": "supporting-3d",
+      "exampleTitle": "Foetus: five figures, with one figure of viscera. Pen and ink drawing by Joyce Cutler Shaw, 1993."
+    },
+    {
+      "label": "Coats",
+      "count": 4,
+      "category": "supporting-3d",
+      "exampleTitle": "Foetus: five figures, with one figure of viscera. Pen and ink drawing by Joyce Cutler Shaw, 1993."
+    },
+    {
+      "label": "Comics",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Collateral damage."
+    },
+    {
+      "label": "Competition drawings",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "A finger marked with a \"lost property\" sign, as a warning of the danger of looms to textile workers. Gouache painting attributed to John Bonella Third, 1949."
+    },
+    {
+      "label": "Cutouts",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "A zoological garden with animal enclosures and people as paper cutouts. Coloured lithograph."
+    },
+    {
+      "label": "Electronic books",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Galvanism experiments on human body parts"
+    },
+    {
+      "label": "Fans",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Six vignettes on a design for a fan illustrating how to lead a moral and happy life. Stipple engraving, 1797."
+    },
+    {
+      "label": "Fiction",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Zorastro : a romance / by Creswick J. Thompson [pseud.]."
+    },
+    {
+      "label": "Genre paintings",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "A woman with a basket of fruit, and a boy, offer fruit to a woman in the doorway of her house. Oil painting by S. Jenner."
+    },
+    {
+      "label": "Graphs",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "A red arrow on a graph pointing upwards through a human body, representing the increase in cancer in the USA. Colour lithograph after D. Fellnagel, 1941."
+    },
+    {
+      "label": "Indexes",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Map showing the distribution of races in Europe"
+    },
+    {
+      "label": "Invitations",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Ticket for the Tiverton School Feast of 1726. Steel engraving by J. Moore after W. Hogarth."
+    },
+    {
+      "label": "Monogrammed bindings (Binding)",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "London labour and the London poor : a cyclopaedia of the condition and earnings of those that will work, those that cannot work, and those that will not work. / by Henry Mayhew."
+    },
+    {
+      "label": "Paper negatives",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Canton, Kwangtung (Guangdong) province, China: two seated musicians. Photograph by John Thomson, 1869."
+    },
+    {
+      "label": "Photograph album",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of unidentified couple."
+    },
+    {
+      "label": "Popular works",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "The surprising monsters : being the wonderful works of the divine judgement on a wicked proud young woman who for her game and despising of others was made herself an example of, for instead of three children at one birth, she had three of the most horrid objects that ever mortal eye beheld; and such that the oldest person living never before saw the like."
+    },
+    {
+      "label": "Poster",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Six ill people, with either AIDS or another disease, representing the difficulty of being sure that someone has AIDS."
+    },
+    {
+      "label": "Pouncing",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Krishna playing the flute to Radha. Pouncing."
+    },
+    {
+      "label": "Presentation pieces (Gifts)",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Saint Wenceslaus. Coloured engraving."
+    },
+    {
+      "label": "Publishers' catalogues",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "BEIS promotional material / British Egg Information Service."
+    },
+    {
+      "label": "Publishers' cloth bindings (Binding)",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "London labour and the London poor : a cyclopaedia of the condition and earnings of those that will work, those that cannot work, and those that will not work. / by Henry Mayhew."
+    },
+    {
+      "label": "Registers",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "The medical register."
+    },
+    {
+      "label": "Regulations",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Orders, thought meete by Her Maiestie, and her privie Councell, to be executed throughout the counties of this realme, in such townes, villages, and other places, as are, or may be hereafter infected with the plague ... Also, an advise set downe ... by the best learned in physicke ... contayning sundry good rules and easie medicines."
+    },
+    {
+      "label": "Song sheet",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Medical song: Morrison's Pills"
+    },
+    {
+      "label": "Souvenir programs",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Asylums ephemera. Box 1."
+    },
+    {
+      "label": "Tiles",
+      "count": 4,
+      "category": "strong-3d",
+      "exampleTitle": "A Japanese erotic scene of a man and a woman having sexual intercourse in a bedroom. Ceramic tile by Japanese craftsman."
+    },
+    {
+      "label": "Trade catalogues",
+      "count": 4,
+      "category": "supporting-3d",
+      "exampleTitle": "Veterinary and canine surgical instruments and equipment / A. Fleming & Co."
+    },
+    {
+      "label": "Transfer sheets",
+      "count": 4,
+      "category": "unclassified",
+      "exampleTitle": "Sida Info Service : 0 800 840 800 : www.sida-info-service.org. : mode d'emploi ..."
+    },
+    {
+      "label": "Acrostics",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Heinrich Khunrath. Line engraving by J. Diricks van Campen, 1602."
+    },
+    {
+      "label": "Addresses",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Human physiognomy explain'd: in the Crounian Lectures on muscular motion. For the year MDCCXLVI. Read before the Royal Society / By James Parsons, M.D. and F.R.S. Being a supplement to the Philosophical Transactions for that year."
+    },
+    {
+      "label": "Bandages and bandaging",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Bandaging techniques for use in first aid. Lithograph, ca. 1900."
+    },
+    {
+      "label": "Charts, diagrams, etc",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Gan zi wu sequence in the yin channels"
+    },
+    {
+      "label": "Decorations",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "The first verse of a poem entitled, \"Rheinweinlied\", surrounded by an ornamental design with a large wine glass. Etching, 1842."
+    },
+    {
+      "label": "Fashion design drawings",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A design for a fan depicting a pastoral scene with Chinese figures on horses. Watercolour painting by a Chinese artist."
+    },
+    {
+      "label": "Figure drawings",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A man holding his nose to avoid breathing in a miasma. Drawing."
+    },
+    {
+      "label": "Fliers (Printed matter)",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "The Falklands '82 Event : \"Tenth anniversary\" airshow & family fun day out (full of shows, displays, entertainment, information and relaxation) : Sunday 13th september 1992, the Herts Showground, Redbourn (just off Junction 9 of the M1) : Gates open from 9.00 am : raising funds for The Airborne Forces Initiative (A.B.I), The British Limbless Ex-Service Men's Association ... / The '82 Event."
+    },
+    {
+      "label": "Flow charts",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A chart for treating diarrhoea in children for Health Centre workers in Nigeria. Colour lithograph by Enugu State Ministry of Health, ca. 2000."
+    },
+    {
+      "label": "Formation photographs",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A crowd of faces of people from many countries forming the word \"AIDS\". Colour lithograph."
+    },
+    {
+      "label": "Handbill",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Advertisement for Joseph Law, surgeon."
+    },
+    {
+      "label": "Hymns",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Mount Calvary."
+    },
+    {
+      "label": "Information table",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "C15 Chinese medical primer: Correlations of the pulses"
+    },
+    {
+      "label": "Ink Drawings",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Ayurvedic medicine"
+    },
+    {
+      "label": "Jacquard weaving",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Joseph-Marie Jacquard, seated in an armchair. Weaving by Carquillat after Bruyas, ca. 1810."
+    },
+    {
+      "label": "Juvenilia",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Emily M. Madden's cat Mouton. Drawings by Emily M. Madden, 1856-1859."
+    },
+    {
+      "label": "Lectures",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Engraving: sphygmomanometer devised by S.S. von Basch, circa 1881."
+    },
+    {
+      "label": "Measured drawings",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A drinking-horn (rhyton) in the form of the head of a deer: outline drawing with measurements. Engraving, 17--."
+    },
+    {
+      "label": "Narratives",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Wonderful adventures : a series of narratives of personal experiences among the native tribes of America."
+    },
+    {
+      "label": "Obituaries",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "[Newspaper clipping (1874?) featuring an illustration of 'The Siamese Twins' Chang and Eng and the report of their death with an obituary]."
+    },
+    {
+      "label": "Painted signs and signboards",
+      "count": 3,
+      "category": "supporting-3d",
+      "exampleTitle": "Saint Leopold: shop sign for St Leopold's pharmacy, Vienna. Oil painting by E. Nacht, 18--."
+    },
+    {
+      "label": "Political cartoons",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Pancakes."
+    },
+    {
+      "label": "Progress photographs",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Colón, Panama: unpaved street lined with wooden houses; two children watch from a porch beside the open sewer. Photograph, 1906."
+    },
+    {
+      "label": "Puns",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "A pink heart with a green condom in front, and a message that plays on the conjugation of 'préserver' (to protect); advertising the SIDA Info Service by FTPJ. Colour lithograph."
+    },
+    {
+      "label": "Scientific illustrations",
+      "count": 3,
+      "category": "supporting-3d",
+      "exampleTitle": "Skull of a three-year-old brown bear: four figures, showing the skull and jaw-bones. Etching, 1840/1870?."
+    },
+    {
+      "label": "Scrapbook",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Man suffering from gout being offered a remedy"
+    },
+    {
+      "label": "Seascapes",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Men in fishing boats near a harbour. Etching attributed to F. Vivares after C.J. Vernet."
+    },
+    {
+      "label": "Silver gelatin photoprints",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Friern Hospital, London: a brain"
+    },
+    {
+      "label": "Tables (Systematic lists)",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "The relative incidence and mortality from enteric fever among British troops engaged in the South African War and the Great War 1914-1918."
+    },
+    {
+      "label": "Textbooks",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Nasenplastik und sonstige Gesichtsplastik : nebst einem Anhang über Mammaplastik und einige weitere Operationen aus dem Gebiete der äusseren Körperplastik ein Atlas und Lehrbuch / von J. Joseph."
+    },
+    {
+      "label": "Textile fabrics",
+      "count": 3,
+      "category": "supporting-3d",
+      "exampleTitle": "Joseph-Marie Jacquard, seated in an armchair. Weaving by Carquillat after Bruyas, ca. 1810."
+    },
+    {
+      "label": "Topographical maps",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Soraluze-Placencia de las Armas, Spain: the town and its surrounding places, its armaments factory, inscribed tabernacles describing them, and dedications to King Ferdinand VI and the Conde de Aranda. Engraving by J.F. Palomino after J. Zameza after F.J. de Lamot, 1756."
+    },
+    {
+      "label": "Trial proceedings",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "The tryal of Spencer Cowper, John Marson, Ellis Stevens, and William Rogers, Gent. : upon an indictment for the murther of Mrs. Sarah Stout, a Quaker. Before Mr. Baron Hatsell, at Hertford Assizes, July 18. 1699. Of which they were acquitted. With the opinions of the eminent physicians and chyrurgeons on both sides concerning drowned bodies, delivered in the tryal. And the several letters produced in court."
+    },
+    {
+      "label": "Wall charts",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Royal Society of Medicine 1991/92 year planner."
+    },
+    {
+      "label": "Watercolours",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "Watercolour of a typical Alpine house created by using a camera lucida"
+    },
+    {
+      "label": "Wave grain",
+      "count": 3,
+      "category": "unclassified",
+      "exampleTitle": "London labour and the London poor : a cyclopaedia of the condition and earnings of those that will work, those that cannot work, and those that will not work. / by Henry Mayhew."
+    },
+    {
+      "label": "Wooden signs and signboards",
+      "count": 3,
+      "category": "supporting-3d",
+      "exampleTitle": "Saint Leopold: shop sign for St Leopold's pharmacy, Vienna. Oil painting by E. Nacht, 18--."
+    },
+    {
+      "label": "Anagrams",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Johannes Ortelius. Etching."
+    },
+    {
+      "label": "Animals as artists - Pictorial works",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Purple, orange and grey streaks. Watercolour by Tonka, 2000."
+    },
+    {
+      "label": "Atlases (Geographic)",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Atlas geographique et physique du royaume de la Nouvelle-Espagne : fondé sur des observations astronomiques, des mesures trigonométriques et des nivellemens barométriques / par Al. de Humboldt."
+    },
+    {
+      "label": "Auction catalogues",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Catalogue of a bookseller's retail stock : comprising a variety of standard, miscellaneous works, juveniles, etc. : to be sold at auction / by Joseph Leonard, no.37 Tremont Row, on Tuesday, October 19, 1847."
+    },
+    {
+      "label": "Autochromes",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "The left forearm of Sir George Turner (?), showing symptoms of leprosy. Colour photograph, 19--."
+    },
+    {
+      "label": "Ballads",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Cimon in prison sucks at the breast of his daughter Pero. Woodcut and letterpress, ca. 1850 (?)."
+    },
+    {
+      "label": "Baxter-process prints",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Queen Victoria, Prince Albert and their children. Baxterprint by W. Dickes, 185-."
+    },
+    {
+      "label": "Book covers",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Back cover of 'secretly transmitted' acu-moxa text"
+    },
+    {
+      "label": "Booksellers' catalogues",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "For more information / The FRESH Network."
+    },
+    {
+      "label": "Booksmarks",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Write off pain with Paramol-118."
+    },
+    {
+      "label": "Brochure",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Portrait of R.L.K. Virchow"
+    },
+    {
+      "label": "Camera obscura works",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "The Royal Naval Hospital and the Queen's House, Greenwich, from the south, the Isle of Dogs and West India Docks beyond. Engraving by T. Reeve after E. Pugh, 1804."
+    },
+    {
+      "label": "Cards - Packaging",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "I'm into safer sex. Including...  : ...and I want to do it with you, why not give me a ring? / Terrence Higgins Trust."
+    },
+    {
+      "label": "Cars",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Services for people living with and affected by HIV : better futures for positive people / Positive East."
+    },
+    {
+      "label": "Casebooks",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Drawing of inoculation knife from 1817 Chinese casebook"
+    },
+    {
+      "label": "Certificate",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Certificate authorizing F. Korn to practise pharmacy."
+    },
+    {
+      "label": "Collected correspondence",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Life of Octavia Hill as told in her letters / edited by C. Edmund Maurice."
+    },
+    {
+      "label": "Colonial reports",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Annual report on the Medical Department / Sierra Leone."
+    },
+    {
+      "label": "Conference programs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "British Medical Association : 73rd annual meeting : Leicester, July 24th to 28th 1905 inclusive : members admission card."
+    },
+    {
+      "label": "Counterproofs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A nurse and a surgeon, both wearing gown and mask. Etching by H.A. Freeth."
+    },
+    {
+      "label": "Cutting",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Cutting relating to Bartholomew Joseph Alexander Dominiceti"
+    },
+    {
+      "label": "Devotional literature - Mexico",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Novena que en charidad devemos hazer al glorioso martyr S. Bonifacio ... / compuesta por Joseph Manuel Garcia del Valla, y Araujo."
+    },
+    {
+      "label": "Dictionaries, Medical",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A medicinal dictionary; including physic, surgery, anatomy, chymistry, and botany, in all their branches relative to medicine. Together with a history of drugs ... and an introductory preface, tracing the progress of physic, and explaining the theories which have ... prevail'd in all ages / By R. James."
+    },
+    {
+      "label": "Diplomas",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Souvenir diploma : the city of Bradford Cartwright Memorial Hall inaugural exhibition May to October 1904 : music, industries, art."
+    },
+    {
+      "label": "Directories",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Cottage hospitals, general, fever and convalescent : their progress, management and work in Great Britain and Ireland, and the United States of America : with an alphabetical list of every cottage hospital at present opened : many plans and illustrations including a portrait of Albert Napper / by Henry C. Burdett."
+    },
+    {
+      "label": "Engravingss",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Saint Cecilia: her martyrdom. Engraving by C.M.F. Dien, 1827, after Giulio Romano."
+    },
+    {
+      "label": "Epitaphs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Giovanni Pico della Mirandola [Johannes Picus Mirandulanus]. Letterpress epitaph in his Epigrammata, 1494."
+    },
+    {
+      "label": "Glamour photographs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A young woman, posing naked in a classical attitude, against a square column in a photographic studio. Photograph, ca.1890/1910."
+    },
+    {
+      "label": "Glass containers",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Powder produced from the decay of medical records. Jars."
+    },
+    {
+      "label": "Gouache paintings",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Yama, the Lord of Death, holding the Wheel of Life which represents Samsara, or the world on a Tibetan Thangka. In the central circle is a snake chasing a pig chasing a rooster chasing the snake which represents craving, hatred and ignorance. The six sections, surrounding the central circle, show representations of the six realms - the realm of the gods, the realm of the titans, the realm of the humans, the realm of the animals, the realm of the hungry ghosts and the realm of the demons."
+    },
+    {
+      "label": "Handkerchiefs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A silk handkerchief printed with a description of an erotic encounter with the words in the form of breasts. Mixed media, 1802, after E. Parny."
+    },
+    {
+      "label": "Kinoras",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Gwendoline Syrie Maud Wellcome and Henry Mounteney Wellcome, ca. 1908. Kinora photographs."
+    },
+    {
+      "label": "Laboratory manuals",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Select methods in chemical analysis (chiefly inorganic) / by William Crookes."
+    },
+    {
+      "label": "Laws",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "The code of Hammurabi, King of Babylon, about 2250 B.C : autographed text, transliteration, translation, glossary, index of subjects, lists of proper names, signs, numerals, corrections and erasures, with map, frontispiece and photograph of text / by Robert Francis Harper."
+    },
+    {
+      "label": "Local histories",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A new and compleat history and survey of the cities of London and Westminster, the borough of Southwark, and parts adjacent. From the earliest accounts, to the beginning of the year 1770 / By a society of gentlemen. Revised, corrected and improved by Henry Chamberlain of Hatton-Garden, esq."
+    },
+    {
+      "label": "Manuscripts - Chinese",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "[Wellcome Chinese Collection 100]."
+    },
+    {
+      "label": "Marquetry",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Angels making up and dispensing a medicine. Wood inlay attributed to Luigi Gargiulo."
+    },
+    {
+      "label": "Medical records",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Powder produced from the decay of medical records. Jars."
+    },
+    {
+      "label": "Metal sculpture",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Saint Christopher. Watercolour painting."
+    },
+    {
+      "label": "Mutoscopes",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Gwendoline Syrie Maud Wellcome and Henry Mounteney Wellcome, ca. 1908. Kinora photographs."
+    },
+    {
+      "label": "Novenas - Mexico",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Novena que en charidad devemos hazer al glorioso martyr S. Bonifacio ... / compuesta por Joseph Manuel Garcia del Valla, y Araujo."
+    },
+    {
+      "label": "Oleographs",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "An elegantly dressed horsewoman jumping over a gate in a fence. Colour oleograph by E.G. Hester after C. Burton Barber, ca. 1870 (?)."
+    },
+    {
+      "label": "Opalotypes",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Herbert R. Bracey. Mixed media by Edmund S. Baker."
+    },
+    {
+      "label": "Photograph prints",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Julian Eltinge in drag. Photographic postcard, 1907."
+    },
+    {
+      "label": "Photographic Postcards",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Scouts in a summer camp at Kapellen near Antwerp, peeling potatoes. Photographic postcard, ca. 1951."
+    },
+    {
+      "label": "Photographis prints",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Petrus de Montagnana. Photograph after a woodcut, 1495."
+    },
+    {
+      "label": "Powders",
+      "count": 2,
+      "category": "strong-3d",
+      "exampleTitle": "Powder produced from the decay of medical records. Jars."
+    },
+    {
+      "label": "Presentation albums",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Hospital Saturday Fund : [fold-out presentation album of T. Stevens and W.H. Grant's 14 street collection flags from between 1886 to 1897 with a 1996 congratulatory telegram from Mr. and Mrs. Eusden and their business card]."
+    },
+    {
+      "label": "Projections",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Heriot's Hospital, Edinburgh: the interior and Council Room. Line engraving by J.H. Le Keux, 1847, after R.W. Billings."
+    },
+    {
+      "label": "Rotogravures",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A laundry maid leaning out of a sash window to wring out a wet garment. Rotogravure by Rembrandt Intaglio Printing Co. Ltd. after P. Dawe after H. Morland."
+    },
+    {
+      "label": "Satirical maps",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "A woman with a load on her back representing the map of North Wales. Lithograph by J.J. Dodd after H. Hughes."
+    },
+    {
+      "label": "Scores",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Indian musical instruments; percussion, string and wind, and a musical score for a snake-charming melody. Coloured etching."
+    },
+    {
+      "label": "Short stories",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Sherlock Holmes and the missing box : (with apologies to Dr. A. Conan Doyle)."
+    },
+    {
+      "label": "Stereoscopes",
+      "count": 2,
+      "category": "strong-3d",
+      "exampleTitle": "The Edinburgh stereoscopic atlas of anatomy / edited by David Waterston."
+    },
+    {
+      "label": "Still life drawings",
+      "count": 2,
+      "category": "supporting-3d",
+      "exampleTitle": "A box, a bottle and a tube for ointment, pills and tablets. Pen and pencil drawing by E. Hodgkin, ca. 1969."
+    },
+    {
+      "label": "Student Collection",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Report on the sanitary condition of the labouring population of Gt. Britain / by Edwin Chadwick ; edited with an introduction by M.W. Flinn."
+    },
+    {
+      "label": "Teaching Materials",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Objects, people and activities with their names, as a teaching aid for children. Colour engraving (?)."
+    },
+    {
+      "label": "Theatrical posters",
+      "count": 2,
+      "category": "unclassified",
+      "exampleTitle": "Lysistrata: two characters (Lysistrata and a man) advertising a performance of an adaptation by Ralf König of the theme of Aristophanes' play. Colour lithograph, 1991."
+    },
+    {
+      "label": "Wood sculpture",
+      "count": 2,
+      "category": "strong-3d",
+      "exampleTitle": "Apollo. Sculpture attributed to Giuseppe Maria Bonzanigo."
+    },
+    {
+      "label": "Adaptations",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A man, a woman and two children stand and listen to a man playing a violin. Etching by D. Deuchar, 1802, after A. van Ostade."
+    },
+    {
+      "label": "Anti-Jewish propaganda - Specimens",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The Panama Canal: Dr Cornelius Herz, one of those responsible for its financing, having fled France, spends his time fishing in Bournemouth. Watercolour drawing by H.S. Robert, ca. 1897."
+    },
+    {
+      "label": "Aquatint",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Geology: a large iceberg in Baffin Bay. Aquatint by W. Westall after Beechey."
+    },
+    {
+      "label": "Atlases",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Plate V, Atlas du cancer, J. Darier, 1922-1931."
+    },
+    {
+      "label": "Autobiographies",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The history...of the chevalier John Taylor Ophthalmiater."
+    },
+    {
+      "label": "Broadsides - England - 19th century",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Trial, confession, and execution of Courvoisier for the murder of Lord Wm. Russell : memoir of F. B. Courvoisier, Lord W. Russell's valet."
+    },
+    {
+      "label": "Broadsides - Massachusetts - Boston - 1851",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Commonwealth of Massachusetts, by His Excellency George S. Boutwell, Governor of the Commonwealth of Massachusetts: a proclamation for a day of public thanksgiving and praise : ... Thursday, the 27th day of November next ... Given at the Council chamber, in Boston, this fourth day of October ... one thousand eight hundred and fifty-one ... / George S. Boutwell, Amasa Walker, Secretary."
+    },
+    {
+      "label": "Censuses",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Census of Great Britain, 1851 : population tables."
+    },
+    {
+      "label": "Chine appliqué prints",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Christ among sick people and Pharisees."
+    },
+    {
+      "label": "Chromoithographs",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A boy sits on the library floor with a book on his knees and a cat scrambles over the books on the shelf. Chromoithograph."
+    },
+    {
+      "label": "Chronograms",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Martin Limburger. Line engraving by J.C. Sartorius, 1692, after C. Eimmart."
+    },
+    {
+      "label": "Cityscape drawings",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Cityscape of Bagnères de Bigorre, Pyrénees. Coloured pencil drawing."
+    },
+    {
+      "label": "Cityscape paintings",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The Medical Cold Baths, and Fenton's Hotel, St. James's Street, London. Watercolour attributed to T. C. Dibdin."
+    },
+    {
+      "label": "Concert programmes",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Heads of fellows of the Royal College of Physicians of Edinburgh, around the programme for Scottish pipe music in honour of the International Ophthalmological Congress. Colour line block after George A. Fothergill, 1894."
+    },
+    {
+      "label": "Dedications",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Dedication to William IV, Prince of Orange-Nassau. Line engraving by J. Wandelaar, 1747."
+    },
+    {
+      "label": "Diaries",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Drug diary : factsheet 47 October 2000 / NAM, National AIDS Manual."
+    },
+    {
+      "label": "Drinking songs",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A large man carrying a tankard and a wooden half-barrel is singing, representing Jean Ramponneau and his drinking establishment in Paris, Engraving, 1760."
+    },
+    {
+      "label": "Dye destruction prints",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Asian medicine in the West. Colour photograph by Chila Kumari Burman, 2004"
+    },
+    {
+      "label": "Employment references",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Edward Law: a testimonial to him from the Governors of the District Infirmary, Ashton under Lyne. Manuscript, 1879."
+    },
+    {
+      "label": "Gelatin silver film negatives",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A deformed foot: X-ray. Photograph."
+    },
+    {
+      "label": "Genre drawings",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A doctor and some women attend to and prepare bandages for a wounded military man lying in comfortable surroundings. Coloured pen and pencil drawing by A. Lynch."
+    },
+    {
+      "label": "German wit and humor, Pictorial",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A physician looks at the coffin of a deceased patient and says \"I cured him too\". Watercolour, ca. 1752/1755."
+    },
+    {
+      "label": "Glass photonegatives",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Victim of leprosy."
+    },
+    {
+      "label": "Gloves",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The last gloves of Albert Dastre. Gloves, 1917."
+    },
+    {
+      "label": "Horns",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Tusk of the narwhal (Monodon monoceros), or horn of the unicorn."
+    },
+    {
+      "label": "Irish wit and humor, Pictorial",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A disabled soldier has his wooden legs stolen by four Irishmen in a bar. Colour lithograph by H.G. Banks, ca. 1899."
+    },
+    {
+      "label": "Juvenile literature",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Joh. Amos Comenii Orbis sensualium pictus: hoc est omnium principalium in mundo rerum, & in vita actionum, pictura & nomenclatura. Joh. Amos Comenius's visible world: or, a nomenclature, and pictures, of all the chief things that are in the world, and of men's employments therein; in above 150 cuts / Written by the author in Latin and High Dutch ... Translated into English by Charles Hoole, M.A. For the use of young Latin scholars."
+    },
+    {
+      "label": "Lantern Slide",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Muscles of the eye."
+    },
+    {
+      "label": "Laws - England",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Anno XXXII. Henrici octavi. In the parlyamente Begon // at Westm̄. the. xxviii. of Apryll, the .xxxii. [i.e. xxxi] yeare of // the reygne of the moste excellente, most hyghe, and moste // myghty prynce, Henrye the eyghte by the // grace of God kynge of Englande and of // Fraunce, the actes folowing ... have bene established."
+    },
+    {
+      "label": "Leaflet",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Leaflet: Doctor Death, medicine at the end of life."
+    },
+    {
+      "label": "Mandala (Buddhism)",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Mandala with the eight-handed Uṣṇīṣavijayā as a Buddhist deity of long life. Distemper painting by a Tibetan painter."
+    },
+    {
+      "label": "Manuscripts - Sanskrit",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "MS Indic delta 74."
+    },
+    {
+      "label": "Manuscripts - Transcriptions",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A Welsh leech book, or, Llyfr o feddyginiaeth, faithfully reproduced from the original manuscript / edited by Timothy Lewis, M.A."
+    },
+    {
+      "label": "Manuscripts, Batak",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "[Wellcome MS. Batak 331834]."
+    },
+    {
+      "label": "Manuscripts, Persian",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "[Wellcome MS Persian 474]."
+    },
+    {
+      "label": "Manuscripts, Prakrit",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Wellcome MS Indic Beta 1471"
+    },
+    {
+      "label": "Matchcovers",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "An American sailor looking at a prostitute with a warning to use a condom as a protection against sexually transmitted diseases. Lithographic match-book cover."
+    },
+    {
+      "label": "Medal",
+      "count": 1,
+      "category": "strong-3d",
+      "exampleTitle": "Reverse of medal of Joseph Priestly, 1783"
+    },
+    {
+      "label": "Medals",
+      "count": 1,
+      "category": "strong-3d",
+      "exampleTitle": "Étienne Geoffroy-Saint-Hilaire; in profile. Bronze sculpture by David d'Angers, 1831."
+    },
+    {
+      "label": "Menu",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "St George's Hospital, front of building; late 19th century?"
+    },
+    {
+      "label": "Metal cuts",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Three images of the Virgin of Luschari appearing to shepherds; above a monastery with a text pertaining to death. Coloured metalcut and letterpress."
+    },
+    {
+      "label": "Mnemonics",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A hand with images of saints in the digits, as a mnemonic for good Christian conduct. Coloured engraving."
+    },
+    {
+      "label": "Monotypes",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A man pulls a cart in which Death is seated. Monotype by R. Bunny."
+    },
+    {
+      "label": "Occasional addresses",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Address to the Earl of Selborne from the town of Heidelberg, Transvaal. Wash drawing and manuscript, 1905."
+    },
+    {
+      "label": "Offprint",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Cooperative Women Demand Legislation of Abortion"
+    },
+    {
+      "label": "Photoengravings",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A girl looking through a window on a rainy day, disappointed that her walk outside will be cancelled. Photoengraving, 1857, after S. Anderson."
+    },
+    {
+      "label": "Photograph",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Sir Joseph Barcroft, from a photograph lent by Professor H. Barcroft."
+    },
+    {
+      "label": "Photoprints",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "South Africa: Lady Hely Hutchinson, wife of the Governor of Natal. 1896."
+    },
+    {
+      "label": "Picture frames",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Frame. Carved and gilt wood."
+    },
+    {
+      "label": "Posters.2gmgpc",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "How much would you tell on a first date? : no-one tells everything about themselves ... / Terrence Higgins Trust."
+    },
+    {
+      "label": "Relief prints",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A coach heavily laden with passengers, some on the top, is being driven at speed around a hairpin bend on the St Gothard pass. Electrotype after a wood engraving after R. Doyle."
+    },
+    {
+      "label": "Reverse painting on glass",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A young man holding a rod with a shaped end (sceptre?) and a round object. Reverse glass painting by a Qajar artist, 182-."
+    },
+    {
+      "label": "Sand grain",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The book of perfumes / by Eugene Rimmel."
+    },
+    {
+      "label": "Scroll",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Ottoman Calendar"
+    },
+    {
+      "label": "Sermons",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The encouragement to works of charity and mercy, from Christ's acceptance of them as done to himself. A sermon preached in the Parish Church of All Saints in Northampton, before the President and Governors of the County Infirmary for sick and lame poor on Thursday, March 29, 1744 / by Richard Grey ... ; To which are added, the statutes of the said Infirmary."
+    },
+    {
+      "label": "Sign language",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "The Deaf community in Berlin by the Deutsche AIDS-Hilfe"
+    },
+    {
+      "label": "Sketchbook",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A page from Lister's sketchbook, 1832-34"
+    },
+    {
+      "label": "Sketchbooks",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Emily M. Madden's cat Mouton. Drawings by Emily M. Madden, 1856-1859."
+    },
+    {
+      "label": "Soft ground etchings",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A girl filling a bucket at a water-outlet, whle a boy is opening up a fish (to clean it?). Soft ground etching by W.H. Pyne, 1813."
+    },
+    {
+      "label": "Stamp",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Stamp showing C.L.A. Laveran, issued by Algeria in 1954. From the collection of S.H. Watkins."
+    },
+    {
+      "label": "Stencils (Images)",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Saint Alexius. Coloured engraving."
+    },
+    {
+      "label": "Stipple prints",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A group of children playing at being doctors and pharmacists, mother and grandmother approach through a door. Stipple engraving after F.D. Hardy."
+    },
+    {
+      "label": "Textbook",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "C15 Chinese medical textbook, Foreword"
+    },
+    {
+      "label": "Thanka",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Yama, the Lord of Death, holding the Wheel of Life which represents Samsara, or the world on a Tibetan Thangka. In the central circle is a snake chasing a pig chasing a rooster chasing the snake which represents craving, hatred and ignorance. The six sections, surrounding the central circle, show representations of the six realms - the realm of the gods, the realm of the titans, the realm of the humans, the realm of the animals, the realm of the hungry ghosts and the realm of the demons."
+    },
+    {
+      "label": "Thanksgiving day proclamations - Massachusetts - 1851 Nov. 27",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Commonwealth of Massachusetts, by His Excellency George S. Boutwell, Governor of the Commonwealth of Massachusetts: a proclamation for a day of public thanksgiving and praise : ... Thursday, the 27th day of November next ... Given at the Council chamber, in Boston, this fourth day of October ... one thousand eight hundred and fifty-one ... / George S. Boutwell, Amasa Walker, Secretary."
+    },
+    {
+      "label": "Tintypes",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Joseph Dawson seated in a chair: portrait in a studio in San Salvador, the Bahamas. Photograph, 1855/1865."
+    },
+    {
+      "label": "Title page",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "C9 Chinese obstetrics text, C19 re-edition, Woodblock print"
+    },
+    {
+      "label": "Tole painting",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Brook Watson being attacked by a shark in Havana harbour, 1749. Oil painting after J.S. Copley."
+    },
+    {
+      "label": "Tusks",
+      "count": 1,
+      "category": "strong-3d",
+      "exampleTitle": "Tusk of the narwhal (Monodon monoceros), or horn of the unicorn."
+    },
+    {
+      "label": "Wood engraving",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "David Livingstone and Henry Morton Stanley on the River Ruzizi. Wood engraving."
+    },
+    {
+      "label": "Wood Engraving",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "\"one of a Lady's duties - hair cutting en famille\""
+    },
+    {
+      "label": "Wood engravings - England - 19th century",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Trial, confession, and execution of Courvoisier for the murder of Lord Wm. Russell : memoir of F. B. Courvoisier, Lord W. Russell's valet."
+    },
+    {
+      "label": "Wood engravingss",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "A woman stealing some sugar by emptying it into her pocket is discovered by a manservant of the household. Wood engraving by Swain & Co.."
+    },
+    {
+      "label": "Wood-carving",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Frame. Carved and gilt wood."
+    },
+    {
+      "label": "Wrappers (Binding)",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Cover-sheet to 'Anatomischer Atlas', section I, by E. Wenzel. Letterpress, 1877."
+    },
+    {
+      "label": "Yearbooks",
+      "count": 1,
+      "category": "unclassified",
+      "exampleTitle": "Les Prix Nobel."
+    }
+  ]
+}

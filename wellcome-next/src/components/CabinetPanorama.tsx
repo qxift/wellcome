@@ -633,7 +633,7 @@ function ClickableFront({
 
   const handleClick = (event: { stopPropagation: () => void }) => {
     event.stopPropagation();
-    if (interactionLocked) return;
+    if (interactionLocked && !open) return;
     onToggle(doorId);
   };
 
@@ -1340,6 +1340,17 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
 
   const toggleDoor = (doorId: string) => {
     if (interactionLocked) {
+      if (focusedDoorId === doorId) {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+
+        pendingPostStoryShakeRef.current = false;
+        setReturnPose(roamPoseRef.current);
+        setFocusedDoorId("");
+        setSelectedItemId("");
+      }
+
       return;
     }
 
