@@ -66,7 +66,13 @@ type PendingDoorSwap = {
   nextItemId: string;
 } | null;
 
+type DoorShakeCue = {
+  doorId: string;
+  nonce: number;
+} | null;
+
 const postZoomSwapDelayMs = 220;
+const idleShakeDelayMs = 5000;
 
 const playerRadius = 0.28;
 const roomRadius = 4.385;
@@ -77,6 +83,91 @@ const backgroundSeedTolerance = 42;
 const backgroundFloodTolerance = 54;
 const backgroundNeighborTolerance = 34;
 const alphaVisibilityThreshold = 24;
+
+function createWoodShakeNoiseBuffer(context: AudioContext) {
+  const durationSeconds = 0.18;
+  const frameCount = Math.max(1, Math.floor(context.sampleRate * durationSeconds));
+  const buffer = context.createBuffer(1, frameCount, context.sampleRate);
+  const channel = buffer.getChannelData(0);
+
+  for (let index = 0; index < frameCount; index += 1) {
+    const progress = index / frameCount;
+    const taper = 1 - progress * 0.45;
+    channel[index] = (Math.random() * 2 - 1) * taper;
+  }
+
+  return buffer;
+}
+
+function playWoodShakeBurst(context: AudioContext, noiseBuffer: AudioBuffer) {
+  const startAt = context.currentTime;
+  const noiseSource = context.createBufferSource();
+  noiseSource.buffer = noiseBuffer;
+  noiseSource.playbackRate.value = 0.78 + Math.random() * 0.18;
+
+  const noiseBandpass = context.createBiquadFilter();
+  noiseBandpass.type = "bandpass";
+  noiseBandpass.frequency.value = 420 + Math.random() * 180;
+  noiseBandpass.Q.value = 0.7;
+
+  const noiseLowpass = context.createBiquadFilter();
+  noiseLowpass.type = "lowpass";
+  noiseLowpass.frequency.value = 980 + Math.random() * 260;
+
+  const noiseGain = context.createGain();
+  noiseGain.gain.setValueAtTime(0.0001, startAt);
+  noiseGain.gain.linearRampToValueAtTime(0.15 + Math.random() * 0.05, startAt + 0.012);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.14);
+
+  noiseSource.connect(noiseBandpass);
+  noiseBandpass.connect(noiseLowpass);
+  noiseLowpass.connect(noiseGain);
+  noiseGain.connect(context.destination);
+  noiseSource.start(startAt);
+  noiseSource.stop(startAt + 0.15);
+
+  const thunk = context.createOscillator();
+  thunk.type = "triangle";
+  thunk.frequency.setValueAtTime(112 + Math.random() * 28, startAt);
+  thunk.frequency.exponentialRampToValueAtTime(76 + Math.random() * 16, startAt + 0.08);
+
+  const thunkLowpass = context.createBiquadFilter();
+  thunkLowpass.type = "lowpass";
+  thunkLowpass.frequency.value = 340;
+
+  const thunkGain = context.createGain();
+  thunkGain.gain.setValueAtTime(0.0001, startAt);
+  thunkGain.gain.linearRampToValueAtTime(0.06 + Math.random() * 0.03, startAt + 0.01);
+  thunkGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.11);
+
+  thunk.connect(thunkLowpass);
+  thunkLowpass.connect(thunkGain);
+  thunkGain.connect(context.destination);
+  thunk.start(startAt);
+  thunk.stop(startAt + 0.12);
+
+  if (Math.random() > 0.35) {
+    const aftershockSource = context.createBufferSource();
+    aftershockSource.buffer = noiseBuffer;
+    aftershockSource.playbackRate.value = 0.92 + Math.random() * 0.24;
+
+    const aftershockLowpass = context.createBiquadFilter();
+    aftershockLowpass.type = "lowpass";
+    aftershockLowpass.frequency.value = 760 + Math.random() * 220;
+
+    const aftershockGain = context.createGain();
+    const aftershockStartAt = startAt + 0.04 + Math.random() * 0.04;
+    aftershockGain.gain.setValueAtTime(0.0001, aftershockStartAt);
+    aftershockGain.gain.linearRampToValueAtTime(0.06 + Math.random() * 0.03, aftershockStartAt + 0.008);
+    aftershockGain.gain.exponentialRampToValueAtTime(0.0001, aftershockStartAt + 0.08);
+
+    aftershockSource.connect(aftershockLowpass);
+    aftershockLowpass.connect(aftershockGain);
+    aftershockGain.connect(context.destination);
+    aftershockSource.start(aftershockStartAt);
+    aftershockSource.stop(aftershockStartAt + 0.09);
+  }
+}
 
 function trimTitle(title: string) {
   return title.replace(/^\[/, "").replace(/\]\.?$/, "");
@@ -550,7 +641,9 @@ function chooseInitialDoorItem(
   items: CabinetItem[],
   assignedItemIds: Set<string>,
 ) {
-  const nextItemId = items.find((item) => !assignedItemIds.has(item.id))?.id ?? "";
+  const nextModelItemId = items.find((item) => item.modelUrl && !assignedItemIds.has(item.id))?.id ?? "";
+  const nextFallbackItemId = items.find((item) => !assignedItemIds.has(item.id))?.id ?? "";
+  const nextItemId = nextModelItemId || nextFallbackItemId;
 
   if (nextItemId) {
     assignedItemIds.add(nextItemId);
@@ -575,6 +668,62 @@ function isDemoModelDoor(
   }
 
   return Boolean(itemsById.get(itemId)?.modelUrl);
+}
+
+function chooseConnectedClosedDoor(
+  sourceDoorId: string,
+  doorItemIds: Record<string, string>,
+  openedDoorIds: Record<string, boolean>,
+  itemsById: Map<string, CabinetItem>,
+) {
+  const sourceItemId = doorItemIds[sourceDoorId];
+
+  if (!sourceItemId) {
+    return "";
+  }
+
+  const sourceKeywords = new Set(itemsById.get(sourceItemId)?.linkKeywords ?? []);
+
+  if (sourceKeywords.size === 0) {
+    return "";
+  }
+
+  const candidates = Object.entries(doorItemIds)
+    .map(([doorId, itemId]) => ({ doorId, itemId, item: itemId ? itemsById.get(itemId) : undefined }))
+    .filter(({ doorId, item }) => {
+      if (doorId === sourceDoorId || openedDoorIds[doorId]) {
+        return false;
+      }
+
+      return (item?.linkKeywords ?? []).some((keyword) => sourceKeywords.has(keyword));
+    })
+    .sort((left, right) => {
+      const leftShared = (left.item?.linkKeywords ?? []).filter((keyword) => sourceKeywords.has(keyword)).length;
+      const rightShared = (right.item?.linkKeywords ?? []).filter((keyword) => sourceKeywords.has(keyword)).length;
+      return rightShared - leftShared;
+    });
+
+  if (candidates.length === 0) {
+    return "";
+  }
+
+  const topCandidates = candidates.slice(0, Math.min(4, candidates.length));
+  const choice = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+
+  return choice?.doorId ?? "";
+}
+
+function chooseRandomClosedDoor(
+  doorItemIds: Record<string, string>,
+  openedDoorIds: Record<string, boolean>,
+) {
+  const candidates = Object.keys(doorItemIds).filter((doorId) => !openedDoorIds[doorId]);
+
+  if (candidates.length === 0) {
+    return "";
+  }
+
+  return candidates[Math.floor(Math.random() * candidates.length)] ?? "";
 }
 
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
@@ -1005,6 +1154,8 @@ function ClickableFront({
   open,
   active,
   hasFocusedDoor,
+  isShaking,
+  shakeNonce,
   interactionLocked,
   onToggle,
   woodTexture,
@@ -1015,13 +1166,18 @@ function ClickableFront({
   open: boolean;
   active: boolean;
   hasFocusedDoor: boolean;
+  isShaking: boolean;
+  shakeNonce: number;
   interactionLocked: boolean;
   woodTexture?: Texture | null;
   onToggle: (doorId: string) => void;
 }) {
   const frontRef = useRef<Group>(null);
+  const shakeElapsedRef = useRef(0);
+  const lastShakeNonceRef = useRef(shakeNonce);
   const frontZ = style.depth * 0.15; // Adjusted for new depth
   const hingeDirection = spec.type === "door-left" ? -1 : 1;
+  const baseFrontX = spec.x + hingeDirection * spec.width * 0.5;
   const arcDepth = spec.width * 0.04;
   const doorOverlap = 0.028;
   const doorFrameTexture = useMemo(() => {
@@ -1052,12 +1208,45 @@ function ClickableFront({
     const ajarAngle = openAngle * 0.18;
     const targetRotation = active ? openAngle : open ? (hasFocusedDoor ? ajarAngle : openAngle) : 0;
 
+    if (lastShakeNonceRef.current !== shakeNonce) {
+      lastShakeNonceRef.current = shakeNonce;
+      shakeElapsedRef.current = 0;
+    }
+
+    shakeElapsedRef.current += delta;
+    const shakeEnvelope = isShaking ? 1 : 0;
+    const shakeOffsetY =
+      shakeEnvelope > 0
+        ? Math.sin(shakeElapsedRef.current * 38) * 0.14 * shakeEnvelope +
+          Math.sin(shakeElapsedRef.current * 83) * 0.06 * shakeEnvelope
+        : 0;
+    const shakeOffsetZ =
+      shakeEnvelope > 0
+        ? Math.sin(shakeElapsedRef.current * 71) * 0.028 * shakeEnvelope
+        : 0;
+    const shakeOffsetX =
+      shakeEnvelope > 0
+        ? Math.sin(shakeElapsedRef.current * 54) * hingeDirection * 0.012 * shakeEnvelope
+        : 0;
+    const shakeTiltX =
+      shakeEnvelope > 0
+        ? Math.sin(shakeElapsedRef.current * 92) * 0.035 * shakeEnvelope
+        : 0;
+    const shakeTiltZ =
+      shakeEnvelope > 0
+        ? Math.sin(shakeElapsedRef.current * 64) * 0.025 * shakeEnvelope
+        : 0;
+
     frontRef.current.rotation.y = MathUtils.damp(
       frontRef.current.rotation.y,
-      targetRotation,
-      10,
+      targetRotation + shakeOffsetY,
+      14,
       delta,
     );
+    frontRef.current.rotation.x = MathUtils.damp(frontRef.current.rotation.x, shakeTiltX, 12, delta);
+    frontRef.current.rotation.z = MathUtils.damp(frontRef.current.rotation.z, shakeTiltZ, 12, delta);
+    frontRef.current.position.x = MathUtils.damp(frontRef.current.position.x, baseFrontX + shakeOffsetX, 14, delta);
+    frontRef.current.position.z = MathUtils.damp(frontRef.current.position.z, frontZ + shakeOffsetZ, 14, delta);
   });
 
   const handleClick = (event: { stopPropagation: () => void }) => {
@@ -1069,7 +1258,7 @@ function ClickableFront({
   return (
     <group
       ref={frontRef}
-      position={[spec.x + hingeDirection * spec.width * 0.5, spec.y, frontZ]}
+      position={[baseFrontX, spec.y, frontZ]}
       onClick={handleClick}
     >
       <mesh position={[-hingeDirection * 0.06, 0, 0.02 + arcDepth]} castShadow>
@@ -1118,6 +1307,8 @@ function CabinetCompartment({
   open,
   active,
   hasFocusedDoor,
+  isShaking,
+  shakeNonce,
   interactionLocked,
   onToggle,
 }: {
@@ -1130,6 +1321,8 @@ function CabinetCompartment({
   open: boolean;
   active: boolean;
   hasFocusedDoor: boolean;
+  isShaking: boolean;
+  shakeNonce: number;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -1242,6 +1435,8 @@ function CabinetCompartment({
         open={open}
         active={active}
         hasFocusedDoor={hasFocusedDoor}
+        isShaking={isShaking}
+        shakeNonce={shakeNonce}
         interactionLocked={interactionLocked}
         woodTexture={woodTexture}
         onToggle={onToggle}
@@ -1257,6 +1452,7 @@ function CabinetPanel({
   focusedDoorId,
   allItems,
   doorItemIds,
+  shakeCue,
   interactionLocked,
   woodTextures,
   onToggleDoor,
@@ -1267,6 +1463,7 @@ function CabinetPanel({
   focusedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
+  shakeCue: DoorShakeCue;
   interactionLocked: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
@@ -1309,6 +1506,8 @@ function CabinetPanel({
               open={Boolean(openedDoorIds[doorId])}
               active={focusedDoorId === doorId}
               hasFocusedDoor={Boolean(focusedDoorId)}
+              isShaking={shakeCue?.doorId === doorId}
+              shakeNonce={shakeCue?.doorId === doorId ? shakeCue.nonce : 0}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1476,6 +1675,7 @@ function CabinetRoom({
   openedDoorIds,
   focusedDoorId,
   doorItemIds,
+  shakeCue,
   interactionLocked,
   woodTextures,
   rugTexture,
@@ -1492,6 +1692,7 @@ function CabinetRoom({
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
   doorItemIds: Record<string, string>;
+  shakeCue: DoorShakeCue;
   interactionLocked: boolean;
   woodTextures: Texture[];
   rugTexture?: Texture | null;
@@ -1545,6 +1746,7 @@ function CabinetRoom({
               focusedDoorId={focusedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
+              shakeCue={shakeCue}
               interactionLocked={interactionLocked}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
@@ -1584,6 +1786,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
   const [pendingDoorSwap, setPendingDoorSwap] = useState<PendingDoorSwap>(null);
+  const [shakeCue, setShakeCue] = useState<DoorShakeCue>(null);
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const focusedItem = useMemo(() => {
@@ -1604,6 +1807,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     cameraPosition: [0, 0.05, 0.25],
     yaw: 0,
   });
+  const lastInteractionAtRef = useRef(Date.now());
+  const shakeAudioContextRef = useRef<AudioContext | null>(null);
+  const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
+  const shakeAudioStopRef = useRef<(() => void) | null>(null);
+  const shakeCueRef = useRef<DoorShakeCue>(null);
+  const shakeNonceRef = useRef(0);
 
   const cabinetFocusTarget = useMemo(() => {
     if (!focusedDoorId) {
@@ -1742,8 +1951,20 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       if (returnReleaseFrameRef.current !== null) {
         window.cancelAnimationFrame(returnReleaseFrameRef.current);
       }
+      if (shakeAudioStopRef.current) {
+        shakeAudioStopRef.current();
+        shakeAudioStopRef.current = null;
+      }
+      if (shakeAudioContextRef.current) {
+        void shakeAudioContextRef.current.close().catch(() => {});
+        shakeAudioContextRef.current = null;
+      }
     };
   }, []);
+
+  useEffect(() => {
+    shakeCueRef.current = shakeCue;
+  }, [shakeCue]);
 
   useEffect(() => {
     if (!pendingDoorSwap || returnPose || interactionLocked) {
@@ -1763,7 +1984,134 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     };
   }, [interactionLocked, pendingDoorSwap, returnPose]);
 
+  const stopShakeAudio = useCallback(() => {
+    if (shakeAudioStopRef.current) {
+      shakeAudioStopRef.current();
+      shakeAudioStopRef.current = null;
+    }
+  }, []);
+
+  const startShakeAudio = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const AudioContextCtor =
+      window.AudioContext ??
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+    if (!AudioContextCtor) {
+      return;
+    }
+
+    const context = shakeAudioContextRef.current ?? new AudioContextCtor();
+    shakeAudioContextRef.current = context;
+
+    const noiseBuffer = shakeNoiseBufferRef.current ?? createWoodShakeNoiseBuffer(context);
+    shakeNoiseBufferRef.current = noiseBuffer;
+
+    let cancelled = false;
+    let timeoutId: number | null = null;
+
+    const scheduleNext = () => {
+      if (cancelled) {
+        return;
+      }
+
+      playWoodShakeBurst(context, noiseBuffer);
+      timeoutId = window.setTimeout(scheduleNext, 190 + Math.random() * 170);
+    };
+
+    const begin = () => {
+      if (cancelled) {
+        return;
+      }
+
+      scheduleNext();
+    };
+
+    if (context.state === "suspended") {
+      void context.resume().then(begin).catch(() => {});
+    } else {
+      begin();
+    }
+
+    shakeAudioStopRef.current = () => {
+      cancelled = true;
+
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, []);
+
+  const triggerDoorShake = useCallback((doorId: string) => {
+    if (!doorId || typeof window === "undefined" || shakeCueRef.current) {
+      return;
+    }
+
+    shakeNonceRef.current += 1;
+    const nextCue = {
+      doorId,
+      nonce: shakeNonceRef.current,
+    };
+    shakeCueRef.current = nextCue;
+    setShakeCue(nextCue);
+
+    stopShakeAudio();
+    startShakeAudio();
+  }, [startShakeAudio, stopShakeAudio]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      const isZoomedOut = !focusedDoorId && !interactionLocked && !returnPose;
+
+      if (!isZoomedOut) {
+        return;
+      }
+
+      if (Date.now() - lastInteractionAtRef.current < idleShakeDelayMs) {
+        return;
+      }
+
+      if (shakeCueRef.current) {
+        return;
+      }
+
+      const doorId = chooseRandomClosedDoor(doorItemIds, openedDoorIds);
+
+      if (!doorId) {
+        return;
+      }
+
+      triggerDoorShake(doorId);
+      lastInteractionAtRef.current = Date.now();
+    }, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [doorItemIds, focusedDoorId, interactionLocked, openedDoorIds, returnPose, triggerDoorShake]);
+
+  useEffect(() => {
+    if (!shakeCue) {
+      stopShakeAudio();
+    }
+  }, [shakeCue, stopShakeAudio]);
+
   const toggleDoor = (doorId: string) => {
+    lastInteractionAtRef.current = Date.now();
+
+    if (shakeCue) {
+      shakeCueRef.current = null;
+      setShakeCue(null);
+      stopShakeAudio();
+    }
+
     if (interactionLocked && focusedDoorId !== doorId) {
       return;
     }
@@ -1862,6 +2210,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       }
 
       setInteractionLocked(false);
+      lastInteractionAtRef.current = Date.now();
 
       if (returnReleaseFrameRef.current !== null) {
         window.cancelAnimationFrame(returnReleaseFrameRef.current);
@@ -1891,6 +2240,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
                 doorItemIds={doorItemIds}
+                shakeCue={shakeCue}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}
                 rugTexture={rugTexture}
