@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "data:curate": "node scripts/build-curated-dataset.mjs"
+    "data:curate": "node scripts/build-curated-dataset.mjs",
+    "data:genres": "node scripts/build-curated-dataset.mjs --mode genres --output src/data/genreReport.json"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

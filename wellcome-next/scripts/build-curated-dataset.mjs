@@ -20,8 +20,53 @@ const outputPath = path.resolve(args.get("--output") ?? defaultOutput);
 const limit = Number.parseInt(args.get("--limit") ?? "100", 10);
 const seed = Number.parseInt(args.get("--seed") ?? "42", 10);
 const maxConnections = Number.parseInt(args.get("--max-connections") ?? "8", 10);
+const mode = args.get("--mode") ?? "curate";
 
-const strong3dGenreLabels = new Set(["museum object"]);
+const strong3dGenreLabels = new Set([
+  "amulets",
+  "badges",
+  "bags",
+  "boxes",
+  "bronze sculpture",
+  "chessmen",
+  "clocks and watches",
+  "condoms",
+  "medal",
+  "medals",
+  "museum object",
+  "plaster sculpture",
+  "portrait sculpture",
+  "powders",
+  "sandals",
+  "sculpture",
+  "shelf clocks",
+  "stereoscopes",
+  "tiles",
+  "tusks",
+  "votive offerings",
+  "wax-modeling",
+  "wood sculpture",
+  "wood-carving",
+]);
+const supporting3dGenreLabels = new Set([
+  "cloth prints",
+  "clothing",
+  "coats",
+  "costumes",
+  "painted signs and signboards",
+  "samples",
+  "scientific illustrations",
+  "signs (notices)",
+  "still life drawings",
+  "still life paintings",
+  "still life photographs",
+  "still life prints",
+  "still lifes",
+  "textile fabrics",
+  "trade cards",
+  "trade catalogues",
+  "wooden signs and signboards",
+]);
 const weak2dGenreLabels = new Set([
   "advertisements",
   "book",
@@ -193,6 +238,62 @@ function collectContributors(record) {
     .filter(Boolean);
 }
 
+async function reportGenres() {
+  const counts = new Map();
+  const examples = new Map();
+  const input = fs.createReadStream(inputPath);
+  const lines = readline.createInterface({ input, crlfDelay: Infinity });
+
+  for await (const line of lines) {
+    if (!line.trim()) continue;
+
+    let record;
+    try {
+      record = JSON.parse(line);
+    } catch {
+      continue;
+    }
+
+    for (const genre of record.source?.genres ?? []) {
+      const label = genre.label || "(missing)";
+      counts.set(label, (counts.get(label) ?? 0) + 1);
+      if (!examples.has(label)) examples.set(label, record.source?.title ?? "");
+    }
+  }
+
+  const rows = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([label, count]) => {
+      const key = normalizeText(label);
+      const category = strong3dGenreLabels.has(key)
+        ? "strong-3d"
+        : supporting3dGenreLabels.has(key)
+          ? "supporting-3d"
+          : weak2dGenreLabels.has(key)
+            ? "mostly-2d"
+            : "unclassified";
+
+      return { label, count, category, exampleTitle: examples.get(label) };
+    });
+
+  const output = {
+    generatedAt: new Date().toISOString(),
+    source: path.relative(projectRoot, inputPath),
+    uniqueGenreCount: rows.length,
+    categories: {
+      strong3d: [...strong3dGenreLabels].sort(),
+      supporting3d: [...supporting3dGenreLabels].sort(),
+      mostly2d: [...weak2dGenreLabels].sort(),
+    },
+    genres: rows,
+  };
+
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);
+
+  console.log(`Wrote ${rows.length} unique genres to ${path.relative(projectRoot, outputPath)}`);
+}
+
 function dedupeBy(values, getKey) {
   const seen = new Set();
   const deduped = [];
@@ -274,15 +375,23 @@ function scoreCandidate(record) {
     ...contributors,
   ].join(" "));
   const keywordHits = findKeywordGroups(metadataText);
-  const isMuseumObject = genreKeys.some((genre) => strong3dGenreLabels.has(genre));
+  const strong3dGenres = genreKeys.filter((genre) => strong3dGenreLabels.has(genre));
+  const supporting3dGenres = genreKeys.filter((genre) => supporting3dGenreLabels.has(genre));
+  const hasStrong3dGenre = strong3dGenres.length > 0;
+  const hasSupporting3dGenre = supporting3dGenres.length > 0;
   const hasOnlyWeak2dGenres = genreKeys.length > 0 && genreKeys.every((genre) => weak2dGenreLabels.has(genre));
 
   let score = 0;
   const reasons = [];
 
-  if (isMuseumObject) {
+  if (hasStrong3dGenre) {
     score += 8;
-    reasons.push("genre:Museum object");
+    reasons.push(...strong3dGenres.slice(0, 3).map((genre) => `genre:${genre}`));
+  }
+
+  if (hasSupporting3dGenre) {
+    score += 4;
+    reasons.push(...supporting3dGenres.slice(0, 3).map((genre) => `supporting-genre:${genre}`));
   }
 
   if (keywordHits.length > 0) {
@@ -299,7 +408,7 @@ function scoreCandidate(record) {
     reasons.push(`license:${record.thumbnail.license.id}`);
   }
 
-  if (hasOnlyWeak2dGenres && !isMuseumObject) {
+  if (hasOnlyWeak2dGenres && !hasStrong3dGenre && !hasSupporting3dGenre) {
     score -= 5;
   }
 
@@ -493,6 +602,11 @@ function buildConnections(items) {
 }
 
 async function main() {
+  if (mode === "genres") {
+    await reportGenres();
+    return;
+  }
+
   if (!Number.isInteger(limit) || limit <= 0) {
     throw new Error("--limit must be a positive integer");
   }
@@ -509,7 +623,7 @@ async function main() {
       seed,
       candidateCount: candidates.length,
       method:
-        "Stream images.json, keep likely 3D records from Museum object genre and object-like metadata keywords, then link selected items by shared subjects, genres, and normalized object keywords.",
+        "Stream images.json, keep likely 3D records from strong 3D genres, supporting object-like genres, and object-related metadata keywords, then link selected items by shared subjects, genres, and normalized object keywords.",
     },
     items,
   };

@@ -3,8 +3,11 @@
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Box3,
   DoubleSide,
   MathUtils,
+  Mesh,
+  MeshStandardMaterial,
   RepeatWrapping,
   Vector3,
   TextureLoader,
@@ -12,6 +15,7 @@ import {
   SRGBColorSpace,
   type Group,
 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { CabinetItem } from "@/data/cabinetItems";
 
 type CabinetPanoramaProps = {
@@ -65,6 +69,11 @@ const playerRadius = 0.28;
 const roomRadius = 5.2;
 const itemsPerCabinet = 4;
 const doorsPerCabinet = 16;
+const forceNeutralModelPreviewMaterial = true;
+// Preview tuning: adjust these to make neutral preview less bright
+const previewMaterialColor = "#c0b9ad";
+const previewMaterialRoughness = 0.7;
+const previewMaterialMetalness = 0.02;
 
 function trimTitle(title: string) {
   return title.replace(/^\[/, "").replace(/\]\.?$/, "");
@@ -609,6 +618,123 @@ function ItemDisplay({
   );
 }
 
+function ModelDisplay({
+  modelUrl,
+  spec,
+  style,
+  open,
+}: {
+  modelUrl: string;
+  spec: CompartmentSpec;
+  style: CabinetStyle;
+  open: boolean;
+}) {
+  const gltf = useLoader(GLTFLoader, modelUrl);
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true);
+
+    cloned.traverse((child) => {
+      if (child instanceof Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.frustumCulled = false;
+
+        if (forceNeutralModelPreviewMaterial) {
+          if (Array.isArray(child.material)) {
+            child.material = child.material.map(
+              () =>
+                new MeshStandardMaterial({
+                  color: previewMaterialColor,
+                  roughness: previewMaterialRoughness,
+                  metalness: previewMaterialMetalness,
+                }),
+            );
+          } else {
+            child.material = new MeshStandardMaterial({
+              color: previewMaterialColor,
+              roughness: previewMaterialRoughness,
+              metalness: previewMaterialMetalness,
+            });
+          }
+
+          return;
+        }
+
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+
+        materials.forEach((material) => {
+          if (!material) return;
+
+          if ("toneMapped" in material) {
+            material.toneMapped = false;
+          }
+
+          const hasBaseColorMap = "map" in material && !!material.map;
+
+          if (hasBaseColorMap && "map" in material && material.map) {
+            material.map.colorSpace = SRGBColorSpace;
+          }
+
+          if ("color" in material && material.color) {
+            const luminance =
+              material.color.r * 0.2126 +
+              material.color.g * 0.7152 +
+              material.color.b * 0.0722;
+
+            if (!hasBaseColorMap && luminance < 0.08) {
+              material.color.setRGB(0.86, 0.83, 0.76);
+            } else {
+              material.color.multiplyScalar(1.12);
+            }
+          }
+
+          if ("emissive" in material && material.emissive) {
+            if ("color" in material && material.color) {
+              material.emissive.copy(material.color);
+            }
+            if ("emissiveIntensity" in material) {
+              material.emissiveIntensity = hasBaseColorMap ? 0.15 : 0.2;
+            }
+          }
+
+          if ("roughness" in material) {
+            material.roughness = Math.min(material.roughness ?? 0.8, 0.75);
+          }
+
+          material.needsUpdate = true;
+        });
+      }
+    });
+
+    return cloned;
+  }, [gltf]);
+  const { scale, center } = useMemo(() => {
+    const box = new Box3().setFromObject(scene);
+    const size = new Vector3();
+    const centerVec = new Vector3();
+    box.getSize(size);
+    box.getCenter(centerVec);
+    const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+    const target = Math.min(spec.width, spec.height) * 1.02;
+
+    return {
+      scale: target / maxDim,
+      center: centerVec,
+    };
+  }, [scene, spec.height, spec.width]);
+
+  const displayZ = open ? -style.depth * 0.2 : style.depth * 0.3;
+  const displayY = spec.y - spec.height * 0.05;
+
+  return (
+    <group position={[spec.x, displayY, displayZ]} visible={open} renderOrder={11}>
+      <ambientLight intensity={1.0} />
+      <pointLight position={[0, spec.height * 0.15, 0.4]} intensity={2.2} color="#fff4d8" distance={2.4} />
+      <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
+    </group>
+  );
+}
+
 
 function ClickableFront({
   doorId,
@@ -657,7 +783,7 @@ function ClickableFront({
 
   const handleClick = (event: { stopPropagation: () => void }) => {
     event.stopPropagation();
-    if (interactionLocked) return;
+    if (interactionLocked && !open) return;
     onToggle(doorId);
   };
 
@@ -690,6 +816,7 @@ function ClickableFront({
 function CabinetCompartment({
   doorId,
   item,
+  modelUrl,
   spec,
   style,
   woodTexture,
@@ -700,6 +827,7 @@ function CabinetCompartment({
 }: {
   doorId: string;
   item: CabinetItem;
+  modelUrl?: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   woodTexture?: Texture | null;
@@ -793,13 +921,17 @@ function CabinetCompartment({
           />
         </mesh>
       </group>
-      <ItemDisplay
-        item={item}
-        spec={spec}
-        style={style}
-        open={open}
-        interactionLocked={interactionLocked}
-      />
+      {modelUrl ? (
+        <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} />
+      ) : (
+        <ItemDisplay
+          item={item}
+          spec={spec}
+          style={style}
+          open={open}
+          interactionLocked={interactionLocked}
+        />
+      )}
       <ClickableFront
         doorId={doorId}
         spec={spec}
@@ -927,12 +1059,16 @@ function CabinetPanel({
           const item =
             allItems.find((candidate) => candidate.id === doorItemIds[doorId]) ??
             allItems[(index * doorsPerCabinet + specIndex) % allItems.length];
+          const demoModelUrl = index === 0 && specIndex < demoModelUrls.length
+            ? demoModelUrls[specIndex]
+            : undefined;
 
           return (
             <CabinetCompartment
               key={doorId}
               doorId={doorId}
               item={item}
+              modelUrl={demoModelUrl}
               spec={spec}
               style={style}
               woodTexture={cabinetWoodTexture}
@@ -1164,6 +1300,14 @@ const cabinetWoodTextureFiles = [
   "/medium_light_wood.jpg",
 ];
 
+const demoModelUrls = [
+  "/models_3d/3D-demo-1.glb",
+  "/models_3d/3D-demo-2.glb",
+  "/models_3d/3D-demo-3.glb",
+  "/models_3d/3D-demo-4.glb",
+  "/models_3d/3D-demo-5.glb",
+];
+
 export function CabinetPanorama({ items }: CabinetPanoramaProps) {
   const groups = useMemo(() => chunkItems(items), [items]);
   const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
@@ -1364,6 +1508,17 @@ export function CabinetPanorama({ items }: CabinetPanoramaProps) {
 
   const toggleDoor = (doorId: string) => {
     if (interactionLocked) {
+      if (focusedDoorId === doorId) {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+
+        pendingPostStoryShakeRef.current = false;
+        setReturnPose(roamPoseRef.current);
+        setFocusedDoorId("");
+        setSelectedItemId("");
+      }
+
       return;
     }
 
