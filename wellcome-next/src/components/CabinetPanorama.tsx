@@ -555,26 +555,22 @@ function chooseInitialDoorItem(
   return nextItemId;
 }
 
-function isDemoModelDoor(doorId: string, groups: CabinetGroup[]) {
+function isDemoModelDoor(
+  doorId: string,
+  doorItemIds: Record<string, string>,
+  itemsById: Map<string, CabinetItem>,
+) {
   if (!doorId) {
     return false;
   }
 
-  const specSeparatorIndex = doorId.lastIndexOf("-");
+  const itemId = doorItemIds[doorId];
 
-  if (specSeparatorIndex === -1) {
+  if (!itemId) {
     return false;
   }
 
-  const groupId = doorId.slice(0, specSeparatorIndex);
-  const specIndex = Number(doorId.slice(specSeparatorIndex + 1));
-  const groupIndex = groups.findIndex((group) => group.id === groupId);
-
-  if (groupIndex !== 0 || Number.isNaN(specIndex)) {
-    return false;
-  }
-
-  return specIndex >= 0 && specIndex < demoModelUrls.length;
+  return Boolean(itemsById.get(itemId)?.modelUrl);
 }
 
 function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
@@ -1597,14 +1593,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, [doorIds, items]);
   const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
   const [seenItemIds, setSeenItemIds] = useState<Record<string, boolean>>({});
-  const [selectedItemId, setSelectedItemId] = useState("");
   const [focusedDoorId, setFocusedDoorId] = useState("");
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [doorDissolvePhases, setDoorDissolvePhases] = useState<Record<string, DissolvePhase>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
-  const selectedItem = items.find((item) => item.id === selectedItemId);
   const focusedItem = useMemo(() => {
     if (!focusedDoorId) {
       return undefined;
@@ -1710,22 +1704,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
-    if (!focusedDoorId) {
-      return;
-    }
-
-    if (isDemoModelDoor(focusedDoorId, groups)) {
-      return;
-    }
-
-    const focusedItemId = doorItemIds[focusedDoorId];
-
-    if (focusedItemId && focusedItemId !== selectedItemId) {
-      setSelectedItemId(focusedItemId);
-    }
-  }, [doorItemIds, focusedDoorId, groups, selectedItemId]);
-
-  useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       return;
     }
@@ -1737,7 +1715,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    if (isDemoModelDoor(focusedDoorId, groups)) {
+    if (isDemoModelDoor(focusedDoorId, doorItemIds, itemsById)) {
       return;
     }
 
@@ -1757,7 +1735,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     utterance.onend = () => {
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
-      setSelectedItemId("");
     };
 
     const handleVoicesChanged = () => {
@@ -1771,7 +1748,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       speech.removeEventListener("voiceschanged", handleVoicesChanged);
       speech.cancel();
     };
-  }, [focusedDoorId, focusedItem, groups]);
+  }, [doorItemIds, focusedDoorId, focusedItem, itemsById]);
 
   useEffect(() => {
     return () => {
@@ -1818,7 +1795,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       });
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
-      setSelectedItemId("");
       return;
     }
 
@@ -1830,7 +1806,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     if (openedDoorIds[doorId] && !focusedDoorId) {
       setOpenedDoorIds({ [doorId]: true });
       setInteractionLocked(true);
-      setSelectedItemId(currentItem.id);
       setFocusedDoorId(doorId);
       setReturnPose(null);
       return;
@@ -1838,7 +1813,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
     setOpenedDoorIds({ [doorId]: true });
     setInteractionLocked(true);
-    setSelectedItemId(currentItem.id);
     setFocusedDoorId(doorId);
     setReturnPose(null);
   };
