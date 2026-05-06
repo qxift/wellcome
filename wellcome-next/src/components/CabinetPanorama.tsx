@@ -8,7 +8,6 @@ import {
   DoubleSide,
   MathUtils,
   Mesh,
-  MeshBasicMaterial,
   RepeatWrapping,
   Vector3,
   TextureLoader,
@@ -62,7 +61,12 @@ type FurniturePlacement = {
   rotationY: number;
 };
 
-type DissolvePhase = "idle" | "entering" | "exiting";
+type PendingDoorSwap = {
+  doorId: string;
+  nextItemId: string;
+} | null;
+
+const postZoomSwapDelayMs = 220;
 
 const playerRadius = 0.28;
 const roomRadius = 4.385;
@@ -410,11 +414,11 @@ function getCabinetStyle(): CabinetStyle {
 }
 
 function getCompartmentSpecs(style: CabinetStyle, count: number): CompartmentSpec[] {
-  const innerWidth = style.width - 0.02;
-  const innerHeight = style.height - 0.02;
+  const innerWidth = style.width - 0.004;
+  const innerHeight = style.height - 0.004;
   const columns = 2;
   const rows = 4;
-  const gap = 0.002;
+  const gap = 0;
   const specs: CompartmentSpec[] = [];
   const columnWidth = (innerWidth - gap * (columns - 1)) / columns;
   const rowHeight = (innerHeight - gap * (rows - 1)) / rows;
@@ -834,25 +838,21 @@ function ItemDisplay({
   style,
   open,
   active,
-  dissolvePhase,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
-  dissolvePhase: DissolvePhase;
 }) {
   const objectRef = useRef<Group>(null);
-  const materialRef = useRef<MeshBasicMaterial | null>(null);
-  const dissolveProgressRef = useRef(0);
   const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
     loader.crossOrigin = "anonymous";
   });
   const { texture: displayTexture, contentWidth, contentHeight } = useMemo(() => buildDisplayTexture(texture), [texture]);
   const { imageWidth, imageHeight } = useMemo(() => {
-    const maxWidth = spec.width * 0.68;
-    const maxHeight = spec.height * 0.58;
+    const maxWidth = spec.width * 0.76;
+    const maxHeight = spec.height * 0.66;
     const sourceWidth = contentWidth;
     const sourceHeight = contentHeight;
     const aspectRatio = sourceWidth / Math.max(1, sourceHeight);
@@ -870,32 +870,21 @@ function ItemDisplay({
     };
   }, [contentHeight, contentWidth, spec.height, spec.width]);
 
-  useEffect(() => {
-    dissolveProgressRef.current = dissolvePhase === "exiting" ? 1 : dissolvePhase === "entering" ? 0 : 1;
-  }, [dissolvePhase, item.id]);
-
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.012 : 0;
     const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.08 : 0;
-    const targetDissolve = dissolvePhase === "exiting" ? 0 : 1;
-    dissolveProgressRef.current = MathUtils.damp(dissolveProgressRef.current, targetDissolve, 5.5, delta);
-    const dissolve = dissolveProgressRef.current;
+    const targetDepth = active ? 0.32 : 0;
 
     objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
     objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
     objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.04 : 0, 4, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, (1 - dissolve) * -0.08, 6, delta);
-    const scale = (open ? 1.04 : 1) * (0.94 + dissolve * 0.1);
-    objectRef.current.scale.setScalar(scale);
-
-    if (materialRef.current) {
-      materialRef.current.opacity = dissolve * 0.9;
-    }
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
+    objectRef.current.scale.setScalar(active ? 1.34 : open ? 1.08 : 1);
   });
 
-  const displayZ = open ? style.depth * 0.38 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.3 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   return (
@@ -904,12 +893,12 @@ function ItemDisplay({
         <mesh position={[0, 0, 0.002]} renderOrder={12}>
           <planeGeometry args={[imageWidth, imageHeight]} />
           <meshBasicMaterial
-            ref={materialRef}
             map={displayTexture}
             color="#dbc7a3"
             transparent
+            alphaTest={0.04}
+            depthWrite={false}
             side={DoubleSide}
-            opacity={0}
           />
         </mesh>
       </group>
@@ -923,17 +912,14 @@ function ModelDisplay({
   style,
   open,
   active,
-  dissolvePhase,
 }: {
   modelUrl: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
-  dissolvePhase: DissolvePhase;
 }) {
   const gltf = useLoader(GLTFLoader, modelUrl);
-  const dissolveProgressRef = useRef(0);
   const scene = useMemo(() => {
     const cloned = gltf.scene.clone(true);
 
@@ -966,10 +952,10 @@ function ModelDisplay({
     box.getSize(size);
     box.getCenter(centerVec);
     const maxDim = Math.max(size.x, size.y, size.z, 0.001);
-    const target = Math.min(spec.width, spec.height) * 0.82;
+    const target = Math.min(spec.width, spec.height) * 0.94;
 
     return {
-      scale: (target / maxDim) * 0.72,
+      scale: (target / maxDim) * 0.84,
       center: centerVec,
     };
   }, [scene, spec.height, spec.width]);
@@ -979,17 +965,11 @@ function ModelDisplay({
   const displayZ = open ? style.depth * 0.26 : style.depth * 0.04;
   const displayY = spec.y - spec.height * 0.04;
 
-  useEffect(() => {
-    dissolveProgressRef.current = dissolvePhase === "exiting" ? 1 : dissolvePhase === "entering" ? 0 : 1;
-  }, [dissolvePhase, modelUrl]);
-
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
-    const targetDissolve = dissolvePhase === "exiting" ? 0 : 1;
-    dissolveProgressRef.current = MathUtils.damp(dissolveProgressRef.current, targetDissolve, 5.5, delta);
-    const dissolve = dissolveProgressRef.current;
+    const targetDepth = active ? 0.18 : -0.16;
 
     if (active) {
       spinXRef.current += delta * 0.7;
@@ -1000,32 +980,10 @@ function ModelDisplay({
     }
 
     objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4.5, delta);
-    objectRef.current.position.z = MathUtils.damp(
-      objectRef.current.position.z,
-      -0.16 + (1 - dissolve) * -0.08,
-      6,
-      delta,
-    );
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
     objectRef.current.rotation.x = spinXRef.current;
     objectRef.current.rotation.y = spinYRef.current;
-    objectRef.current.scale.setScalar(0.88 + dissolve * 0.06);
-
-    scene.traverse((child) => {
-      if (!(child instanceof Mesh)) {
-        return;
-      }
-
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-
-      materials.forEach((material) => {
-        if (!material || !("opacity" in material)) {
-          return;
-        }
-
-        material.transparent = dissolve < 0.999;
-        material.opacity = dissolve;
-      });
-    });
+    objectRef.current.scale.setScalar(active ? 1.28 : 1.02);
   });
 
   return (
@@ -1045,6 +1003,8 @@ function ClickableFront({
   spec,
   style,
   open,
+  active,
+  hasFocusedDoor,
   interactionLocked,
   onToggle,
   woodTexture,
@@ -1053,6 +1013,8 @@ function ClickableFront({
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
+  active: boolean;
+  hasFocusedDoor: boolean;
   interactionLocked: boolean;
   woodTexture?: Texture | null;
   onToggle: (doorId: string) => void;
@@ -1061,6 +1023,7 @@ function ClickableFront({
   const frontZ = style.depth * 0.15; // Adjusted for new depth
   const hingeDirection = spec.type === "door-left" ? -1 : 1;
   const arcDepth = spec.width * 0.04;
+  const doorOverlap = 0.028;
   const doorFrameTexture = useMemo(() => {
     if (!woodTexture) {
       return null;
@@ -1079,14 +1042,15 @@ function ClickableFront({
     roughness: 0.78,
     metalness: 0.04,
   };
-  const panelInsetWidth = Math.max(0.12, spec.width - 0.22);
-  const panelInsetHeight = Math.max(0.16, spec.height - 0.22);
+  const panelInsetWidth = Math.max(0.12, spec.width - 0.16);
+  const panelInsetHeight = Math.max(0.16, spec.height - 0.16);
 
   useFrame((_, delta) => {
     if (!frontRef.current) return;
 
     const openAngle = hingeDirection * (Math.PI * 82 / 180);
-    const targetRotation = open ? openAngle : 0;
+    const ajarAngle = openAngle * 0.18;
+    const targetRotation = active ? openAngle : open ? (hasFocusedDoor ? ajarAngle : openAngle) : 0;
 
     frontRef.current.rotation.y = MathUtils.damp(
       frontRef.current.rotation.y,
@@ -1108,20 +1072,20 @@ function ClickableFront({
       position={[spec.x + hingeDirection * spec.width * 0.5, spec.y, frontZ]}
       onClick={handleClick}
     >
-      <mesh position={[-hingeDirection * 0.05, 0, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[0.1, spec.height + 0.02, 0.08]} />
+      <mesh position={[-hingeDirection * 0.06, 0, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
         <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
       </mesh>
-      <mesh position={[-hingeDirection * (spec.width - 0.05), 0, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[0.1, spec.height + 0.02, 0.08]} />
+      <mesh position={[-hingeDirection * (spec.width - 0.06), 0, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
         <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
       </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.5 - 0.045, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[spec.width + 0.02, 0.1, 0.08]} />
+      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.5 - 0.05, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
         <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
       </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.5 + 0.045, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[spec.width + 0.02, 0.1, 0.08]} />
+      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.5 + 0.05, 0.02 + arcDepth]} castShadow>
+        <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
         <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
       </mesh>
       <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.068 + arcDepth]} renderOrder={16}>
@@ -1153,7 +1117,7 @@ function CabinetCompartment({
   woodTexture,
   open,
   active,
-  dissolvePhase,
+  hasFocusedDoor,
   interactionLocked,
   onToggle,
 }: {
@@ -1165,7 +1129,7 @@ function CabinetCompartment({
   woodTexture?: Texture | null;
   open: boolean;
   active: boolean;
-  dissolvePhase: DissolvePhase;
+  hasFocusedDoor: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -1257,7 +1221,7 @@ function CabinetCompartment({
       {item ? (
         modelUrl ? (
           <Suspense fallback={null}>
-            <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} dissolvePhase={dissolvePhase} />
+            <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} />
           </Suspense>
         ) : (
           <Suspense fallback={null}>
@@ -1267,7 +1231,6 @@ function CabinetCompartment({
               style={style}
               open={open}
               active={active}
-              dissolvePhase={dissolvePhase}
             />
           </Suspense>
         )
@@ -1277,6 +1240,8 @@ function CabinetCompartment({
         spec={spec}
         style={style}
         open={open}
+        active={active}
+        hasFocusedDoor={hasFocusedDoor}
         interactionLocked={interactionLocked}
         woodTexture={woodTexture}
         onToggle={onToggle}
@@ -1292,7 +1257,6 @@ function CabinetPanel({
   focusedDoorId,
   allItems,
   doorItemIds,
-  doorDissolvePhases,
   interactionLocked,
   woodTextures,
   onToggleDoor,
@@ -1303,7 +1267,6 @@ function CabinetPanel({
   focusedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
-  doorDissolvePhases: Record<string, DissolvePhase>;
   interactionLocked: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
@@ -1345,7 +1308,7 @@ function CabinetPanel({
               woodTexture={cabinetWoodTexture}
               open={Boolean(openedDoorIds[doorId])}
               active={focusedDoorId === doorId}
-              dissolvePhase={doorDissolvePhases[doorId] ?? "idle"}
+              hasFocusedDoor={Boolean(focusedDoorId)}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1423,6 +1386,15 @@ function WasdCamera({
       lookAtRef.current.z = MathUtils.damp(lookAtRef.current.z, focusTarget.lookAt[2], 5.5, delta);
       sceneCamera.lookAt(lookAtRef.current);
 
+      // Keep the roam pose aligned with the real camera during the return trip
+      // so free movement resumes without a second handoff jump.
+      if (targetMode === "return") {
+        onRoamPoseChange({
+          cameraPosition: [sceneCamera.position.x, sceneCamera.position.y, sceneCamera.position.z],
+          yaw: yaw.current,
+        });
+      }
+
       if (targetMode && settledTargetModeRef.current !== targetMode) {
         const distance =
           Math.abs(sceneCamera.position.x - focusTarget.cameraPosition[0]) +
@@ -1431,6 +1403,30 @@ function WasdCamera({
         const yawDistance = Math.abs(yaw.current - focusTarget.yaw);
 
         if (distance < 0.03 && yawDistance < 0.03) {
+          sceneCamera.position.set(
+            focusTarget.cameraPosition[0],
+            focusTarget.cameraPosition[1],
+            focusTarget.cameraPosition[2],
+          );
+          yaw.current = focusTarget.yaw;
+          lookAtRef.current.set(
+            focusTarget.lookAt[0],
+            focusTarget.lookAt[1],
+            focusTarget.lookAt[2],
+          );
+          sceneCamera.lookAt(lookAtRef.current);
+
+          if (targetMode === "return") {
+            onRoamPoseChange({
+              cameraPosition: [
+                focusTarget.cameraPosition[0],
+                focusTarget.cameraPosition[1],
+                focusTarget.cameraPosition[2],
+              ],
+              yaw: focusTarget.yaw,
+            });
+          }
+
           settledTargetModeRef.current = targetMode;
           onTargetReached(targetMode);
         }
@@ -1480,7 +1476,6 @@ function CabinetRoom({
   openedDoorIds,
   focusedDoorId,
   doorItemIds,
-  doorDissolvePhases,
   interactionLocked,
   woodTextures,
   rugTexture,
@@ -1497,7 +1492,6 @@ function CabinetRoom({
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
   doorItemIds: Record<string, string>;
-  doorDissolvePhases: Record<string, DissolvePhase>;
   interactionLocked: boolean;
   woodTextures: Texture[];
   rugTexture?: Texture | null;
@@ -1551,7 +1545,6 @@ function CabinetRoom({
               focusedDoorId={focusedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
-              doorDissolvePhases={doorDissolvePhases}
               interactionLocked={interactionLocked}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
@@ -1589,8 +1582,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [seenItemIds, setSeenItemIds] = useState<Record<string, boolean>>({});
   const [focusedDoorId, setFocusedDoorId] = useState("");
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
-  const [doorDissolvePhases, setDoorDissolvePhases] = useState<Record<string, DissolvePhase>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
+  const [pendingDoorSwap, setPendingDoorSwap] = useState<PendingDoorSwap>(null);
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const focusedItem = useMemo(() => {
@@ -1606,7 +1599,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [rugTexture, setRugTexture] = useState<Texture | null>(null);
   const [floorTexture, setFloorTexture] = useState<Texture | null>(null);
   const mountedRef = useRef(false);
-  const dissolveTimersRef = useRef<number[]>([]);
+  const returnReleaseFrameRef = useRef<number | null>(null);
   const roamPoseRef = useRef<CameraPose>({
     cameraPosition: [0, 0.05, 0.25],
     yaw: 0,
@@ -1746,10 +1739,29 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
   useEffect(() => {
     return () => {
-      dissolveTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
-      dissolveTimersRef.current = [];
+      if (returnReleaseFrameRef.current !== null) {
+        window.cancelAnimationFrame(returnReleaseFrameRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!pendingDoorSwap || returnPose || interactionLocked) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setDoorItemIds((currentDoorItemIds) => ({
+        ...currentDoorItemIds,
+        [pendingDoorSwap.doorId]: pendingDoorSwap.nextItemId,
+      }));
+      setPendingDoorSwap(null);
+    }, postZoomSwapDelayMs);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [interactionLocked, pendingDoorSwap, returnPose]);
 
   const toggleDoor = (doorId: string) => {
     if (interactionLocked && focusedDoorId !== doorId) {
@@ -1775,7 +1787,10 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     }
 
     if (!openedDoorIds[doorId]) {
-      setOpenedDoorIds({ [doorId]: true });
+      setOpenedDoorIds((currentDoors) => ({
+        ...currentDoors,
+        [doorId]: true,
+      }));
     }
 
     if (focusedDoorId === doorId) {
@@ -1798,14 +1813,20 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     }));
 
     if (openedDoorIds[doorId] && !focusedDoorId) {
-      setOpenedDoorIds({ [doorId]: true });
+      setOpenedDoorIds((currentDoors) => ({
+        ...currentDoors,
+        [doorId]: true,
+      }));
       setInteractionLocked(true);
       setFocusedDoorId(doorId);
       setReturnPose(null);
       return;
     }
 
-    setOpenedDoorIds({ [doorId]: true });
+    setOpenedDoorIds((currentDoors) => ({
+      ...currentDoors,
+      [doorId]: true,
+    }));
     setInteractionLocked(true);
     setFocusedDoorId(doorId);
     setReturnPose(null);
@@ -1830,39 +1851,26 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
             .map(([, itemId]) => itemId));
 
           if (nextItemId && nextItemId !== currentItemId) {
-            setDoorDissolvePhases((currentPhases) => ({
-              ...currentPhases,
-              [closingDoorId]: "exiting",
-            }));
-
-            const doorId = closingDoorId;
-            const swapTimer = window.setTimeout(() => {
-              setDoorItemIds((currentDoorItemIds) => ({
-                ...currentDoorItemIds,
-                [doorId]: nextItemId,
-              }));
-              setDoorDissolvePhases((currentPhases) => ({
-                ...currentPhases,
-                [doorId]: "entering",
-              }));
-            }, 220);
-
-            const settleTimer = window.setTimeout(() => {
-              setDoorDissolvePhases((currentPhases) => ({
-                ...currentPhases,
-                [doorId]: "idle",
-              }));
-            }, 560);
-
-            dissolveTimersRef.current.push(swapTimer, settleTimer);
+            setPendingDoorSwap({
+              doorId: closingDoorId,
+              nextItemId,
+            });
           }
         }
 
         setClosingDoorId("");
       }
 
-      setReturnPose(null);
       setInteractionLocked(false);
+
+      if (returnReleaseFrameRef.current !== null) {
+        window.cancelAnimationFrame(returnReleaseFrameRef.current);
+      }
+
+      returnReleaseFrameRef.current = window.requestAnimationFrame(() => {
+        setReturnPose(null);
+        returnReleaseFrameRef.current = null;
+      });
     }
   }, [closingDoorId, doorItemIds, doorItemPools, itemsById, seenItemIds]);
 
@@ -1883,7 +1891,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
                 doorItemIds={doorItemIds}
-                doorDissolvePhases={doorDissolvePhases}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}
                 rugTexture={rugTexture}
