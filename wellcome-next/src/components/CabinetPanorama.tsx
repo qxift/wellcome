@@ -17,6 +17,7 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { CabinetItem } from "@/data/cabinetItems";
+import cabinetStories from "@/data/cabinetStories.json";
 
 type CabinetPanoramaProps = {
   items: CabinetItem[];
@@ -800,6 +801,12 @@ function getDoorFocusTarget(
 }
 
 function buildBackstory(item: CabinetItem) {
+  const storyPayload = cabinetStories as { stories?: Record<string, string> };
+  const story = storyPayload.stories?.[item.id];
+  if (story) {
+    return story;
+  }
+
   const year = cleanYear(item.year || "an unknown year");
   const title = trimTitle(item.title);
 
@@ -1911,10 +1918,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    if (isDemoModelDoor(focusedDoorId, doorItemIds, itemsById)) {
-      return;
-    }
-
     const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
     const applyVoice = () => {
       const preferredVoice = chooseNarrationVoice(speech.getVoices());
@@ -1925,8 +1928,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     };
 
     applyVoice();
-    utterance.rate = 0.9;
-    utterance.pitch = 0.88;
+    utterance.rate = 1.15;
+    utterance.pitch = 1.12;
     utterance.volume = 1;
     utterance.onend = () => {
       setReturnPose(roamPoseRef.current);
@@ -2166,6 +2169,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         [doorId]: true,
       }));
       setInteractionLocked(true);
+      console.log("[Cabinet] opened object", {
+        doorId,
+        itemId: currentItem.id,
+        title: currentItem.title,
+      });
       setFocusedDoorId(doorId);
       setReturnPose(null);
       return;
@@ -2176,6 +2184,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       [doorId]: true,
     }));
     setInteractionLocked(true);
+    console.log("[Cabinet] opened object", {
+      doorId,
+      itemId: currentItem.id,
+      title: currentItem.title,
+    });
     setFocusedDoorId(doorId);
     setReturnPose(null);
   };
