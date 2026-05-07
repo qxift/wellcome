@@ -17,7 +17,7 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { CabinetItem } from "@/data/cabinetItems";
-import cabinetStories from "@/data/cabinetStories.json";
+import cabinetStories from "@/data/cabinetStories.llm.json";
 
 type CabinetPanoramaProps = {
   items: CabinetItem[];
@@ -801,8 +801,7 @@ function getDoorFocusTarget(
 }
 
 function buildBackstory(item: CabinetItem) {
-  const storyPayload = cabinetStories as { stories?: Record<string, string> };
-  const story = storyPayload.stories?.[item.id];
+  const story = cabinetStories[item.id as keyof typeof cabinetStories];
   if (story) {
     return story;
   }
@@ -831,19 +830,26 @@ function getFocusTargetFromPose(pose: CameraPose): FocusTarget {
 
 function chooseNarrationVoice(voices: SpeechSynthesisVoice[]) {
   const preferredNames = [
-    "samantha",
+    "aria",
+    "jenny",
     "ava",
+    "samantha",
+    "zira",
     "allison",
     "moira",
     "serena",
     "karen",
     "daniel",
     "libby",
-    "aria",
-    "jenny",
-    "zira",
     "google uk english female",
     "google us english",
+    "microsoft aria",
+    "microsoft jenny",
+    "microsoft zira",
+    "natural",
+    "neural",
+    "online",
+    "bright",
   ];
 
   return [...voices]
@@ -853,16 +859,20 @@ function chooseNarrationVoice(voices: SpeechSynthesisVoice[]) {
         const name = voice.name.toLowerCase();
         let score = 0;
 
-        if (voice.default) score += 20;
-        if (voice.localService) score += 15;
+        if (voice.default) score += 8;
+        if (voice.localService) score += 10;
         if (voice.lang.toLowerCase().startsWith("en-gb")) score += 8;
         if (voice.lang.toLowerCase().startsWith("en-us")) score += 6;
         if (preferredNames.some((preferred) => name.includes(preferred))) score += 30;
         if (name.includes("female")) score += 6;
         if (name.includes("natural")) score += 8;
+        if (name.includes("neural")) score += 10;
+        if (name.includes("online")) score += 6;
+        if (name.includes("bright")) score += 8;
         if (name.includes("enhanced")) score += 5;
         if (name.includes("compact")) score -= 8;
         if (name.includes("novelty")) score -= 20;
+        if (name.includes("old")) score -= 4;
 
         return score;
       };
@@ -1814,12 +1824,16 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     cameraPosition: [0, 0.05, 0.25],
     yaw: 0,
   });
-  const lastInteractionAtRef = useRef(Date.now());
+  const lastInteractionAtRef = useRef(0);
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
   const shakeCueRef = useRef<DoorShakeCue>(null);
   const shakeNonceRef = useRef(0);
+
+  useEffect(() => {
+    lastInteractionAtRef.current = Date.now();
+  }, []);
 
   const cabinetFocusTarget = useMemo(() => {
     if (!focusedDoorId) {
@@ -1928,7 +1942,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     };
 
     applyVoice();
-    utterance.rate = 1.15;
+    utterance.rate = 1.10;
     utterance.pitch = 1.12;
     utterance.volume = 1;
     utterance.onend = () => {

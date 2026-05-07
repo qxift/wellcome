@@ -51,6 +51,8 @@ npm run start
 npm run lint
 npm run data:curate -- --limit 100 --seed 42
 npm run data:genres
+npm run data:stories
+npm run data:stories:validate
 ```
 
 ## Curating Cabinet Data
@@ -72,6 +74,42 @@ npm run data:genres
 ```
 
 This writes `src/data/genreReport.json` with all unique `source.genres` values, counts, example titles, and the curator's current classification for each genre.
+
+## Generating Cabinet Stories
+
+The spoken cabinet descriptions are stored in `src/data/cabinetStories.llm.json`. Each entry is keyed by the object `id` from `src/data/curatedCabinetItems.json`, and `CabinetPanorama` reads this file when a user opens a cabinet door.
+
+Generate or refresh the stories from the `wellcome-next` directory:
+
+```bash
+npm run data:stories
+```
+
+If `OPENAI_API_KEY` is set, the script calls the OpenAI Responses API. It sends each object's metadata plus its `imageUrl`, asks for a concise spoken label, and writes the result back to `src/data/cabinetStories.llm.json`.
+
+```bash
+OPENAI_API_KEY="your_key_here" npm run data:stories
+```
+
+You can choose a different model with `OPENAI_MODEL`:
+
+```bash
+OPENAI_API_KEY="your_key_here" OPENAI_MODEL="gpt-4.1-mini" npm run data:stories
+```
+
+To generate stories without calling OpenAI, use the local fallback:
+
+```bash
+node scripts/generate-cabinet-stories.mjs --offline
+```
+
+Validate that every curated object has a story and that each story is no more than 50 words:
+
+```bash
+npm run data:stories:validate
+```
+
+After regenerating stories, restart or refresh the dev server so the app uses the updated JSON.
 
 ## Learn More
 
