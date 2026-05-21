@@ -776,47 +776,6 @@ function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
   return placements;
 }
 
-function rotateY([x, y, z]: [number, number, number], rotationY: number): [number, number, number] {
-  const cos = Math.cos(rotationY);
-  const sin = Math.sin(rotationY);
-
-  return [x * cos + z * sin, y, -x * sin + z * cos];
-}
-
-function addVec3([ax, ay, az]: [number, number, number], [bx, by, bz]: [number, number, number]): [number, number, number] {
-  return [ax + bx, ay + by, az + bz];
-}
-
-function getDoorFocusTarget(
-  group: CabinetGroup,
-  index: number,
-  specIndex: number,
-  placement: FurniturePlacement,
-): FocusTarget | null {
-  const style = getCabinetStyle();
-  const specs = getCompartmentSpecs(style, doorsPerCabinet);
-  const spec = specs[specIndex];
-
-  if (!spec) {
-    return null;
-  }
-  const basePosition: [number, number, number] = [
-    placement.position[0],
-    placement.position[1] + style.y,
-    placement.position[2],
-  ];
-  const localLookAt: [number, number, number] = [spec.x, spec.y, style.depth * 0.42];
-  const localCamera: [number, number, number] = [spec.x, spec.y + 0.02, style.depth * 1.45];
-  const worldLookAt = addVec3(basePosition, rotateY(localLookAt, placement.rotationY));
-  const worldCamera = addVec3(basePosition, rotateY(localCamera, placement.rotationY));
-
-  return {
-    cameraPosition: worldCamera,
-    lookAt: worldLookAt,
-    yaw: placement.rotationY + Math.PI,
-  };
-}
-
 function buildBackstory(item: CabinetItem) {
   const story = cabinetStories[item.id as keyof typeof cabinetStories];
   if (story) {
@@ -1056,15 +1015,15 @@ function ItemDisplay({
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.012 : 0;
-    const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.08 : 0;
-    const targetDepth = active ? 0.32 : 0;
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.02 : 0;
+    const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.12 : 0;
+    const targetDepth = active ? 1.5 : 0;
 
     objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
     objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
-    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.04 : 0, 4, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.1 : 0, 4, delta);
     objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
-    objectRef.current.scale.setScalar(active ? 1.34 : open ? 1.08 : 1);
+    objectRef.current.scale.setScalar(active ? 2.25 : open ? 1.08 : 1);
   });
 
   const displayZ = open ? style.depth * 0.3 : style.depth * 0.1;
@@ -1151,12 +1110,12 @@ function ModelDisplay({
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
-    const targetDepth = active ? 0.18 : -0.16;
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
+    const targetDepth = active ? 1.35 : -0.16;
 
     if (active) {
-      spinXRef.current += delta * 0.7;
-      spinYRef.current += delta * 1.05;
+      spinXRef.current += delta * 0.9;
+      spinYRef.current += delta * 1.2;
     } else {
       spinXRef.current = MathUtils.damp(spinXRef.current, 0, 8, delta);
       spinYRef.current = MathUtils.damp(spinYRef.current, 0, 8, delta);
@@ -1166,7 +1125,7 @@ function ModelDisplay({
     objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
     objectRef.current.rotation.x = spinXRef.current;
     objectRef.current.rotation.y = spinYRef.current;
-    objectRef.current.scale.setScalar(active ? 1.28 : 1.02);
+    objectRef.current.scale.setScalar(active ? 1.95 : 1.02);
   });
 
   return (
@@ -1342,8 +1301,7 @@ function ClickableFront({
     if (!frontRef.current) return;
 
     const openAngle = hingeDirection * (Math.PI * 82 / 180);
-    const ajarAngle = openAngle * 0.18;
-    const targetRotation = active ? openAngle : open ? (hasFocusedDoor ? ajarAngle : openAngle) : 0;
+    const targetRotation = open ? openAngle : 0;
 
     if (lastSuggestionNonceRef.current !== suggestionNonce) {
       lastSuggestionNonceRef.current = suggestionNonce;
@@ -2123,51 +2081,15 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     lastInteractionAtRef.current = Date.now();
   }, []);
 
-  const cabinetFocusTarget = useMemo(() => {
-    if (!focusedDoorId) {
-      return null;
-    }
-
-    const specSeparatorIndex = focusedDoorId.lastIndexOf("-");
-
-    if (specSeparatorIndex === -1) {
-      return null;
-    }
-
-    const groupId = focusedDoorId.slice(0, specSeparatorIndex);
-    const specIndex = Number(focusedDoorId.slice(specSeparatorIndex + 1));
-    const groupIndex = groups.findIndex((group) => group.id === groupId);
-
-    if (groupIndex === -1 || Number.isNaN(specIndex)) {
-      return null;
-    }
-
-    const placement = placements[groupIndex];
-
-    if (!placement) {
-      return null;
-    }
-
-    return getDoorFocusTarget(groups[groupIndex], groupIndex, specIndex, placement);
-  }, [focusedDoorId, groups, placements]);
-
   const focusTarget = useMemo(() => {
-    if (cabinetFocusTarget) {
-      return cabinetFocusTarget;
-    }
-
     if (returnPose) {
       return getFocusTargetFromPose(returnPose);
     }
 
     return null;
-  }, [cabinetFocusTarget, returnPose]);
+  }, [returnPose]);
 
-  const targetMode: "focus" | "return" | null = cabinetFocusTarget
-    ? "focus"
-    : returnPose
-      ? "return"
-      : null;
+  const targetMode: "focus" | "return" | null = returnPose ? "return" : null;
 
   useEffect(() => {
     if (mountedRef.current) return;
@@ -2234,8 +2156,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     utterance.pitch = 1.12;
     utterance.volume = 1;
     utterance.onend = () => {
-      setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
+      setInteractionLocked(false);
+      lastInteractionAtRef.current = Date.now();
     };
 
     const handleVoicesChanged = () => {
@@ -2270,6 +2193,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   useEffect(() => {
     suggestionCueRef.current = suggestionCue;
   }, [suggestionCue]);
+
+  useEffect(() => {
+    if (!focusedDoorId && !returnPose && interactionLocked) {
+      setInteractionLocked(false);
+    }
+  }, [focusedDoorId, interactionLocked, returnPose]);
 
   useEffect(() => {
     if (!pendingDoorSwap || returnPose || interactionLocked) {
@@ -2420,10 +2349,6 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       suggestionCueRef.current = null;
       setSuggestionCue(null);
       stopShakeAudio();
-    }
-
-    if (interactionLocked && focusedDoorId !== doorId) {
-      return;
     }
 
     if (items.length === 0) {
