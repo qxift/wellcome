@@ -5,9 +5,11 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import {
   Box3,
   CanvasTexture,
+  Color,
   DoubleSide,
   MathUtils,
   Mesh,
+  MeshStandardMaterial,
   RepeatWrapping,
   Vector3,
   TextureLoader,
@@ -18,6 +20,17 @@ import {
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { CabinetItem } from "@/data/cabinetItems";
 import cabinetStories from "@/data/cabinetStories.llm.json";
+
+type BlendableDoorMaterial = MeshStandardMaterial & {
+  userData: MeshStandardMaterial["userData"] & {
+    textureBlendShader?: {
+      uniforms: {
+        uBlendFactor?: { value: number };
+        uBlendMap?: { value: Texture };
+      };
+    };
+  };
+};
 
 type CabinetPanoramaProps = {
   items: CabinetItem[];
@@ -67,13 +80,17 @@ type PendingDoorSwap = {
   nextItemId: string;
 } | null;
 
-type DoorShakeCue = {
+type SuggestionMode = "shake" | "creak" | "color" | "size";
+
+type DoorSuggestionCue = {
   doorId: string;
   nonce: number;
+  mode: SuggestionMode;
 } | null;
 
 const postZoomSwapDelayMs = 220;
 const idleShakeDelayMs = 5000;
+const suggestionModeCycle: SuggestionMode[] = ["shake", "creak", "color", "size"];
 
 const playerRadius = 0.28;
 const roomRadius = 4.385;
@@ -1171,8 +1188,8 @@ function ClickableFront({
   open,
   active,
   hasFocusedDoor,
-  isShaking,
-  shakeNonce,
+  suggestionMode,
+  suggestionNonce,
   interactionLocked,
   onToggle,
   woodTexture,
@@ -1183,20 +1200,28 @@ function ClickableFront({
   open: boolean;
   active: boolean;
   hasFocusedDoor: boolean;
-  isShaking: boolean;
-  shakeNonce: number;
+  suggestionMode: SuggestionMode | null;
+  suggestionNonce: number;
   interactionLocked: boolean;
   woodTexture?: Texture | null;
   onToggle: (doorId: string) => void;
 }) {
   const frontRef = useRef<Group>(null);
-  const shakeElapsedRef = useRef(0);
-  const lastShakeNonceRef = useRef(shakeNonce);
+  const visualRef = useRef<Group>(null);
+  const backingRef = useRef<Mesh>(null);
+  const panelRef = useRef<Mesh>(null);
+  const suggestionElapsedRef = useRef(0);
+  const lastSuggestionNonceRef = useRef(suggestionNonce);
+  const frameMaterialRefs = useRef<MeshStandardMaterial[]>([]);
+  const metalMaterialRefs = useRef<MeshStandardMaterial[]>([]);
+  const panelMaterialRef = useRef<MeshStandardMaterial | null>(null);
+  const backingMaterialRef = useRef<MeshStandardMaterial | null>(null);
   const frontZ = style.depth * 0.15; // Adjusted for new depth
   const hingeDirection = spec.type === "door-left" ? -1 : 1;
   const baseFrontX = spec.x + hingeDirection * spec.width * 0.5;
   const arcDepth = spec.width * 0.04;
   const doorOverlap = 0.028;
+  const redWoodSource = useLoader(TextureLoader, "/red_wood.png");
   const doorFrameTexture = useMemo(() => {
     if (!woodTexture) {
       return null;
@@ -1209,6 +1234,36 @@ function ClickableFront({
     texture.needsUpdate = true;
     return texture;
   }, [woodTexture]);
+  const backingTexture = useMemo(() => {
+    if (!woodTexture) {
+      return null;
+    }
+
+    const texture = woodTexture.clone();
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+    texture.repeat.set(0.95, 0.95);
+    texture.needsUpdate = true;
+    return texture;
+  }, [woodTexture]);
+  const redWoodTexture = useMemo(() => {
+    const texture = redWoodSource.clone();
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+    texture.colorSpace = SRGBColorSpace;
+    texture.repeat.set(2.2, 2.2);
+    texture.needsUpdate = true;
+    return texture;
+  }, [redWoodSource]);
+  const panelRedWoodTexture = useMemo(() => {
+    const texture = redWoodSource.clone();
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+    texture.colorSpace = SRGBColorSpace;
+    texture.repeat.set(1.9, 1.9);
+    texture.needsUpdate = true;
+    return texture;
+  }, [redWoodSource]);
   const doorWoodMaterialProps = {
     map: doorFrameTexture ?? woodTexture ?? undefined,
     color: style.wood,
@@ -1217,6 +1272,71 @@ function ClickableFront({
   };
   const panelInsetWidth = Math.max(0.12, spec.width - 0.16);
   const panelInsetHeight = Math.max(0.16, spec.height - 0.16);
+  const baseWoodColor = useMemo(() => new Color(style.wood), [style.wood]);
+  const panelWoodColor = useMemo(() => new Color("#5a321d"), []);
+  const redWoodBackingTint = useMemo(() => new Color("#9a735f"), []);
+  const redWoodPanelTint = useMemo(() => new Color("#7f5b49"), []);
+  const brassColor = useMemo(() => new Color("#d3a95f"), []);
+  const blackColor = useMemo(() => new Color("#000000"), []);
+  const darkPurpleWoodColor = useMemo(() => new Color("#3e1f52"), []);
+  const darkPurpleMetalColor = useMemo(() => new Color("#2b1339"), []);
+
+  useEffect(() => {
+    const applyTextureBlend = (material: MeshStandardMaterial | null, blendTexture: Texture) => {
+      if (!material) {
+        return;
+      }
+
+      const blendableMaterial = material as BlendableDoorMaterial;
+      blendableMaterial.onBeforeCompile = (shader) => {
+        shader.uniforms.uBlendMap = { value: blendTexture };
+        shader.uniforms.uBlendFactor = { value: 0 };
+
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <map_pars_fragment>",
+          "#include <map_pars_fragment>\nuniform sampler2D uBlendMap;\nuniform float uBlendFactor;",
+        );
+
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <map_fragment>",
+          `#ifdef USE_MAP
+	vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+	vec4 sampledBlendColor = texture2D( uBlendMap, vMapUv );
+	sampledDiffuseColor = mix( sampledDiffuseColor, sampledBlendColor, uBlendFactor );
+	diffuseColor *= sampledDiffuseColor;
+#endif`,
+        );
+
+        blendableMaterial.userData.textureBlendShader = shader;
+      };
+
+      blendableMaterial.customProgramCacheKey = () => `texture-blend-${blendTexture.uuid}`;
+      blendableMaterial.needsUpdate = true;
+    };
+
+    applyTextureBlend(backingMaterialRef.current, redWoodTexture);
+    applyTextureBlend(panelMaterialRef.current, panelRedWoodTexture);
+  }, [panelRedWoodTexture, redWoodTexture]);
+
+  const setFrameMaterialRef = useCallback((material: MeshStandardMaterial | null) => {
+    if (!material) {
+      return;
+    }
+
+    if (!frameMaterialRefs.current.includes(material)) {
+      frameMaterialRefs.current.push(material);
+    }
+  }, []);
+
+  const setMetalMaterialRef = useCallback((material: MeshStandardMaterial | null) => {
+    if (!material) {
+      return;
+    }
+
+    if (!metalMaterialRefs.current.includes(material)) {
+      metalMaterialRefs.current.push(material);
+    }
+  }, []);
 
   useFrame((_, delta) => {
     if (!frontRef.current) return;
@@ -1225,45 +1345,190 @@ function ClickableFront({
     const ajarAngle = openAngle * 0.18;
     const targetRotation = active ? openAngle : open ? (hasFocusedDoor ? ajarAngle : openAngle) : 0;
 
-    if (lastShakeNonceRef.current !== shakeNonce) {
-      lastShakeNonceRef.current = shakeNonce;
-      shakeElapsedRef.current = 0;
+    if (lastSuggestionNonceRef.current !== suggestionNonce) {
+      lastSuggestionNonceRef.current = suggestionNonce;
+      suggestionElapsedRef.current = 0;
     }
 
-    shakeElapsedRef.current += delta;
-    const shakeEnvelope = isShaking ? 1 : 0;
-    const shakeOffsetY =
-      shakeEnvelope > 0
-        ? Math.sin(shakeElapsedRef.current * 38) * 0.14 * shakeEnvelope +
-          Math.sin(shakeElapsedRef.current * 83) * 0.06 * shakeEnvelope
-        : 0;
-    const shakeOffsetZ =
-      shakeEnvelope > 0
-        ? Math.sin(shakeElapsedRef.current * 71) * 0.028 * shakeEnvelope
-        : 0;
-    const shakeOffsetX =
-      shakeEnvelope > 0
-        ? Math.sin(shakeElapsedRef.current * 54) * hingeDirection * 0.012 * shakeEnvelope
-        : 0;
-    const shakeTiltX =
-      shakeEnvelope > 0
-        ? Math.sin(shakeElapsedRef.current * 92) * 0.035 * shakeEnvelope
-        : 0;
-    const shakeTiltZ =
-      shakeEnvelope > 0
-        ? Math.sin(shakeElapsedRef.current * 64) * 0.025 * shakeEnvelope
-        : 0;
+    suggestionElapsedRef.current += delta;
+    const elapsed = suggestionElapsedRef.current;
+    const isSuggesting = Boolean(suggestionMode);
+    const pulse = isSuggesting ? 0.5 + 0.5 * Math.sin(elapsed * 4.8) : 0;
+    const colorPulse = isSuggesting ? 0.5 + 0.5 * Math.sin(elapsed * 1.8) : 0;
+    const swingPulse = isSuggesting ? 0.5 + 0.5 * Math.sin(elapsed * 9.6) : 0;
+
+    let rotationOffsetY = 0;
+    let offsetX = 0;
+    let offsetZ = 0;
+    let tiltX = 0;
+    let tiltZ = 0;
+    let scaleX = 1;
+    let scaleY = 1;
+    let scaleZ = 1;
+    let backingScaleX = 1;
+    let backingScaleY = 1;
+    let backingScaleZ = 1;
+    let panelScaleX = 1;
+    let panelScaleY = 1;
+    let panelScaleZ = 1;
+    let colorMix = 0;
+
+    switch (suggestionMode) {
+      case "shake":
+        rotationOffsetY =
+          Math.sin(elapsed * 38) * 0.14 +
+          Math.sin(elapsed * 83) * 0.06;
+        offsetZ = Math.sin(elapsed * 71) * 0.028;
+        offsetX = Math.sin(elapsed * 54) * hingeDirection * 0.012;
+        tiltX = Math.sin(elapsed * 92) * 0.035;
+        tiltZ = Math.sin(elapsed * 64) * 0.025;
+        break;
+      case "size":
+        {
+          const sizeMorph = 0.5 + 0.5 * Math.sin(elapsed * 3.6);
+          scaleX = MathUtils.lerp(0.72, 1.52, sizeMorph);
+          scaleY = MathUtils.lerp(1.52, 0.72, sizeMorph);
+          scaleZ = 1.12 + pulse * 0.22;
+          backingScaleX = 1.02;
+          backingScaleY = 1.02;
+          backingScaleZ = 1.03;
+          panelScaleX = MathUtils.lerp(0.94, 1.08, sizeMorph);
+          panelScaleY = MathUtils.lerp(1.08, 0.94, sizeMorph);
+          panelScaleZ = 1.04 + pulse * 0.04;
+          offsetZ = pulse * 0.06;
+          offsetX = Math.sin(elapsed * 4.4) * hingeDirection * 0.018;
+          tiltX = Math.sin(elapsed * 6.6) * 0.024;
+          tiltZ = Math.sin(elapsed * 8.2) * 0.04;
+        }
+        break;
+      case "color":
+        colorMix = colorPulse * 0.5;
+        break;
+      case "creak": {
+        const cycleDuration = 3.8;
+        const cycleTime = elapsed % cycleDuration;
+        const openDuration = 2;
+        const holdDuration = 0.2;
+        const closeDuration = 0.18;
+        const settleDuration = 0.4;
+        const maxOpenOffset = 0.38;
+        let creakProgress = 0;
+
+        if (cycleTime < openDuration) {
+          const openProgress = cycleTime / openDuration;
+          creakProgress = MathUtils.smootherstep(openProgress, 0, 1);
+        } else if (cycleTime < openDuration + holdDuration) {
+          creakProgress = 1;
+        } else if (cycleTime < openDuration + holdDuration + closeDuration) {
+          const closeProgress = (cycleTime - openDuration - holdDuration) / closeDuration;
+          creakProgress = 1 - MathUtils.smootherstep(closeProgress, 0, 1);
+        } else if (cycleTime < openDuration + holdDuration + closeDuration + settleDuration) {
+          const settleProgress = (cycleTime - openDuration - holdDuration - closeDuration) / settleDuration;
+          creakProgress = (1 - MathUtils.smootherstep(settleProgress, 0, 1)) * 0.06;
+        }
+
+        rotationOffsetY = hingeDirection * maxOpenOffset * creakProgress;
+        offsetZ = creakProgress * 0.032;
+        tiltX = -creakProgress * 0.032;
+        break;
+      }
+      default:
+        break;
+    }
 
     frontRef.current.rotation.y = MathUtils.damp(
       frontRef.current.rotation.y,
-      targetRotation + shakeOffsetY,
+      targetRotation + rotationOffsetY,
       14,
       delta,
     );
-    frontRef.current.rotation.x = MathUtils.damp(frontRef.current.rotation.x, shakeTiltX, 12, delta);
-    frontRef.current.rotation.z = MathUtils.damp(frontRef.current.rotation.z, shakeTiltZ, 12, delta);
-    frontRef.current.position.x = MathUtils.damp(frontRef.current.position.x, baseFrontX + shakeOffsetX, 14, delta);
-    frontRef.current.position.z = MathUtils.damp(frontRef.current.position.z, frontZ + shakeOffsetZ, 14, delta);
+    frontRef.current.rotation.x = MathUtils.damp(frontRef.current.rotation.x, tiltX, 12, delta);
+    frontRef.current.rotation.z = MathUtils.damp(frontRef.current.rotation.z, tiltZ, 12, delta);
+    frontRef.current.position.x = MathUtils.damp(frontRef.current.position.x, baseFrontX + offsetX, 14, delta);
+    frontRef.current.position.z = MathUtils.damp(frontRef.current.position.z, frontZ + offsetZ, 14, delta);
+    if (visualRef.current) {
+      visualRef.current.scale.x = MathUtils.damp(visualRef.current.scale.x, scaleX, 10, delta);
+      visualRef.current.scale.y = MathUtils.damp(visualRef.current.scale.y, scaleY, 10, delta);
+      visualRef.current.scale.z = MathUtils.damp(visualRef.current.scale.z, scaleZ, 10, delta);
+    }
+
+    if (backingRef.current) {
+      backingRef.current.scale.x = MathUtils.damp(backingRef.current.scale.x, backingScaleX, 10, delta);
+      backingRef.current.scale.y = MathUtils.damp(backingRef.current.scale.y, backingScaleY, 10, delta);
+      backingRef.current.scale.z = MathUtils.damp(backingRef.current.scale.z, backingScaleZ, 10, delta);
+    }
+
+    if (backingMaterialRef.current?.map) {
+      backingMaterialRef.current.map.repeat.set(
+        0.95 / Math.max(backingScaleX, 0.001),
+        0.95 / Math.max(backingScaleY, 0.001),
+      );
+      backingMaterialRef.current.map.needsUpdate = true;
+      const shader = (backingMaterialRef.current as BlendableDoorMaterial).userData.textureBlendShader;
+      if (shader?.uniforms.uBlendFactor) {
+        shader.uniforms.uBlendFactor.value = suggestionMode === "color" ? colorMix : 0;
+      }
+      if (shader?.uniforms.uBlendMap) {
+        shader.uniforms.uBlendMap.value.repeat.set(
+          2.2 / Math.max(backingScaleX, 0.001),
+          2.2 / Math.max(backingScaleY, 0.001),
+        );
+        shader.uniforms.uBlendMap.value.needsUpdate = true;
+      }
+    }
+
+    if (panelRef.current) {
+      panelRef.current.scale.x = MathUtils.damp(panelRef.current.scale.x, panelScaleX, 10, delta);
+      panelRef.current.scale.y = MathUtils.damp(panelRef.current.scale.y, panelScaleY, 10, delta);
+      panelRef.current.scale.z = MathUtils.damp(panelRef.current.scale.z, panelScaleZ, 10, delta);
+    }
+
+    if (panelMaterialRef.current) {
+      const shader = (panelMaterialRef.current as BlendableDoorMaterial).userData.textureBlendShader;
+      if (shader?.uniforms.uBlendFactor) {
+        shader.uniforms.uBlendFactor.value = suggestionMode === "color" ? colorMix : 0;
+      }
+    }
+
+    for (const material of frameMaterialRefs.current) {
+      material.color.lerpColors(
+        baseWoodColor,
+        darkPurpleWoodColor,
+        suggestionMode === "color" ? colorMix * 0.85 : 0,
+      );
+      material.emissive.copy(blackColor);
+      material.emissiveIntensity = 0;
+    }
+
+    if (backingMaterialRef.current) {
+      backingMaterialRef.current.color.lerpColors(
+        baseWoodColor,
+        redWoodBackingTint,
+        suggestionMode === "color" ? colorMix * 0.85 : 0,
+      );
+      backingMaterialRef.current.emissive.copy(blackColor);
+      backingMaterialRef.current.emissiveIntensity = 0;
+    }
+
+    if (panelMaterialRef.current) {
+      panelMaterialRef.current.color.lerpColors(
+        panelWoodColor,
+        redWoodPanelTint,
+        suggestionMode === "color" ? colorMix * 0.85 : 0,
+      );
+      panelMaterialRef.current.emissive.copy(blackColor);
+      panelMaterialRef.current.emissiveIntensity = 0;
+    }
+
+    for (const material of metalMaterialRefs.current) {
+      material.color.lerpColors(
+        brassColor,
+        darkPurpleMetalColor,
+        suggestionMode === "color" ? Math.min(1, colorMix * 1.6) : 0,
+      );
+      material.emissive.copy(blackColor);
+      material.emissiveIntensity = 0;
+    }
   });
 
   const handleClick = (event: { stopPropagation: () => void }) => {
@@ -1278,38 +1543,60 @@ function ClickableFront({
       position={[baseFrontX, spec.y, frontZ]}
       onClick={handleClick}
     >
-      <mesh position={[-hingeDirection * 0.06, 0, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
+      <mesh
+        ref={backingRef}
+        position={[-hingeDirection * spec.width * 0.5, 0, 0.01 + arcDepth]}
+        castShadow
+      >
+        <boxGeometry args={[panelInsetWidth + 0.08, panelInsetHeight + 0.08, 0.06]} />
+        <meshStandardMaterial
+          ref={backingMaterialRef}
+          map={backingTexture ?? doorFrameTexture ?? woodTexture ?? undefined}
+          color={style.wood}
+          roughness={0.8}
+          metalness={0.03}
+        />
       </mesh>
-      <mesh position={[-hingeDirection * (spec.width - 0.06), 0, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.5 - 0.05, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.5 + 0.05, 0.02 + arcDepth]} castShadow>
-        <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} roughness={0.82} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, 0, 0.068 + arcDepth]} renderOrder={16}>
-        <boxGeometry args={[panelInsetWidth, panelInsetHeight, 0.03]} />
-        <meshStandardMaterial {...doorWoodMaterialProps} color="#5a321d" roughness={0.86} metalness={0.02} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, spec.height * 0.26, 0.095 + arcDepth]}>
-        <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
-        <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.5, -spec.height * 0.26, 0.095 + arcDepth]}>
-        <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
-        <meshStandardMaterial color="#d3a95f" roughness={0.34} metalness={0.62} />
-      </mesh>
-      <mesh position={[-hingeDirection * spec.width * 0.82, -spec.height * 0.12, 0.11 + arcDepth]}>
-        <sphereGeometry args={[0.045, 18, 18]} />
-        <meshStandardMaterial color="#d3a95f" roughness={0.28} metalness={0.72} />
-      </mesh>
+      <group ref={visualRef} position={[-hingeDirection * spec.width * 0.5, 0, 0]}>
+        <mesh position={[hingeDirection * (spec.width * 0.5 - 0.06), 0, 0.02 + arcDepth]} castShadow>
+          <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
+          <meshStandardMaterial ref={setFrameMaterialRef} {...doorWoodMaterialProps} roughness={0.82} />
+        </mesh>
+        <mesh position={[-hingeDirection * (spec.width * 0.5 - 0.06), 0, 0.02 + arcDepth]} castShadow>
+          <boxGeometry args={[0.12, spec.height + doorOverlap * 2, 0.08]} />
+          <meshStandardMaterial ref={setFrameMaterialRef} {...doorWoodMaterialProps} roughness={0.82} />
+        </mesh>
+        <mesh position={[0, spec.height * 0.5 - 0.05, 0.02 + arcDepth]} castShadow>
+          <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
+          <meshStandardMaterial ref={setFrameMaterialRef} {...doorWoodMaterialProps} roughness={0.82} />
+        </mesh>
+        <mesh position={[0, -spec.height * 0.5 + 0.05, 0.02 + arcDepth]} castShadow>
+          <boxGeometry args={[spec.width + doorOverlap * 2, 0.12, 0.08]} />
+          <meshStandardMaterial ref={setFrameMaterialRef} {...doorWoodMaterialProps} roughness={0.82} />
+        </mesh>
+        <mesh ref={panelRef} position={[0, 0, 0.068 + arcDepth]} renderOrder={16}>
+          <boxGeometry args={[panelInsetWidth, panelInsetHeight, 0.03]} />
+          <meshStandardMaterial
+            ref={panelMaterialRef}
+            {...doorWoodMaterialProps}
+            color="#5a321d"
+            roughness={0.86}
+            metalness={0.02}
+          />
+        </mesh>
+        <mesh position={[0, spec.height * 0.26, 0.095 + arcDepth]}>
+          <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
+          <meshStandardMaterial ref={setMetalMaterialRef} color="#d3a95f" roughness={0.34} metalness={0.62} />
+        </mesh>
+        <mesh position={[0, -spec.height * 0.26, 0.095 + arcDepth]}>
+          <boxGeometry args={[spec.width - 0.12, 0.032, 0.028]} />
+          <meshStandardMaterial ref={setMetalMaterialRef} color="#d3a95f" roughness={0.34} metalness={0.62} />
+        </mesh>
+        <mesh position={[-hingeDirection * (spec.width * 0.5 - 0.14), -spec.height * 0.12, 0.11 + arcDepth]}>
+          <sphereGeometry args={[0.045, 18, 18]} />
+          <meshStandardMaterial ref={setMetalMaterialRef} color="#d3a95f" roughness={0.28} metalness={0.72} />
+        </mesh>
+      </group>
     </group>
   );
 }
@@ -1324,8 +1611,8 @@ function CabinetCompartment({
   open,
   active,
   hasFocusedDoor,
-  isShaking,
-  shakeNonce,
+  suggestionMode,
+  suggestionNonce,
   interactionLocked,
   onToggle,
 }: {
@@ -1338,8 +1625,8 @@ function CabinetCompartment({
   open: boolean;
   active: boolean;
   hasFocusedDoor: boolean;
-  isShaking: boolean;
-  shakeNonce: number;
+  suggestionMode: SuggestionMode | null;
+  suggestionNonce: number;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -1452,8 +1739,8 @@ function CabinetCompartment({
         open={open}
         active={active}
         hasFocusedDoor={hasFocusedDoor}
-        isShaking={isShaking}
-        shakeNonce={shakeNonce}
+        suggestionMode={suggestionMode}
+        suggestionNonce={suggestionNonce}
         interactionLocked={interactionLocked}
         woodTexture={woodTexture}
         onToggle={onToggle}
@@ -1469,7 +1756,7 @@ function CabinetPanel({
   focusedDoorId,
   allItems,
   doorItemIds,
-  shakeCue,
+  suggestionCue,
   interactionLocked,
   woodTextures,
   onToggleDoor,
@@ -1480,7 +1767,7 @@ function CabinetPanel({
   focusedDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
-  shakeCue: DoorShakeCue;
+  suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
@@ -1523,8 +1810,8 @@ function CabinetPanel({
               open={Boolean(openedDoorIds[doorId])}
               active={focusedDoorId === doorId}
               hasFocusedDoor={Boolean(focusedDoorId)}
-              isShaking={shakeCue?.doorId === doorId}
-              shakeNonce={shakeCue?.doorId === doorId ? shakeCue.nonce : 0}
+              suggestionMode={suggestionCue?.doorId === doorId ? suggestionCue.mode : null}
+              suggestionNonce={suggestionCue?.doorId === doorId ? suggestionCue.nonce : 0}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -1692,7 +1979,7 @@ function CabinetRoom({
   openedDoorIds,
   focusedDoorId,
   doorItemIds,
-  shakeCue,
+  suggestionCue,
   interactionLocked,
   woodTextures,
   rugTexture,
@@ -1709,7 +1996,7 @@ function CabinetRoom({
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
   doorItemIds: Record<string, string>;
-  shakeCue: DoorShakeCue;
+  suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
   woodTextures: Texture[];
   rugTexture?: Texture | null;
@@ -1763,7 +2050,7 @@ function CabinetRoom({
               focusedDoorId={focusedDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
-              shakeCue={shakeCue}
+              suggestionCue={suggestionCue}
               interactionLocked={interactionLocked}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
@@ -1803,7 +2090,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
   const [pendingDoorSwap, setPendingDoorSwap] = useState<PendingDoorSwap>(null);
-  const [shakeCue, setShakeCue] = useState<DoorShakeCue>(null);
+  const [suggestionCue, setSuggestionCue] = useState<DoorSuggestionCue>(null);
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
   const focusedItem = useMemo(() => {
@@ -1828,8 +2115,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
-  const shakeCueRef = useRef<DoorShakeCue>(null);
-  const shakeNonceRef = useRef(0);
+  const suggestionCueRef = useRef<DoorSuggestionCue>(null);
+  const suggestionNonceRef = useRef(0);
+  const suggestionModeIndexRef = useRef(0);
 
   useEffect(() => {
     lastInteractionAtRef.current = Date.now();
@@ -1980,8 +2268,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
-    shakeCueRef.current = shakeCue;
-  }, [shakeCue]);
+    suggestionCueRef.current = suggestionCue;
+  }, [suggestionCue]);
 
   useEffect(() => {
     if (!pendingDoorSwap || returnPose || interactionLocked) {
@@ -2062,21 +2350,26 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     };
   }, []);
 
-  const triggerDoorShake = useCallback((doorId: string) => {
-    if (!doorId || typeof window === "undefined" || shakeCueRef.current) {
+  const triggerDoorSuggestion = useCallback((doorId: string) => {
+    if (!doorId || typeof window === "undefined" || suggestionCueRef.current) {
       return;
     }
 
-    shakeNonceRef.current += 1;
+    const mode = suggestionModeCycle[suggestionModeIndexRef.current % suggestionModeCycle.length] ?? "shake";
+    suggestionModeIndexRef.current += 1;
+    suggestionNonceRef.current += 1;
     const nextCue = {
       doorId,
-      nonce: shakeNonceRef.current,
+      nonce: suggestionNonceRef.current,
+      mode,
     };
-    shakeCueRef.current = nextCue;
-    setShakeCue(nextCue);
+    suggestionCueRef.current = nextCue;
+    setSuggestionCue(nextCue);
 
     stopShakeAudio();
-    startShakeAudio();
+    if (mode === "shake" || mode === "creak") {
+      startShakeAudio();
+    }
   }, [startShakeAudio, stopShakeAudio]);
 
   useEffect(() => {
@@ -2095,7 +2388,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         return;
       }
 
-      if (shakeCueRef.current) {
+      if (suggestionCueRef.current) {
         return;
       }
 
@@ -2105,27 +2398,27 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         return;
       }
 
-      triggerDoorShake(doorId);
+      triggerDoorSuggestion(doorId);
       lastInteractionAtRef.current = Date.now();
     }, 1000);
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [doorItemIds, focusedDoorId, interactionLocked, openedDoorIds, returnPose, triggerDoorShake]);
+  }, [doorItemIds, focusedDoorId, interactionLocked, openedDoorIds, returnPose, triggerDoorSuggestion]);
 
   useEffect(() => {
-    if (!shakeCue) {
+    if (!suggestionCue) {
       stopShakeAudio();
     }
-  }, [shakeCue, stopShakeAudio]);
+  }, [stopShakeAudio, suggestionCue]);
 
   const toggleDoor = (doorId: string) => {
     lastInteractionAtRef.current = Date.now();
 
-    if (shakeCue) {
-      shakeCueRef.current = null;
-      setShakeCue(null);
+    if (suggestionCue) {
+      suggestionCueRef.current = null;
+      setSuggestionCue(null);
       stopShakeAudio();
     }
 
@@ -2267,7 +2560,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
                 doorItemIds={doorItemIds}
-                shakeCue={shakeCue}
+                suggestionCue={suggestionCue}
                 interactionLocked={interactionLocked}
                 woodTextures={woodTextures}
                 rugTexture={rugTexture}
