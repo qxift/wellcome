@@ -91,6 +91,14 @@ type DoorSuggestionCue = {
 const postZoomSwapDelayMs = 220;
 const idleShakeDelayMs = 5000;
 const suggestionModeCycle: SuggestionMode[] = ["shake", "creak", "color", "size"];
+const creakCycleDuration = 3.8;
+const creakOpenDuration = 2;
+const creakHoldDuration = 0.2;
+const creakCloseDuration = 0.18;
+const creakSettleDuration = 0.4;
+const creakOpenSoundDelayMs = Math.round(creakOpenDuration * 0.34 * 1000);
+const creakCloseSoundDelayMs = Math.round((creakOpenDuration + creakHoldDuration + creakCloseDuration * 0.45) * 1000);
+const firstVisibleCabinetCount = 3;
 
 const playerRadius = 0.28;
 const roomRadius = 4.385;
@@ -185,6 +193,247 @@ function playWoodShakeBurst(context: AudioContext, noiseBuffer: AudioBuffer) {
     aftershockSource.start(aftershockStartAt);
     aftershockSource.stop(aftershockStartAt + 0.09);
   }
+}
+
+function playWoodCreakCycle(context: AudioContext, noiseBuffer: AudioBuffer) {
+  const startAt = context.currentTime;
+  const openDuration = 1.05;
+  const shutAt = startAt + 1.12;
+
+  const creakSource = context.createBufferSource();
+  creakSource.buffer = noiseBuffer;
+  creakSource.playbackRate.setValueAtTime(0.12, startAt);
+  creakSource.playbackRate.linearRampToValueAtTime(0.08, startAt + openDuration);
+
+  const creakBandpass = context.createBiquadFilter();
+  creakBandpass.type = "bandpass";
+  creakBandpass.frequency.setValueAtTime(460, startAt);
+  creakBandpass.frequency.linearRampToValueAtTime(280, startAt + openDuration);
+  creakBandpass.Q.value = 2.4;
+
+  const creakLowpass = context.createBiquadFilter();
+  creakLowpass.type = "lowpass";
+  creakLowpass.frequency.setValueAtTime(1400, startAt);
+  creakLowpass.frequency.linearRampToValueAtTime(760, startAt + openDuration);
+
+  const creakGain = context.createGain();
+  creakGain.gain.setValueAtTime(0.0001, startAt);
+  creakGain.gain.linearRampToValueAtTime(0.06, startAt + 0.08);
+  creakGain.gain.linearRampToValueAtTime(0.1, startAt + 0.42);
+  creakGain.gain.linearRampToValueAtTime(0.07, startAt + 0.88);
+  creakGain.gain.exponentialRampToValueAtTime(0.0001, startAt + openDuration);
+
+  creakSource.connect(creakBandpass);
+  creakBandpass.connect(creakLowpass);
+  creakLowpass.connect(creakGain);
+  creakGain.connect(context.destination);
+  creakSource.start(startAt);
+  creakSource.stop(startAt + openDuration + 0.02);
+
+  const squeal = context.createOscillator();
+  squeal.type = "sawtooth";
+  squeal.frequency.setValueAtTime(980, startAt);
+  squeal.frequency.linearRampToValueAtTime(620, startAt + 0.34);
+  squeal.frequency.linearRampToValueAtTime(760, startAt + 0.7);
+  squeal.frequency.linearRampToValueAtTime(420, startAt + openDuration);
+
+  const squealBandpass = context.createBiquadFilter();
+  squealBandpass.type = "bandpass";
+  squealBandpass.frequency.setValueAtTime(1100, startAt);
+  squealBandpass.frequency.linearRampToValueAtTime(680, startAt + openDuration);
+  squealBandpass.Q.value = 6;
+
+  const squealGain = context.createGain();
+  squealGain.gain.setValueAtTime(0.0001, startAt);
+  squealGain.gain.linearRampToValueAtTime(0.014, startAt + 0.1);
+  squealGain.gain.linearRampToValueAtTime(0.028, startAt + 0.56);
+  squealGain.gain.exponentialRampToValueAtTime(0.0001, startAt + openDuration);
+
+  squeal.connect(squealBandpass);
+  squealBandpass.connect(squealGain);
+  squealGain.connect(context.destination);
+  squeal.start(startAt);
+  squeal.stop(startAt + openDuration + 0.02);
+
+  const hingeRattle = context.createBufferSource();
+  hingeRattle.buffer = noiseBuffer;
+  hingeRattle.playbackRate.value = 0.42;
+
+  const hingeHighpass = context.createBiquadFilter();
+  hingeHighpass.type = "highpass";
+  hingeHighpass.frequency.value = 820;
+
+  const hingeGain = context.createGain();
+  hingeGain.gain.setValueAtTime(0.0001, startAt + 0.18);
+  hingeGain.gain.linearRampToValueAtTime(0.018, startAt + 0.22);
+  hingeGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.76);
+
+  hingeRattle.connect(hingeHighpass);
+  hingeHighpass.connect(hingeGain);
+  hingeGain.connect(context.destination);
+  hingeRattle.start(startAt + 0.18);
+  hingeRattle.stop(startAt + 0.78);
+
+  const closeThunk = context.createOscillator();
+  closeThunk.type = "triangle";
+  closeThunk.frequency.setValueAtTime(172, shutAt);
+  closeThunk.frequency.exponentialRampToValueAtTime(58, shutAt + 0.14);
+
+  const closeThunkGain = context.createGain();
+  closeThunkGain.gain.setValueAtTime(0.0001, shutAt);
+  closeThunkGain.gain.linearRampToValueAtTime(0.14, shutAt + 0.015);
+  closeThunkGain.gain.exponentialRampToValueAtTime(0.0001, shutAt + 0.18);
+
+  closeThunk.connect(closeThunkGain);
+  closeThunkGain.connect(context.destination);
+  closeThunk.start(shutAt);
+  closeThunk.stop(shutAt + 0.18);
+
+  const slamNoise = context.createBufferSource();
+  slamNoise.buffer = noiseBuffer;
+  slamNoise.playbackRate.value = 0.76;
+
+  const slamLowpass = context.createBiquadFilter();
+  slamLowpass.type = "lowpass";
+  slamLowpass.frequency.value = 460;
+
+  const slamGain = context.createGain();
+  slamGain.gain.setValueAtTime(0.0001, shutAt - 0.005);
+  slamGain.gain.linearRampToValueAtTime(0.16, shutAt + 0.012);
+  slamGain.gain.exponentialRampToValueAtTime(0.0001, shutAt + 0.16);
+
+  slamNoise.connect(slamLowpass);
+  slamLowpass.connect(slamGain);
+  slamGain.connect(context.destination);
+  slamNoise.start(shutAt - 0.005);
+  slamNoise.stop(shutAt + 0.16);
+}
+
+function playColorShiftPulse(context: AudioContext) {
+  const startAt = context.currentTime;
+
+  const shimmer = context.createOscillator();
+  shimmer.type = "sine";
+  shimmer.frequency.setValueAtTime(260, startAt);
+  shimmer.frequency.exponentialRampToValueAtTime(520, startAt + 0.48);
+  shimmer.frequency.exponentialRampToValueAtTime(340, startAt + 1.08);
+
+  const shimmerGain = context.createGain();
+  shimmerGain.gain.setValueAtTime(0.0001, startAt);
+  shimmerGain.gain.linearRampToValueAtTime(0.035, startAt + 0.16);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 1.14);
+
+  const shimmerFilter = context.createBiquadFilter();
+  shimmerFilter.type = "bandpass";
+  shimmerFilter.frequency.value = 720;
+  shimmerFilter.Q.value = 1.2;
+
+  shimmer.connect(shimmerFilter);
+  shimmerFilter.connect(shimmerGain);
+  shimmerGain.connect(context.destination);
+  shimmer.start(startAt);
+  shimmer.stop(startAt + 1.18);
+
+  const halo = context.createOscillator();
+  halo.type = "triangle";
+  halo.frequency.setValueAtTime(620, startAt + 0.04);
+  halo.frequency.exponentialRampToValueAtTime(930, startAt + 0.42);
+  halo.frequency.exponentialRampToValueAtTime(700, startAt + 0.92);
+
+  const haloGain = context.createGain();
+  haloGain.gain.setValueAtTime(0.0001, startAt + 0.04);
+  haloGain.gain.linearRampToValueAtTime(0.012, startAt + 0.18);
+  haloGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 1.02);
+
+  halo.connect(haloGain);
+  haloGain.connect(context.destination);
+  halo.start(startAt + 0.04);
+  halo.stop(startAt + 1.04);
+}
+
+function playSizeWarpPulse(context: AudioContext) {
+  const startAt = context.currentTime;
+
+  const warp = context.createOscillator();
+  warp.type = "sawtooth";
+  warp.frequency.setValueAtTime(120, startAt);
+  warp.frequency.exponentialRampToValueAtTime(62, startAt + 0.26);
+  warp.frequency.exponentialRampToValueAtTime(150, startAt + 0.72);
+
+  const warpFilter = context.createBiquadFilter();
+  warpFilter.type = "lowpass";
+  warpFilter.frequency.setValueAtTime(420, startAt);
+  warpFilter.frequency.linearRampToValueAtTime(180, startAt + 0.24);
+  warpFilter.frequency.linearRampToValueAtTime(520, startAt + 0.74);
+
+  const warpGain = context.createGain();
+  warpGain.gain.setValueAtTime(0.0001, startAt);
+  warpGain.gain.linearRampToValueAtTime(0.045, startAt + 0.06);
+  warpGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.86);
+
+  warp.connect(warpFilter);
+  warpFilter.connect(warpGain);
+  warpGain.connect(context.destination);
+  warp.start(startAt);
+  warp.stop(startAt + 0.9);
+
+  const pop = context.createOscillator();
+  pop.type = "triangle";
+  pop.frequency.setValueAtTime(210, startAt + 0.08);
+  pop.frequency.exponentialRampToValueAtTime(98, startAt + 0.22);
+
+  const popGain = context.createGain();
+  popGain.gain.setValueAtTime(0.0001, startAt + 0.08);
+  popGain.gain.linearRampToValueAtTime(0.028, startAt + 0.11);
+  popGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.28);
+
+  pop.connect(popGain);
+  popGain.connect(context.destination);
+  pop.start(startAt + 0.08);
+  pop.stop(startAt + 0.3);
+}
+
+function getSuggestionAudioLoopMs(mode: SuggestionMode) {
+  switch (mode) {
+    case "shake":
+      return 260;
+    case "creak":
+      return Math.round(creakCycleDuration * 1000);
+    case "color":
+      return 3200;
+    case "size":
+      return Math.round((Math.PI * 2 / 3.6) * 1000);
+    default:
+      return 1000;
+  }
+}
+
+function playDoorCreakFiles(
+  activeAudioElements: HTMLAudioElement[],
+  creakTimeoutRefs: number[],
+) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const openTimeoutId = window.setTimeout(() => {
+    const creakAudio = new Audio("/creak_door.mp3");
+    creakAudio.preload = "auto";
+    creakAudio.volume = 0.9;
+    activeAudioElements.push(creakAudio);
+    void creakAudio.play().catch(() => {});
+  }, creakOpenSoundDelayMs);
+
+  const closeTimeoutId = window.setTimeout(() => {
+    const closeAudio = new Audio("/door_close.mp3");
+    closeAudio.preload = "auto";
+    closeAudio.volume = 0.92;
+    activeAudioElements.push(closeAudio);
+    void closeAudio.play().catch(() => {});
+  }, creakCloseSoundDelayMs);
+
+  creakTimeoutRefs.push(openTimeoutId);
+  creakTimeoutRefs.push(closeTimeoutId);
 }
 
 function trimTitle(title: string) {
@@ -425,6 +674,18 @@ function hashSeed(value: string) {
   return hash >>> 0;
 }
 
+function getShuffledDoorIds(doorIds: string[]) {
+  return [...doorIds].sort((left, right) => {
+    const leftHash = hashSeed(`door-layout-${left}`);
+    const rightHash = hashSeed(`door-layout-${right}`);
+    return leftHash - rightHash || left.localeCompare(right);
+  });
+}
+
+function getCabinetIdFromDoorId(doorId: string) {
+  return doorId.replace(/-\d+$/, "");
+}
+
 function buildLinkKeywordCounts(items: CabinetItem[]) {
   const keywordCounts = new Map<string, number>();
 
@@ -641,18 +902,15 @@ function chooseNextPoolItem(
   if (unseenItemId) {
     return unseenItemId;
   }
+  return "";
+}
 
-  const seen3dItemId = pool.find((itemId) => Boolean(itemsById.get(itemId)?.modelUrl));
-  if (seen3dItemId) {
-    return seen3dItemId;
-  }
-
-  if (pool.length === 1) {
-    return pool[0];
-  }
-
-  const currentIndex = currentItemId ? pool.indexOf(currentItemId) : -1;
-  return pool[currentIndex === -1 ? 0 : (currentIndex + 1) % pool.length] ?? pool[0];
+function chooseLeadSequenceItem(
+  items: CabinetItem[],
+  seenItemIds: Record<string, boolean>,
+  boardItemIds: string[],
+) {
+  return items.find((item) => item.modelUrl && !seenItemIds[item.id] && !boardItemIds.includes(item.id))?.id ?? "";
 }
 
 function chooseInitialDoorItem(
@@ -734,11 +992,21 @@ function chooseConnectedClosedDoor(
 function chooseRandomClosedDoor(
   doorItemIds: Record<string, string>,
   openedDoorIds: Record<string, boolean>,
+  itemsById: Map<string, CabinetItem>,
 ) {
   const candidates = Object.keys(doorItemIds).filter((doorId) => !openedDoorIds[doorId]);
 
   if (candidates.length === 0) {
     return "";
+  }
+
+  const threeDCandidates = candidates.filter((doorId) => {
+    const itemId = doorItemIds[doorId];
+    return Boolean(itemId && itemsById.get(itemId)?.modelUrl);
+  });
+
+  if (threeDCandidates.length > 0) {
+    return threeDCandidates[Math.floor(Math.random() * threeDCandidates.length)] ?? "";
   }
 
   return candidates[Math.floor(Math.random() * candidates.length)] ?? "";
@@ -774,6 +1042,25 @@ function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
   });
 
   return placements;
+}
+
+function getLeadCabinetIds(groups: CabinetGroup[], placements: FurniturePlacement[]) {
+  return placements
+    .map((placement, index) => ({
+      groupId: groups[index]?.id ?? "",
+      z: placement.position[2],
+      x: placement.position[0],
+    }))
+    .filter((entry) => Boolean(entry.groupId))
+    .sort((left, right) => {
+      if (left.z !== right.z) {
+        return left.z - right.z;
+      }
+
+      return Math.abs(left.x) - Math.abs(right.x);
+    })
+    .slice(0, firstVisibleCabinetCount)
+    .map((entry) => entry.groupId);
 }
 
 function buildBackstory(item: CabinetItem) {
@@ -1017,16 +1304,23 @@ function ItemDisplay({
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.02 : 0;
     const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.12 : 0;
-    const targetDepth = active ? 1.5 : 0;
+    const targetDepth = active ? 1.42 : open ? 0.08 : -0.02;
+    const motionDamp = active ? 6 : 12;
+    const scaleDamp = active ? 6 : 14;
 
-    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
-    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
-    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.1 : 0, 4, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
-    objectRef.current.scale.setScalar(active ? 2.25 : open ? 1.08 : 1);
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, motionDamp, delta);
+    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, motionDamp, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.1 : 0, motionDamp, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, motionDamp, delta);
+    objectRef.current.scale.setScalar(MathUtils.damp(
+      objectRef.current.scale.x,
+      active ? 2.1 : open ? 1.04 : 1,
+      scaleDamp,
+      delta,
+    ));
   });
 
-  const displayZ = open ? style.depth * 0.3 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.34 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   return (
@@ -1104,14 +1398,15 @@ function ModelDisplay({
   const objectRef = useRef<Group>(null);
   const spinXRef = useRef(0);
   const spinYRef = useRef(0);
-  const displayZ = open ? style.depth * 0.26 : style.depth * 0.04;
   const displayY = spec.y - spec.height * 0.04;
 
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
-    const targetDepth = active ? 1.35 : -0.16;
+    const targetDepth = active ? 1.06 : open ? -0.18 : -0.32;
+    const motionDamp = active ? 6 : 12;
+    const scaleDamp = active ? 6 : 14;
 
     if (active) {
       spinXRef.current += delta * 0.9;
@@ -1121,15 +1416,20 @@ function ModelDisplay({
       spinYRef.current = MathUtils.damp(spinYRef.current, 0, 8, delta);
     }
 
-    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4.5, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, motionDamp, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, motionDamp, delta);
     objectRef.current.rotation.x = spinXRef.current;
     objectRef.current.rotation.y = spinYRef.current;
-    objectRef.current.scale.setScalar(active ? 1.95 : 1.02);
+    objectRef.current.scale.setScalar(MathUtils.damp(
+      objectRef.current.scale.x,
+      active ? 1.68 : open ? 0.9 : 0.86,
+      scaleDamp,
+      delta,
+    ));
   });
 
   return (
-    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
+    <group position={[spec.x, displayY, open ? style.depth * 0.14 : -style.depth * 0.04]} renderOrder={11}>
       <ambientLight intensity={1.0} />
       <pointLight position={[0, spec.height * 0.12, 0.22]} intensity={1.8} color="#ffd39a" distance={2.1} />
       <group ref={objectRef}>
@@ -1363,12 +1663,12 @@ function ClickableFront({
         colorMix = colorPulse * 0.5;
         break;
       case "creak": {
-        const cycleDuration = 3.8;
+        const cycleDuration = creakCycleDuration;
         const cycleTime = elapsed % cycleDuration;
-        const openDuration = 2;
-        const holdDuration = 0.2;
-        const closeDuration = 0.18;
-        const settleDuration = 0.4;
+        const openDuration = creakOpenDuration;
+        const holdDuration = creakHoldDuration;
+        const closeDuration = creakCloseDuration;
+        const settleDuration = creakSettleDuration;
         const maxOpenOffset = 0.38;
         let creakProgress = 0;
 
@@ -2027,16 +2327,56 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const groups = useMemo(() => chunkItems(items), [items]);
   const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
   const placements = useMemo(() => getFurniturePlacements(groups), [groups]);
+  const leadCabinetIds = useMemo(() => getLeadCabinetIds(groups, placements), [groups, placements]);
+  const leadCabinetIdSet = useMemo(() => new Set(leadCabinetIds), [leadCabinetIds]);
   const doorItemPools = useMemo(() => buildDoorItemPools(groups, items), [groups, items]);
   const initialDoorItemIds = useMemo(() => {
     const nextDoorItemIds: Record<string, string> = {};
     const assignedItemIds = new Set<string>();
+    const shuffledDoorIds = getShuffledDoorIds(doorIds);
+    const shuffledCabinetIds = [...new Set(shuffledDoorIds.map((doorId) => getCabinetIdFromDoorId(doorId)))];
+    const doorsByCabinetId = new Map<string, string[]>();
+    const threeDItems = items.filter((item) => Boolean(item.modelUrl));
+    const nonThreeDItems = items.filter((item) => !item.modelUrl);
 
     if (items.length === 0) {
       return nextDoorItemIds;
     }
 
-    doorIds.forEach((doorId) => {
+    shuffledDoorIds.forEach((doorId) => {
+      const cabinetId = getCabinetIdFromDoorId(doorId);
+      const cabinetDoorIds = doorsByCabinetId.get(cabinetId) ?? [];
+      cabinetDoorIds.push(doorId);
+      doorsByCabinetId.set(cabinetId, cabinetDoorIds);
+    });
+
+    threeDItems.forEach((item, index) => {
+      const cabinetId = shuffledCabinetIds[index % Math.max(shuffledCabinetIds.length, 1)];
+      const cabinetDoorIds = doorsByCabinetId.get(cabinetId) ?? [];
+      const targetDoorId = cabinetDoorIds.shift();
+
+      if (!targetDoorId) {
+        return;
+      }
+
+      nextDoorItemIds[targetDoorId] = item.id;
+      assignedItemIds.add(item.id);
+      doorsByCabinetId.set(cabinetId, cabinetDoorIds);
+    });
+
+    shuffledDoorIds.forEach((doorId) => {
+      if (nextDoorItemIds[doorId]) {
+        return;
+      }
+
+      nextDoorItemIds[doorId] = chooseInitialDoorItem(nonThreeDItems, assignedItemIds);
+    });
+
+    shuffledDoorIds.forEach((doorId) => {
+      if (nextDoorItemIds[doorId]) {
+        return;
+      }
+
       nextDoorItemIds[doorId] = chooseInitialDoorItem(items, assignedItemIds);
     });
 
@@ -2073,6 +2413,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
+  const suggestionMediaAudioRefs = useRef<HTMLAudioElement[]>([]);
+  const suggestionMediaTimeoutRefs = useRef<number[]>([]);
   const suggestionCueRef = useRef<DoorSuggestionCue>(null);
   const suggestionNonceRef = useRef(0);
   const suggestionModeIndexRef = useRef(0);
@@ -2183,6 +2525,13 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         shakeAudioStopRef.current();
         shakeAudioStopRef.current = null;
       }
+      suggestionMediaTimeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      suggestionMediaTimeoutRefs.current = [];
+      suggestionMediaAudioRefs.current.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      suggestionMediaAudioRefs.current = [];
       if (shakeAudioContextRef.current) {
         void shakeAudioContextRef.current.close().catch(() => {});
         shakeAudioContextRef.current = null;
@@ -2223,9 +2572,17 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       shakeAudioStopRef.current();
       shakeAudioStopRef.current = null;
     }
+
+    suggestionMediaTimeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    suggestionMediaTimeoutRefs.current = [];
+    suggestionMediaAudioRefs.current.forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    suggestionMediaAudioRefs.current = [];
   }, []);
 
-  const startShakeAudio = useCallback(() => {
+  const startSuggestionAudio = useCallback((mode: SuggestionMode) => {
     if (typeof window === "undefined") {
       return;
     }
@@ -2246,14 +2603,34 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
     let cancelled = false;
     let timeoutId: number | null = null;
+    const loopMs = getSuggestionAudioLoopMs(mode);
 
     const scheduleNext = () => {
       if (cancelled) {
         return;
       }
 
-      playWoodShakeBurst(context, noiseBuffer);
-      timeoutId = window.setTimeout(scheduleNext, 190 + Math.random() * 170);
+      switch (mode) {
+        case "shake":
+          playWoodShakeBurst(context, noiseBuffer);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "creak":
+          playDoorCreakFiles(suggestionMediaAudioRefs.current, suggestionMediaTimeoutRefs.current);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "color":
+          playColorShiftPulse(context);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "size":
+          playSizeWarpPulse(context);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        default:
+          timeoutId = window.setTimeout(scheduleNext, 1000);
+          break;
+      }
     };
 
     const begin = () => {
@@ -2296,10 +2673,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     setSuggestionCue(nextCue);
 
     stopShakeAudio();
-    if (mode === "shake" || mode === "creak") {
-      startShakeAudio();
-    }
-  }, [startShakeAudio, stopShakeAudio]);
+    startSuggestionAudio(mode);
+  }, [startSuggestionAudio, stopShakeAudio]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -2321,7 +2696,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         return;
       }
 
-      const doorId = chooseRandomClosedDoor(doorItemIds, openedDoorIds);
+      const doorId = chooseRandomClosedDoor(doorItemIds, openedDoorIds, itemsById);
 
       if (!doorId) {
         return;
@@ -2334,7 +2709,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [doorItemIds, focusedDoorId, interactionLocked, openedDoorIds, returnPose, triggerDoorSuggestion]);
+  }, [doorItemIds, focusedDoorId, interactionLocked, itemsById, openedDoorIds, returnPose, triggerDoorSuggestion]);
 
   useEffect(() => {
     if (!suggestionCue) {
@@ -2360,7 +2735,33 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    const resolvedItemId = currentItemId;
+    const pool = doorItemPools[doorId] ?? [];
+    const boardItemIds = Object.entries(doorItemIds)
+      .filter(([candidateDoorId, itemId]) => candidateDoorId !== doorId && Boolean(itemId))
+      .map(([, itemId]) => itemId);
+    const cabinetId = doorId.replace(/-\d+$/, "");
+    const isLeadCabinet = leadCabinetIdSet.has(cabinetId);
+    let resolvedItemId = currentItemId;
+
+    if (!openedDoorIds[doorId]) {
+      const prioritizedItemId = isLeadCabinet
+        ? chooseLeadSequenceItem(items, seenItemIds, boardItemIds)
+        : "";
+      const unseenReplacementItemId =
+        prioritizedItemId ||
+        (seenItemIds[currentItemId]
+          ? chooseNextPoolItem(pool, currentItemId, seenItemIds, itemsById, boardItemIds)
+          : "");
+
+      if (unseenReplacementItemId && unseenReplacementItemId !== currentItemId) {
+        resolvedItemId = unseenReplacementItemId;
+        setDoorItemIds((currentDoorItemIds) => ({
+          ...currentDoorItemIds,
+          [doorId]: unseenReplacementItemId,
+        }));
+      }
+    }
+
     const currentItem =
       items.find((candidate) => candidate.id === resolvedItemId) ??
       items[hashSeed(doorId) % Math.max(items.length, 1)];
@@ -2436,12 +2837,19 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         const pool = doorItemPools[closingDoorId] ?? [];
 
         if (currentItemId && pool.length > 0) {
-          const nextItemId = chooseNextPoolItem(pool, currentItemId, {
+          const closingCabinetId = closingDoorId.replace(/-\d+$/, "");
+          const isLeadCabinet = leadCabinetIdSet.has(closingCabinetId);
+          const boardItemIds = Object.entries(doorItemIds)
+            .filter(([candidateDoorId, itemId]) => candidateDoorId !== closingDoorId && Boolean(itemId))
+            .map(([, itemId]) => itemId);
+          const seenWithCurrent = {
             ...seenItemIds,
             [currentItemId]: true,
-          }, itemsById, Object.entries(doorItemIds)
-            .filter(([candidateDoorId, itemId]) => candidateDoorId !== closingDoorId && Boolean(itemId))
-            .map(([, itemId]) => itemId));
+          };
+          const nextItemId = isLeadCabinet
+            ? chooseLeadSequenceItem(items, seenWithCurrent, boardItemIds) ||
+              chooseNextPoolItem(pool, currentItemId, seenWithCurrent, itemsById, boardItemIds)
+            : chooseNextPoolItem(pool, currentItemId, seenWithCurrent, itemsById, boardItemIds);
 
           if (nextItemId && nextItemId !== currentItemId) {
             setPendingDoorSwap({
@@ -2466,7 +2874,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         returnReleaseFrameRef.current = null;
       });
     }
-  }, [closingDoorId, doorItemIds, doorItemPools, itemsById, seenItemIds]);
+  }, [closingDoorId, doorItemIds, doorItemPools, items, itemsById, leadCabinetIdSet, seenItemIds]);
 
   return (
     <section className="panorama-shell" aria-label="Cabinet of curiosities panorama">
