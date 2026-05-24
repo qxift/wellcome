@@ -4,199 +4,124 @@ import path from "node:path";
 const rootDir = process.cwd();
 const dataPath = path.join(rootDir, "src", "data", "curatedCabinetItems.json");
 const outputPath = path.join(rootDir, "src", "data", "cabinetStories.llm.json");
-const args = new Set(process.argv.slice(2));
 const maxWords = 50;
+const defaultModel = "gpt-4.1-mini";
 
-const raw = fs.readFileSync(dataPath, "utf8");
-const payload = JSON.parse(raw);
-const items = payload.items ?? [];
+function parseArgs(argv) {
+  const options = {
+    force: false,
+    help: false,
+    ids: new Set(),
+    limit: null,
+    validate: false,
+  };
 
-function trimTitle(title = "") {
-  return title.replace(/^\[/, "").replace(/\]\.?$/, "").trim();
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+
+    if (arg === "--help" || arg === "-h") {
+      options.help = true;
+    } else if (arg === "--force") {
+      options.force = true;
+    } else if (arg === "--validate") {
+      options.validate = true;
+    } else if (arg === "--id") {
+      const value = argv[index + 1];
+      if (!value) throw new Error("--id requires an object id");
+      options.ids.add(value);
+      index += 1;
+    } else if (arg.startsWith("--id=")) {
+      options.ids.add(arg.slice("--id=".length));
+    } else if (arg === "--limit") {
+      const value = Number(argv[index + 1]);
+      if (!Number.isInteger(value) || value <= 0) throw new Error("--limit requires a positive integer");
+      options.limit = value;
+      index += 1;
+    } else if (arg.startsWith("--limit=")) {
+      const value = Number(arg.slice("--limit=".length));
+      if (!Number.isInteger(value) || value <= 0) throw new Error("--limit requires a positive integer");
+      options.limit = value;
+    } else {
+      throw new Error(`Unknown argument: ${arg}`);
+    }
+  }
+
+  return options;
 }
 
-function compactWords(text, limit = maxWords) {
-  const normalized = text
+function printHelp() {
+  console.log([
+    "Generate cabinet narration stories with OpenAI.",
+    "",
+    "Usage:",
+    "  OPENAI_API_KEY=\"...\" npm run data:stories",
+    "  OPENAI_API_KEY=\"...\" npm run data:stories -- --limit=3",
+    "  OPENAI_API_KEY=\"...\" npm run data:stories -- --id hbke5rty --force",
+    "  npm run data:stories:validate",
+    "",
+    "Options:",
+    "  --force        Regenerate selected stories even if they already exist.",
+    "  --id <id>      Generate one object id. Can be repeated.",
+    "  --limit <n>    Generate the first n curated objects.",
+    "  --validate     Check that every curated object has a <=50 word story.",
+    "  --help         Show this help text.",
+    "",
+    "Environment:",
+    `  OPENAI_MODEL  Defaults to ${defaultModel}.`,
+  ].join("\n"));
+}
+
+function readJson(filePath, fallback = null) {
+  if (!fs.existsSync(filePath)) {
+    return fallback;
+  }
+
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function writeJson(filePath, value) {
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function cleanStory(text) {
+  return text
     .replace(/[“”]/g, "\"")
     .replace(/[‘’]/g, "'")
+    .replace(/^["'\s]+|["'\s]+$/g, "")
+    .replace(/^(story|narration|description)\s*:\s*/i, "")
     .replace(/\s+/g, " ")
     .trim();
-  const words = normalized.split(/\s+/).filter(Boolean);
+}
+
+function wordCount(text) {
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
+function limitWords(text, limit = maxWords) {
+  const words = text.split(/\s+/).filter(Boolean);
 
   if (words.length <= limit) {
-    return normalized;
+    return text;
   }
 
   return `${words.slice(0, limit).join(" ").replace(/[,:;]$/, "")}.`;
 }
 
-function firstUseful(values, fallback) {
-  return values?.find((value) => value && value.length > 2) ?? fallback;
-}
-
-function limitPhrase(text, limit) {
-  const words = text.split(/\s+/).filter(Boolean);
-  return words.length > limit ? words.slice(0, limit).join(" ") : text;
-}
-
-function articleFor(text) {
-  return /^[aeiou]/i.test(text) ? "an" : "a";
-}
-
-function sentenceCase(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-function getDisplayName(item, kind) {
-  const title = trimTitle(item.title || "");
-  const firstClause = title.split(/[;:]/)[0].replace(/\s+/g, " ").trim();
-  const titleWords = firstClause.split(/\s+/).filter(Boolean);
-
-  if (titleWords.length === 0 || titleWords.length > 9) {
-    return `the ${kind}`;
-  }
-
-  return firstClause.replace(/[,.]$/, "");
-}
-
-function getKind(item) {
-  const keywords = item.linkKeywords ?? [];
-  const kinds = item.objectKinds ?? [];
-  const title = item.title?.toLowerCase() ?? "";
-
-  if (kinds.includes("anatomy") || title.includes("anatom")) return "anatomical object";
-  if (keywords.includes("amulet") || keywords.includes("charms") || title.includes("amulet")) return "protective charm";
-  if (keywords.includes("forceps") || title.includes("forceps")) return "medical instrument";
-  if (keywords.includes("stethoscope") || title.includes("stethoscope")) return "listening instrument";
-  if (keywords.includes("galvanism") || title.includes("galvani")) return "electrical apparatus";
-  if (keywords.includes("ceramic") || title.includes("cup") || title.includes("jug") || title.includes("pot")) return "vessel";
-  if (keywords.includes("votive") || title.includes("praying") || title.includes("saint")) return "devotional object";
-  if (keywords.includes("medal") || title.includes("medal")) return "medal";
-  if (kinds.includes("container")) return "case";
-  if (kinds.includes("wearable")) return "worn object";
-  if (kinds.includes("figure")) return "figure";
-
-  return firstUseful(kinds, firstUseful(item.genres, "object")).toLowerCase();
-}
-
-function hashString(input) {
-  let hash = 2166136261;
-  for (let index = 0; index < input.length; index += 1) {
-    hash ^= input.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-}
-
-function pick(list, seed, offset = 0) {
-  return list[(seed + offset) % list.length];
-}
-
-function getSubjectPhrase(item, kind, seed) {
-  const raw = limitPhrase(firstUseful(item.subjects, firstUseful(item.linkKeywords, "care")).toLowerCase(), 5)
-    .replace(/\s*&\s*/g, " and ")
-    .replace(/[.,;:]+$/g, "");
-  const generic = new Set([
-    "anatomical",
-    "figure",
-    "case",
-    "cup",
-    "pot",
-    "statuette",
-    "model",
-    "museum object",
-    "instruments",
-    "containers",
-  ]);
-
-  if (raw && !generic.has(raw)) {
-    return raw;
-  }
-
-  const subjectByKind = {
-    "anatomical object": ["body knowledge", "teaching anatomy", "the visible body"],
-    "protective charm": ["protection", "illness and blessing", "fear made portable"],
-    "medical instrument": ["clinical urgency", "care under pressure", "the managed body"],
-    "listening instrument": ["diagnosis", "private symptoms", "the hidden chest"],
-    "electrical apparatus": ["experiment", "invisible energy", "laboratory wonder"],
-    vessel: ["domestic medicine", "shared remedies", "household care"],
-    "devotional object": ["prayer", "recovery and devotion", "bodies in danger"],
-    medal: ["public memory", "professional pride", "medicine as ceremony"],
-    case: ["readiness", "order and fear", "tools waiting in darkness"],
-    "worn object": ["the body", "public identity", "private protection"],
-    figure: ["myth and care", "embodied belief", "watchful presence"],
-  };
-
-  return pick(subjectByKind[kind] ?? ["care", "memory", "display"], seed, 5);
-}
-
-function localStory(item) {
-  const seed = hashString(item.id ?? item.title ?? "");
-  const kind = getKind(item);
-  const inlineName = getDisplayName(item, kind);
-  const displayName = sentenceCase(inlineName);
-  const objectPhrase = `${articleFor(kind)} ${kind}`;
-  const subject = getSubjectPhrase(item, kind, seed);
-  const materialHint = pick(
-    [
-      "handled in a hurry",
-      "kept close to the body",
-      "brought out only when words failed",
-      "placed where anxious eyes could find it",
-      "saved because someone thought it still had power",
-      "made to turn fear into something visible",
-      "passed between expert hands and private hopes",
-      "kept as proof that care can look strange",
-      "waiting between belief and experiment",
-      "small enough to feel personal, strange enough to endure",
-    ],
-    seed,
-  );
-  const ending = pick(
-    [
-      "It asks us to listen for the hands behind the record.",
-      "The cabinet makes it feel less like evidence than a surviving whisper.",
-      "What remains is not certainty, but a human attempt to manage danger.",
-      "Its mystery is useful: it leaves room for touch, fear, and hope.",
-      "Seen briefly, it becomes a compact stage for medicine and imagination.",
-      "It turns the archive into a small, uneasy encounter.",
-      "The object seems to remember a body just outside the frame.",
-      "It carries the mood of a cure, a warning, or a wish.",
-    ],
-    seed,
-    7,
-  );
-  const templates = [
-    `${displayName} may have begun as ${objectPhrase}, ${materialHint}. Around ${subject}, it gathers use, display, and quiet uncertainty. ${ending}`,
-    `Someone once trusted ${inlineName} to do more than sit still. This ${kind} feels ${materialHint}, shaped by ${subject} and by the wish to make invisible forces behave.`,
-    `In the cabinet, ${inlineName} becomes a clue rather than an answer: ${objectPhrase} tied to ${subject}, ${materialHint}. ${ending}`,
-    `${displayName} looks like ${objectPhrase} with a private task. It is ${materialHint}, carrying ${subject} from the record into the room of imagination.`,
-    `This ${kind} does not tell one clean truth. ${displayName} is ${materialHint}, and the metadata points toward ${subject}: part remedy, part theatre, part memory.`,
-    `Imagine ${inlineName} before it reached the museum: ${objectPhrase} ${materialHint}. Its link to ${subject} turns ordinary handling into a small ceremony.`,
-    `${displayName} holds its silence carefully. As ${objectPhrase} associated with ${subject}, it seems ${materialHint}. ${ending}`,
-    `The record names ${inlineName}; the cabinet lets it breathe. Connected to ${subject}, this ${kind} feels ${materialHint}, as if its purpose was never only practical.`,
-    `${displayName} sits between catalogue and rumour. As ${objectPhrase}, it lets ${subject} take a visible shape, small enough to approach and strange enough to resist explanation.`,
-    `Open the door and ${inlineName} becomes intimate. It suggests ${subject}, but also the ordinary suspense of being held, used, cleaned, hidden, or saved.`,
-    `${displayName} feels less like a specimen than a pause in someone else's day. Its connection to ${subject} turns the cabinet into a brief, watchful room.`,
-    `The image gives ${inlineName} a second life: not proof, exactly, but atmosphere. This ${kind} carries ${subject} as if belief and technique once shared the same breath.`,
-    `${displayName} seems designed for a moment of attention. It draws ${subject} into view, then leaves the rest to the listener: touch, risk, trust, and display.`,
-    `A record can name ${inlineName}, but it cannot finish the story. This ${kind} carries ${subject} like a small pressure mark left by anxious hands.`,
-    `${displayName} enters the cabinet as ${objectPhrase}, but it behaves like a memory. Around ${subject}, it makes care feel practical, theatrical, and unresolved.`,
-    `There is a private drama inside ${inlineName}. The metadata points to ${subject}; the object itself suggests the hush before treatment, prayer, experiment, or display.`,
-  ];
-
-  return compactWords(pick(templates, seed, 13));
-}
-
-function validateStories(stories) {
+function validateStories(stories, items) {
   const missingStories = items.map((item) => item.id).filter((id) => !(id in stories));
+  const emptyStories = Object.entries(stories)
+    .filter(([, story]) => typeof story !== "string" || story.trim().length === 0)
+    .map(([id]) => id);
   const longStories = Object.entries(stories)
-    .filter(([, story]) => story.split(/\s+/).filter(Boolean).length > maxWords)
+    .filter(([, story]) => typeof story === "string" && wordCount(story) > maxWords)
     .map(([id]) => id);
 
-  if (missingStories.length > 0 || longStories.length > 0) {
+  if (missingStories.length > 0 || emptyStories.length > 0 || longStories.length > 0) {
     if (missingStories.length > 0) {
       console.error(`Missing stories for ${missingStories.length} object(s): ${missingStories.join(", ")}`);
+    }
+    if (emptyStories.length > 0) {
+      console.error(`Empty stories for ${emptyStories.length} object(s): ${emptyStories.join(", ")}`);
     }
     if (longStories.length > 0) {
       console.error(`Stories over ${maxWords} words: ${longStories.join(", ")}`);
@@ -205,23 +130,65 @@ function validateStories(stories) {
   }
 }
 
-async function generateWithOpenAI(item) {
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    return null;
-  }
-
-  const metadata = {
+function buildMetadata(item) {
+  return {
     id: item.id,
+    workId: item.workId,
     title: item.title,
     type: item.type,
     imageUrl: item.imageUrl,
     genres: item.genres ?? [],
+    languages: item.languages ?? [],
     subjects: item.subjects ?? [],
+    contributors: item.contributors ?? [],
     objectKinds: item.objectKinds ?? [],
     linkKeywords: item.linkKeywords ?? [],
+    license: item.license ?? null,
   };
+}
+
+function buildPrompt(item) {
+  return [
+    "Write one short spoken narration for this cabinet object.",
+    `Maximum length: ${maxWords} words.`,
+    "Write in a confident museum voice, as if the imagined interpretation were true.",
+    "You may invent a wrong, speculative, or mythical explanation, but anchor it in the metadata and visible image details.",
+    "Make the story clear about what the object does, controls, protects, teaches, measures, reveals, or transforms.",
+    "Use concrete details from the image: inscriptions, posture, handles, containers, materials, figures, marks, color, damage, or arrangement.",
+    "Do not use cautious phrases such as 'perhaps', 'may have', 'might', 'likely', 'seems', or 'suggests'.",
+    "Avoid fantasy or vague mystery language: secret, secrets, mystery, mystical, magical, enchanted, haunting, spell, whispers, shadow, strange silence.",
+    "Do not write a generic object description. Give the object a specific function, ritual, belief, or invented theory.",
+    "You can choose to mention some fact like years or cultural hint in metadata",
+    "Good openings can begin with a place, period, visible detail, social role, user, action",
+    "Use a different rhythm for each object: some can start with a direct claim, others with an image detail, a user, a setting, or a cultural practice.",
+    "Avoid repeating the same opening grammar across nearby objects.",
+    "Use the tone like you're an historian or archaeologist",
+    "Return only the narration text. No title, bullets, markdown, or quotation marks.",
+    "",
+    "",
+    `Metadata: ${JSON.stringify(buildMetadata(item))}`,
+  ].join("\n");
+}
+
+function extractOutputText(result) {
+  if (typeof result.output_text === "string") {
+    return result.output_text;
+  }
+
+  return result.output
+    ?.flatMap((entry) => entry.content ?? [])
+    .map((content) => content.text ?? "")
+    .join("")
+    .trim() ?? "";
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function generateWithOpenAI(item, { apiKey, model }) {
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -229,23 +196,22 @@ async function generateWithOpenAI(item) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_MODEL ?? "gpt-5-mini",
+      model,
       instructions: [
-        "You write concise spoken labels for a cabinet-of-curiosities experience.",
-        `Write no more than ${maxWords} words.`,
-        "Use the metadata and image as inspiration. You may imagine atmosphere or possible use, but do not assert invented provenance as fact.",
-        "Return only the narration text. No title, bullets, markdown, or quotation marks.",
+        "You write museum audio labels for a surreal cabinet-of-curiosities web experience.",
+        "Your tone is intimate, curious, elegant, and slightly uncanny.",
+        "Every answer must be a single short narration that sounds good when spoken aloud.",
       ].join(" "),
       input: [
         {
           role: "user",
           content: [
-            { type: "input_text", text: JSON.stringify(metadata) },
+            { type: "input_text", text: buildPrompt(item) },
             { type: "input_image", image_url: item.imageUrl, detail: "low" },
           ],
         },
       ],
-      max_output_tokens: 120,
+      max_output_tokens: 160,
     }),
   });
 
@@ -254,36 +220,97 @@ async function generateWithOpenAI(item) {
   }
 
   const result = await response.json();
-  const outputText = result.output_text
-    ?? result.output?.flatMap((entry) => entry.content ?? [])
-      .map((content) => content.text ?? "")
-      .join("")
-      .trim();
+  const story = cleanStory(extractOutputText(result));
 
-  return outputText ? compactWords(outputText) : null;
+  if (!story) {
+    throw new Error(`OpenAI returned an empty story for ${item.id}`);
+  }
+
+  return limitWords(story);
 }
 
-if (args.has("--validate")) {
-  const stories = JSON.parse(fs.readFileSync(outputPath, "utf8"));
-  validateStories(stories);
-  console.log(`Validated ${items.length} objects against ${outputPath}`);
+async function generateWithRetry(item, config) {
+  const maxAttempts = 3;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await generateWithOpenAI(item, config);
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+
+      console.warn(`Attempt ${attempt} failed for ${item.id}; retrying...`);
+      await sleep(750 * attempt);
+    }
+  }
+
+  throw new Error(`Failed to generate story for ${item.id}`);
+}
+
+const options = parseArgs(process.argv.slice(2));
+const payload = readJson(dataPath);
+const items = payload.items ?? [];
+
+if (options.help) {
+  printHelp();
   process.exit(0);
 }
 
-const stories = {};
-const useOpenAI = Boolean(process.env.OPENAI_API_KEY) && !args.has("--offline");
+if (options.validate) {
+  const stories = readJson(outputPath, {});
+  validateStories(stories, items);
+  console.log(`Validated ${items.length} stories against ${outputPath}`);
+  process.exit(0);
+}
 
-for (const [index, item] of items.entries()) {
-  if (useOpenAI) {
-    console.log(`Generating story ${index + 1}/${items.length}: ${item.id}`);
-  }
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  console.error("Missing OPENAI_API_KEY. This script now generates stories only with an LLM.");
+  console.error("Example: OPENAI_API_KEY=\"your_key_here\" npm run data:stories");
+  process.exit(1);
+}
 
-  stories[item.id] = useOpenAI ? await generateWithOpenAI(item) : localStory(item);
-  if (!stories[item.id]) {
-    stories[item.id] = localStory(item);
+const model = process.env.OPENAI_MODEL ?? defaultModel;
+const existingStories = readJson(outputPath, {});
+let selectedItems = items;
+
+if (options.ids.size > 0) {
+  selectedItems = selectedItems.filter((item) => options.ids.has(item.id));
+  const missingIds = [...options.ids].filter((id) => !items.some((item) => item.id === id));
+  if (missingIds.length > 0) {
+    console.error(`Unknown object id(s): ${missingIds.join(", ")}`);
+    process.exit(1);
   }
 }
 
-validateStories(stories);
-fs.writeFileSync(outputPath, `${JSON.stringify(stories, null, 2)}\n`);
-console.log(`Wrote ${Object.keys(stories).length} stories to ${outputPath}${useOpenAI ? " using OpenAI" : " using local fallback"}`);
+if (options.limit !== null) {
+  selectedItems = selectedItems.slice(0, options.limit);
+}
+
+const isPartialRun = options.ids.size > 0 || options.limit !== null;
+const stories = isPartialRun ? { ...existingStories } : {};
+const total = selectedItems.length;
+
+console.log(`Generating ${total} cabinet story/stories with OpenAI model ${model}.`);
+
+for (const [index, item] of selectedItems.entries()) {
+  if (!options.force && isPartialRun && stories[item.id]) {
+    console.log(`Skipping ${index + 1}/${total}: ${item.id} already exists`);
+    continue;
+  }
+
+  console.log(`Generating story ${index + 1}/${total}: ${item.id}`);
+  stories[item.id] = await generateWithRetry(item, { apiKey, model });
+}
+
+const orderedStories = {};
+for (const item of items) {
+  if (stories[item.id]) {
+    orderedStories[item.id] = stories[item.id];
+  }
+}
+
+validateStories(orderedStories, isPartialRun ? selectedItems : items);
+writeJson(outputPath, orderedStories);
+console.log(`Wrote ${Object.keys(orderedStories).length} LLM story/stories to ${outputPath}`);

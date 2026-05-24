@@ -1828,6 +1828,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
+  const narrationAudioRef = useRef<HTMLAudioElement | null>(null);
   const shakeCueRef = useRef<DoorShakeCue>(null);
   const shakeNonceRef = useRef(0);
 
@@ -1921,45 +1922,87 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    if (typeof window === "undefined") {
       return;
     }
 
-    const speech = window.speechSynthesis;
-    speech.cancel();
+    const speech = "speechSynthesis" in window ? window.speechSynthesis : null;
+    speech?.cancel();
+    narrationAudioRef.current?.pause();
+    narrationAudioRef.current = null;
 
     if (!focusedDoorId || !focusedItem) {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
-    const applyVoice = () => {
-      const preferredVoice = chooseNarrationVoice(speech.getVoices());
-
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
+    let isCancelled = false;
+    const finishNarration = () => {
+      if (isCancelled) {
+        return;
       }
-    };
 
-    applyVoice();
-    utterance.rate = 1.10;
-    utterance.pitch = 1.12;
-    utterance.volume = 1;
-    utterance.onend = () => {
       setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
     };
+    const playBrowserNarration = () => {
+      if (!speech || isCancelled) {
+        finishNarration();
+        return;
+      }
 
-    const handleVoicesChanged = () => {
+      const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
+      const applyVoice = () => {
+        const preferredVoice = chooseNarrationVoice(speech.getVoices());
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+      };
+
       applyVoice();
-    };
+      utterance.rate = 1.10;
+      utterance.pitch = 1.12;
+      utterance.volume = 1;
+      utterance.onend = finishNarration;
+      speech.addEventListener("voiceschanged", applyVoice);
+      speech.speak(utterance);
 
-    speech.addEventListener("voiceschanged", handleVoicesChanged);
-    speech.speak(utterance);
+      return () => {
+        speech.removeEventListener("voiceschanged", applyVoice);
+      };
+    };
+    let removeVoiceListener: (() => void) | undefined;
+    const audio = new Audio(`/cabinet-audio/${focusedItem.id}.mp3`);
+    narrationAudioRef.current = audio;
+    audio.preload = "auto";
+    audio.volume = 1;
+    audio.onended = finishNarration;
+    audio.onerror = () => {
+      if (narrationAudioRef.current !== audio) {
+        return;
+      }
+
+      narrationAudioRef.current = null;
+      removeVoiceListener = playBrowserNarration();
+    };
+    void audio.play().catch(() => {
+      if (narrationAudioRef.current !== audio) {
+        return;
+      }
+
+      narrationAudioRef.current = null;
+      removeVoiceListener = playBrowserNarration();
+    });
 
     return () => {
-      speech.removeEventListener("voiceschanged", handleVoicesChanged);
-      speech.cancel();
+      isCancelled = true;
+      removeVoiceListener?.();
+      audio.pause();
+      audio.src = "";
+      if (narrationAudioRef.current === audio) {
+        narrationAudioRef.current = null;
+      }
+      speech?.cancel();
     };
   }, [doorItemIds, focusedDoorId, focusedItem, itemsById]);
 

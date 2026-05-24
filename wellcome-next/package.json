@@ -11,7 +11,8 @@
     "data:curate": "node scripts/build-curated-dataset.mjs",
     "data:genres": "node scripts/build-curated-dataset.mjs --mode genres --output src/data/genreReport.json",
     "data:stories": "node scripts/generate-cabinet-stories.mjs",
-    "data:stories:validate": "node scripts/generate-cabinet-stories.mjs --validate"
+    "data:stories:validate": "node scripts/generate-cabinet-stories.mjs --validate",
+    "data:audio": "node scripts/generate-cabinet-audio.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
