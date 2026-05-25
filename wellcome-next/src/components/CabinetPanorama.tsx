@@ -663,6 +663,46 @@ function buildDisplayTexture(sourceTexture: Texture) {
   };
 }
 
+function drawWrappedCanvasText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  startY: number,
+  maxWidth: number,
+  lineHeight: number,
+  maxLines: number,
+) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+
+    if (context.measureText(nextLine).width <= maxWidth) {
+      currentLine = nextLine;
+      continue;
+    }
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    currentLine = word;
+
+    if (lines.length >= maxLines) {
+      break;
+    }
+  }
+
+  if (currentLine && lines.length < maxLines) {
+    lines.push(currentLine);
+  }
+
+  lines.slice(0, maxLines).forEach((line, index) => {
+    context.fillText(line, x, startY + index * lineHeight);
+  });
+}
+
 function hashSeed(value: string) {
   let hash = 2166136261;
 
@@ -1304,7 +1344,7 @@ function ItemDisplay({
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.02 : 0;
     const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.12 : 0;
-    const targetDepth = active ? 1.42 : open ? 0.08 : -0.02;
+    const targetDepth = active ? 1.86 : open ? 0.18 : -0.02;
     const motionDamp = active ? 6 : 12;
     const scaleDamp = active ? 6 : 14;
 
@@ -1320,7 +1360,7 @@ function ItemDisplay({
     ));
   });
 
-  const displayZ = open ? style.depth * 0.34 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.48 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   return (
@@ -1336,6 +1376,138 @@ function ItemDisplay({
             depthWrite={false}
             side={DoubleSide}
           />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+function MetadataCardDisplay({
+  item,
+  spec,
+  style,
+  active,
+}: {
+  item: CabinetItem;
+  spec: CompartmentSpec;
+  style: CabinetStyle;
+  active: boolean;
+}) {
+  const objectRef = useRef<Group>(null);
+  const imageTexture = useLoader(TextureLoader, item.imageUrl, (loader) => {
+    loader.crossOrigin = "anonymous";
+  });
+  const cardTexture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 900;
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      const fallback = new CanvasTexture(canvas);
+      fallback.colorSpace = SRGBColorSpace;
+      fallback.needsUpdate = true;
+      return fallback;
+    }
+
+    context.fillStyle = "#efe1c4";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = "#2d160f";
+    context.fillRect(44, 44, canvas.width - 88, canvas.height - 88);
+    context.fillStyle = "#f2e7d0";
+    context.fillRect(60, 60, canvas.width - 120, canvas.height - 120);
+
+    const imageColumnX = 88;
+    const imageColumnY = 88;
+    const imageColumnWidth = 470;
+    const imageColumnHeight = canvas.height - 176;
+    const textColumnX = 620;
+    const textColumnWidth = canvas.width - textColumnX - 92;
+
+    const metadataRows = [
+      ["Date", cleanYear(item.year || "").trim()],
+      ["Theme", item.theme.trim()],
+      ["Type", (item.type ?? "").trim()],
+      ["Object", (item.objectKinds ?? []).join(", ").trim()],
+      ["Subjects", (item.subjects ?? []).join(", ").trim()],
+      ["Genres", (item.genres ?? []).join(", ").trim()],
+      ["Contributors", (item.contributors ?? []).join(", ").trim()],
+    ].filter(([, value]) => {
+      if (!value) {
+        return false;
+      }
+
+      const lowered = value.toLowerCase();
+      return lowered !== "unknown" && lowered !== "date unknown";
+    });
+
+    const image = imageTexture.image as HTMLImageElement | HTMLCanvasElement | undefined;
+    if (image && image.width && image.height) {
+      const imageAspect = image.width / Math.max(image.height, 1);
+      const frameAspect = imageColumnWidth / imageColumnHeight;
+
+      let drawWidth = imageColumnWidth;
+      let drawHeight = imageColumnHeight;
+
+      if (imageAspect > frameAspect) {
+        drawHeight = imageColumnWidth / imageAspect;
+      } else {
+        drawWidth = imageColumnHeight * imageAspect;
+      }
+
+      const drawX = imageColumnX + (imageColumnWidth - drawWidth) / 2;
+      const drawY = imageColumnY + (imageColumnHeight - drawHeight) / 2;
+
+      context.fillStyle = "#d4c1a0";
+      context.fillRect(imageColumnX - 10, imageColumnY - 10, imageColumnWidth + 20, imageColumnHeight + 20);
+      context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+    }
+
+    context.fillStyle = "#2d160f";
+    context.font = "700 46px Georgia, serif";
+    drawWrappedCanvasText(context, trimTitle(item.title), textColumnX, 132, textColumnWidth, 56, 4);
+
+    let cursorY = 280;
+    metadataRows.forEach(([label, value]) => {
+      context.fillStyle = "#6f5848";
+      context.font = "600 20px Arial";
+      context.fillText(label.toUpperCase(), textColumnX, cursorY);
+      context.fillStyle = "#2d160f";
+      context.font = "400 27px Georgia, serif";
+      drawWrappedCanvasText(context, value, textColumnX, cursorY + 38, textColumnWidth, 34, 3);
+      cursorY += 118;
+    });
+
+    const nextTexture = new CanvasTexture(canvas);
+    nextTexture.colorSpace = SRGBColorSpace;
+    nextTexture.needsUpdate = true;
+    return nextTexture;
+  }, [imageTexture, item]);
+
+  useFrame((state, delta) => {
+    if (!objectRef.current) return;
+
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
+    const targetDepth = active ? 1.72 : 0.24;
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 6, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
+    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, 0, 6, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.06 : 0, 6, delta);
+    objectRef.current.scale.setScalar(MathUtils.damp(objectRef.current.scale.x, active ? 1.9 : 1.08, 6, delta));
+  });
+
+  const cardWidth = spec.width * 0.78;
+  const cardHeight = Math.min(spec.height * 0.9, cardWidth * 1.3);
+  const displayY = spec.y - spec.height * 0.02;
+  const displayZ = style.depth * 0.44;
+
+  return (
+    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
+      <group ref={objectRef}>
+        <mesh renderOrder={12}>
+          <planeGeometry args={[cardWidth, cardHeight]} />
+          <meshBasicMaterial map={cardTexture} side={DoubleSide} />
         </mesh>
       </group>
     </group>
@@ -1871,6 +2043,7 @@ function CabinetCompartment({
   hasFocusedDoor,
   suggestionMode,
   suggestionNonce,
+  isDaydreaming,
   interactionLocked,
   onToggle,
 }: {
@@ -1885,6 +2058,7 @@ function CabinetCompartment({
   hasFocusedDoor: boolean;
   suggestionMode: SuggestionMode | null;
   suggestionNonce: number;
+  isDaydreaming: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
 }) {
@@ -1974,7 +2148,11 @@ function CabinetCompartment({
         </mesh>
       </group>
       {item ? (
-        modelUrl ? (
+        !isDaydreaming && active ? (
+          <Suspense fallback={null}>
+            <MetadataCardDisplay item={item} spec={spec} style={style} active={active} />
+          </Suspense>
+        ) : modelUrl ? (
           <Suspense fallback={null}>
             <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} />
           </Suspense>
@@ -2016,6 +2194,7 @@ function CabinetPanel({
   doorItemIds,
   suggestionCue,
   interactionLocked,
+  isDaydreaming,
   woodTextures,
   onToggleDoor,
 }: {
@@ -2027,6 +2206,7 @@ function CabinetPanel({
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
+  isDaydreaming: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
 }) {
@@ -2070,6 +2250,7 @@ function CabinetPanel({
               hasFocusedDoor={Boolean(focusedDoorId)}
               suggestionMode={suggestionCue?.doorId === doorId ? suggestionCue.mode : null}
               suggestionNonce={suggestionCue?.doorId === doorId ? suggestionCue.nonce : 0}
+              isDaydreaming={isDaydreaming}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
             />
@@ -2239,6 +2420,7 @@ function CabinetRoom({
   doorItemIds,
   suggestionCue,
   interactionLocked,
+  isDaydreaming,
   woodTextures,
   rugTexture,
   floorTexture,
@@ -2256,6 +2438,7 @@ function CabinetRoom({
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
+  isDaydreaming: boolean;
   woodTextures: Texture[];
   rugTexture?: Texture | null;
   floorTexture?: Texture | null;
@@ -2310,6 +2493,7 @@ function CabinetRoom({
               doorItemIds={doorItemIds}
               suggestionCue={suggestionCue}
               interactionLocked={interactionLocked}
+              isDaydreaming={isDaydreaming}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
             />
@@ -2391,6 +2575,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [suggestionCue, setSuggestionCue] = useState<DoorSuggestionCue>(null);
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
+  const [isDaydreaming, setIsDaydreaming] = useState(false);
   const focusedItem = useMemo(() => {
     if (!focusedDoorId) {
       return undefined;
@@ -2473,6 +2658,10 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
+    setIsDaydreaming(false);
+  }, [focusedDoorId]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       return;
     }
@@ -2480,7 +2669,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     const speech = window.speechSynthesis;
     speech.cancel();
 
-    if (!focusedDoorId || !focusedItem) {
+    if (!focusedDoorId || !focusedItem || !isDaydreaming) {
       return;
     }
 
@@ -2514,7 +2703,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       speech.removeEventListener("voiceschanged", handleVoicesChanged);
       speech.cancel();
     };
-  }, [doorItemIds, focusedDoorId, focusedItem, itemsById]);
+  }, [doorItemIds, focusedDoorId, focusedItem, isDaydreaming, itemsById]);
 
   useEffect(() => {
     return () => {
@@ -2548,6 +2737,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       setInteractionLocked(false);
     }
   }, [focusedDoorId, interactionLocked, returnPose]);
+
+  useEffect(() => {
+    if (focusedDoorId && focusedItem && !isDaydreaming && interactionLocked) {
+      setInteractionLocked(false);
+    }
+  }, [focusedDoorId, focusedItem, interactionLocked, isDaydreaming]);
 
   useEffect(() => {
     if (!pendingDoorSwap || returnPose || interactionLocked) {
@@ -2892,12 +3087,13 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 placements={placements}
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
-                doorItemIds={doorItemIds}
-                suggestionCue={suggestionCue}
-                interactionLocked={interactionLocked}
-                woodTextures={woodTextures}
-                rugTexture={rugTexture}
-                floorTexture={floorTexture}
+              doorItemIds={doorItemIds}
+              suggestionCue={suggestionCue}
+              interactionLocked={interactionLocked}
+              isDaydreaming={isDaydreaming}
+              woodTextures={woodTextures}
+              rugTexture={rugTexture}
+              floorTexture={floorTexture}
                 focusTarget={focusTarget}
                 targetMode={targetMode}
                 onRoamPoseChange={handleRoamPoseChange}
@@ -2909,6 +3105,35 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         </Canvas>
 
         <div className="panorama-vignette" />
+        {focusedItem && !isDaydreaming ? (
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              bottom: 24,
+              transform: "translateX(-50%)",
+              zIndex: 4,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsDaydreaming(true)}
+              style={{
+                border: 0,
+                borderRadius: 999,
+                padding: "14px 22px",
+                background: "#e0bf8a",
+                color: "#2a140b",
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 12px 30px rgba(0, 0, 0, 0.28)",
+              }}
+            >
+              Start daydreaming
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );
