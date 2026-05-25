@@ -1307,12 +1307,14 @@ function ItemDisplay({
   style,
   open,
   active,
+  onReplay,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
+  onReplay: () => void;
 }) {
   const objectRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
@@ -1344,7 +1346,7 @@ function ItemDisplay({
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.02 : 0;
     const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.12 : 0;
-    const targetDepth = active ? 1.86 : open ? 0.18 : -0.02;
+    const targetDepth = active ? 0.98 : open ? 0.18 : -0.02;
     const motionDamp = active ? 6 : 12;
     const scaleDamp = active ? 6 : 14;
 
@@ -1354,19 +1356,26 @@ function ItemDisplay({
     objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, motionDamp, delta);
     objectRef.current.scale.setScalar(MathUtils.damp(
       objectRef.current.scale.x,
-      active ? 2.1 : open ? 1.04 : 1,
+      active ? 1.24 : open ? 1.04 : 1,
       scaleDamp,
       delta,
     ));
   });
 
-  const displayZ = open ? style.depth * 0.48 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.14 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   return (
     <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
       <group ref={objectRef}>
-        <mesh position={[0, 0, 0.002]} renderOrder={12}>
+        <mesh
+          position={[0, 0, 0.002]}
+          renderOrder={12}
+          onClick={(event) => {
+            event.stopPropagation();
+            onReplay();
+          }}
+        >
           <planeGeometry args={[imageWidth, imageHeight]} />
           <meshBasicMaterial
             map={displayTexture}
@@ -1520,12 +1529,14 @@ function ModelDisplay({
   style,
   open,
   active,
+  onReplay,
 }: {
   modelUrl: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
+  onReplay: () => void;
 }) {
   const gltf = useLoader(GLTFLoader, modelUrl);
   const scene = useMemo(() => {
@@ -1570,19 +1581,28 @@ function ModelDisplay({
   const objectRef = useRef<Group>(null);
   const spinXRef = useRef(0);
   const spinYRef = useRef(0);
+  const spinSpeed = useMemo(() => {
+    const seed = Math.abs(hashSeed(modelUrl));
+
+    return {
+      x: 1.1 + (seed % 9) * 0.1,
+      y: 1.4 + (seed % 11) * 0.1,
+    };
+  }, [modelUrl]);
   const displayY = spec.y - spec.height * 0.04;
 
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
-    const targetDepth = active ? 1.06 : open ? -0.18 : -0.32;
-    const motionDamp = active ? 6 : 12;
-    const scaleDamp = active ? 6 : 14;
+    const isAnimating = active;
+    const targetFloatY = isAnimating ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
+    const targetDepth = isAnimating ? 0.98 : open ? -0.18 : -0.32;
+    const motionDamp = isAnimating ? 6 : 12;
+    const scaleDamp = isAnimating ? 6 : 14;
 
-    if (active) {
-      spinXRef.current += delta * 0.9;
-      spinYRef.current += delta * 1.2;
+    if (isAnimating) {
+      spinXRef.current += delta * spinSpeed.x;
+      spinYRef.current += delta * spinSpeed.y;
     } else {
       spinXRef.current = MathUtils.damp(spinXRef.current, 0, 8, delta);
       spinYRef.current = MathUtils.damp(spinYRef.current, 0, 8, delta);
@@ -1594,7 +1614,7 @@ function ModelDisplay({
     objectRef.current.rotation.y = spinYRef.current;
     objectRef.current.scale.setScalar(MathUtils.damp(
       objectRef.current.scale.x,
-      active ? 1.68 : open ? 0.9 : 0.86,
+      isAnimating ? 1.24 : open ? 0.9 : 0.86,
       scaleDamp,
       delta,
     ));
@@ -1604,7 +1624,13 @@ function ModelDisplay({
     <group position={[spec.x, displayY, open ? style.depth * 0.14 : -style.depth * 0.04]} renderOrder={11}>
       <ambientLight intensity={1.0} />
       <pointLight position={[0, spec.height * 0.12, 0.22]} intensity={1.8} color="#ffd39a" distance={2.1} />
-      <group ref={objectRef}>
+      <group
+        ref={objectRef}
+        onClick={(event) => {
+          event.stopPropagation();
+          onReplay();
+        }}
+      >
         <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
       </group>
     </group>
@@ -2046,6 +2072,7 @@ function CabinetCompartment({
   isDaydreaming,
   interactionLocked,
   onToggle,
+  onReplayItem,
 }: {
   doorId: string;
   item?: CabinetItem;
@@ -2061,6 +2088,7 @@ function CabinetCompartment({
   isDaydreaming: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const lockerDepth = style.depth * 0.8; // Adjusted for new depth
   const innerWidth = spec.width - 0.04;
@@ -2148,13 +2176,16 @@ function CabinetCompartment({
         </mesh>
       </group>
       {item ? (
-        !isDaydreaming && active ? (
+        modelUrl ? (
           <Suspense fallback={null}>
-            <MetadataCardDisplay item={item} spec={spec} style={style} active={active} />
-          </Suspense>
-        ) : modelUrl ? (
-          <Suspense fallback={null}>
-            <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} />
+            <ModelDisplay
+              modelUrl={modelUrl}
+              spec={spec}
+              style={style}
+              open={open}
+              active={active}
+              onReplay={() => onReplayItem(doorId)}
+            />
           </Suspense>
         ) : (
           <Suspense fallback={null}>
@@ -2164,6 +2195,7 @@ function CabinetCompartment({
               style={style}
               open={open}
               active={active}
+              onReplay={() => onReplayItem(doorId)}
             />
           </Suspense>
         )
@@ -2190,6 +2222,7 @@ function CabinetPanel({
   placement,
   openedDoorIds,
   focusedDoorId,
+  activeDoorId,
   allItems,
   doorItemIds,
   suggestionCue,
@@ -2197,11 +2230,13 @@ function CabinetPanel({
   isDaydreaming,
   woodTextures,
   onToggleDoor,
+  onReplayItem,
 }: {
   group: CabinetGroup;
   placement: FurniturePlacement;
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
+  activeDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
@@ -2209,6 +2244,7 @@ function CabinetPanel({
   isDaydreaming: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const style = getCabinetStyle();
   const specs = getCompartmentSpecs(style, doorsPerCabinet);
@@ -2246,13 +2282,14 @@ function CabinetPanel({
               style={style}
               woodTexture={cabinetWoodTexture}
               open={Boolean(openedDoorIds[doorId])}
-              active={focusedDoorId === doorId}
+              active={activeDoorId === doorId}
               hasFocusedDoor={Boolean(focusedDoorId)}
               suggestionMode={suggestionCue?.doorId === doorId ? suggestionCue.mode : null}
               suggestionNonce={suggestionCue?.doorId === doorId ? suggestionCue.nonce : 0}
               isDaydreaming={isDaydreaming}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
+              onReplayItem={onReplayItem}
             />
           );
         })}
@@ -2417,6 +2454,7 @@ function CabinetRoom({
   placements,
   openedDoorIds,
   focusedDoorId,
+  activeDoorId,
   doorItemIds,
   suggestionCue,
   interactionLocked,
@@ -2429,12 +2467,14 @@ function CabinetRoom({
   onRoamPoseChange,
   onTargetReached,
   onToggleDoor,
+  onReplayItem,
 }: {
   allItems: CabinetItem[];
   groups: CabinetGroup[];
   placements: FurniturePlacement[];
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
+  activeDoorId: string;
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
@@ -2447,6 +2487,7 @@ function CabinetRoom({
   onRoamPoseChange: (pose: CameraPose) => void;
   onTargetReached: (mode: "focus" | "return") => void;
   onToggleDoor: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const blockers = useMemo(() => getFurnitureBlockers(groups, placements), [groups, placements]);
 
@@ -2489,6 +2530,7 @@ function CabinetRoom({
               placement={placements[index]}
               openedDoorIds={openedDoorIds}
               focusedDoorId={focusedDoorId}
+              activeDoorId={activeDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
               suggestionCue={suggestionCue}
@@ -2496,6 +2538,7 @@ function CabinetRoom({
               isDaydreaming={isDaydreaming}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
+              onReplayItem={onReplayItem}
             />
           );
         })}
@@ -2569,6 +2612,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
   const [seenItemIds, setSeenItemIds] = useState<Record<string, boolean>>({});
   const [focusedDoorId, setFocusedDoorId] = useState("");
+  const [activeDoorId, setActiveDoorId] = useState("");
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
   const [pendingDoorSwap, setPendingDoorSwap] = useState<PendingDoorSwap>(null);
@@ -2598,6 +2642,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
+  const cabinetItemAudioRef = useRef<HTMLAudioElement | null>(null);
   const suggestionMediaAudioRefs = useRef<HTMLAudioElement[]>([]);
   const suggestionMediaTimeoutRefs = useRef<number[]>([]);
   const suggestionCueRef = useRef<DoorSuggestionCue>(null);
@@ -2725,6 +2770,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         void shakeAudioContextRef.current.close().catch(() => {});
         shakeAudioContextRef.current = null;
       }
+      if (cabinetItemAudioRef.current) {
+        cabinetItemAudioRef.current.pause();
+        cabinetItemAudioRef.current.currentTime = 0;
+        cabinetItemAudioRef.current = null;
+      }
     };
   }, []);
 
@@ -2776,6 +2826,44 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     });
     suggestionMediaAudioRefs.current = [];
   }, []);
+
+  const stopCabinetItemAudio = useCallback(() => {
+    if (!cabinetItemAudioRef.current) {
+      return;
+    }
+
+    cabinetItemAudioRef.current.pause();
+    cabinetItemAudioRef.current.currentTime = 0;
+    cabinetItemAudioRef.current = null;
+  }, []);
+
+  const playCabinetItemAudio = useCallback((itemId: string, doorId: string) => {
+    if (typeof window === "undefined" || !itemId) {
+      return;
+    }
+
+    stopCabinetItemAudio();
+
+    const audio = new Audio(`/cabinet_audio/${itemId}.mp3`);
+    audio.preload = "auto";
+    audio.onended = () => {
+      if (cabinetItemAudioRef.current === audio) {
+        cabinetItemAudioRef.current = null;
+      }
+
+      lastInteractionAtRef.current = Date.now();
+      setActiveDoorId((currentDoorId) => (currentDoorId === doorId ? "" : currentDoorId));
+    };
+    cabinetItemAudioRef.current = audio;
+    void audio.play().catch(() => {
+      if (cabinetItemAudioRef.current === audio) {
+        cabinetItemAudioRef.current = null;
+      }
+
+      lastInteractionAtRef.current = Date.now();
+      setActiveDoorId((currentDoorId) => (currentDoorId === doorId ? "" : currentDoorId));
+    });
+  }, [stopCabinetItemAudio]);
 
   const startSuggestionAudio = useCallback((mode: SuggestionMode) => {
     if (typeof window === "undefined") {
@@ -2877,9 +2965,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     }
 
     const intervalId = window.setInterval(() => {
-      const isZoomedOut = !focusedDoorId && !interactionLocked && !returnPose;
+      const isIdleState = !focusedDoorId && !interactionLocked && !returnPose && !activeDoorId;
 
-      if (!isZoomedOut) {
+      if (!isIdleState) {
         return;
       }
 
@@ -2904,13 +2992,47 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [doorItemIds, focusedDoorId, interactionLocked, itemsById, openedDoorIds, returnPose, triggerDoorSuggestion]);
+  }, [activeDoorId, doorItemIds, focusedDoorId, interactionLocked, itemsById, openedDoorIds, returnPose, triggerDoorSuggestion]);
 
   useEffect(() => {
     if (!suggestionCue) {
       stopShakeAudio();
     }
   }, [stopShakeAudio, suggestionCue]);
+
+  const replayDoorItem = useCallback((doorId: string) => {
+    if (!openedDoorIds[doorId]) {
+      return;
+    }
+
+    const itemId = doorItemIds[doorId];
+    if (!itemId) {
+      return;
+    }
+
+    const item =
+      items.find((candidate) => candidate.id === itemId) ??
+      items[hashSeed(doorId) % Math.max(items.length, 1)];
+
+    if (!item) {
+      return;
+    }
+
+    lastInteractionAtRef.current = Date.now();
+
+    if (suggestionCue) {
+      suggestionCueRef.current = null;
+      setSuggestionCue(null);
+      stopShakeAudio();
+    }
+
+    setSeenItemIds((currentSeenItemIds) => ({
+      ...currentSeenItemIds,
+      [item.id]: true,
+    }));
+    setActiveDoorId(doorId);
+    playCabinetItemAudio(item.id, doorId);
+  }, [doorItemIds, items, openedDoorIds, playCabinetItemAudio, stopShakeAudio, suggestionCue]);
 
   const toggleDoor = (doorId: string) => {
     lastInteractionAtRef.current = Date.now();
@@ -2965,15 +3087,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    if (!openedDoorIds[doorId]) {
-      setOpenedDoorIds((currentDoors) => ({
-        ...currentDoors,
-        [doorId]: true,
-      }));
-    }
-
-    if (focusedDoorId === doorId) {
-      setClosingDoorId(doorId);
+    if (openedDoorIds[doorId]) {
       setOpenedDoorIds((currentDoors) => {
         if (!currentDoors[doorId]) {
           return currentDoors;
@@ -2981,8 +3095,10 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
         return { ...currentDoors, [doorId]: false };
       });
-      setReturnPose(roamPoseRef.current);
-      setFocusedDoorId("");
+      if (activeDoorId === doorId) {
+        stopCabinetItemAudio();
+        setActiveDoorId("");
+      }
       return;
     }
 
@@ -2991,34 +3107,17 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       [currentItem.id]: true,
     }));
 
-    if (openedDoorIds[doorId] && !focusedDoorId) {
-      setOpenedDoorIds((currentDoors) => ({
-        ...currentDoors,
-        [doorId]: true,
-      }));
-      setInteractionLocked(true);
-      console.log("[Cabinet] opened object", {
-        doorId,
-        itemId: currentItem.id,
-        title: currentItem.title,
-      });
-      setFocusedDoorId(doorId);
-      setReturnPose(null);
-      return;
-    }
-
     setOpenedDoorIds((currentDoors) => ({
       ...currentDoors,
       [doorId]: true,
     }));
-    setInteractionLocked(true);
+    setActiveDoorId(doorId);
+    playCabinetItemAudio(currentItem.id, doorId);
     console.log("[Cabinet] opened object", {
       doorId,
       itemId: currentItem.id,
       title: currentItem.title,
     });
-    setFocusedDoorId(doorId);
-    setReturnPose(null);
   };
 
   const handleRoamPoseChange = useCallback((pose: CameraPose) => {
@@ -3087,6 +3186,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 placements={placements}
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
+                activeDoorId={activeDoorId}
               doorItemIds={doorItemIds}
               suggestionCue={suggestionCue}
               interactionLocked={interactionLocked}
@@ -3099,41 +3199,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 onRoamPoseChange={handleRoamPoseChange}
                 onTargetReached={handleTargetReached}
                 onToggleDoor={toggleDoor}
+                onReplayItem={replayDoorItem}
               />
             </Suspense>
           )}
         </Canvas>
-
         <div className="panorama-vignette" />
-        {focusedItem && !isDaydreaming ? (
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              bottom: 24,
-              transform: "translateX(-50%)",
-              zIndex: 4,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setIsDaydreaming(true)}
-              style={{
-                border: 0,
-                borderRadius: 999,
-                padding: "14px 22px",
-                background: "#e0bf8a",
-                color: "#2a140b",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                boxShadow: "0 12px 30px rgba(0, 0, 0, 0.28)",
-              }}
-            >
-              Start daydreaming
-            </button>
-          </div>
-        ) : null}
       </div>
     </section>
   );
