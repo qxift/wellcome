@@ -2073,6 +2073,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
+  const narrationAudioRef = useRef<HTMLAudioElement | null>(null);
   const suggestionCueRef = useRef<DoorSuggestionCue>(null);
   const suggestionNonceRef = useRef(0);
   const suggestionModeIndexRef = useRef(0);
@@ -2150,15 +2151,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         return;
       }
 
-    applyVoice();
-    utterance.rate = 1.10;
-    utterance.pitch = 1.12;
-    utterance.volume = 1;
-    utterance.onend = () => {
+      setReturnPose(roamPoseRef.current);
       setFocusedDoorId("");
-      setInteractionLocked(false);
       lastInteractionAtRef.current = Date.now();
     };
+
     const playBrowserNarration = () => {
       if (!speech || isCancelled) {
         finishNarration();
