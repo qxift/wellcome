@@ -118,6 +118,16 @@ npm run data:stories:validate
 
 After regenerating stories, restart or refresh the dev server so the app uses the updated JSON.
 
+To generate multiple story variants per item, set `STORY_VARIANTS` (or pass `--variants`):
+
+```bash
+STORY_VARIANTS=2 OPENAI_API_KEY="your_key_here" npm run data:stories
+# or
+OPENAI_API_KEY="your_key_here" npm run data:stories -- --variants 2
+```
+
+By default, existing variants are reused and only missing variants are generated. To regenerate all variants, add `--refresh`.
+
 ## Generating Natural Narration Audio
 
 By default, the app can read story text with the browser's built-in `speechSynthesis`, but those voices may sound robotic. For warmer narration, generate MP3 files into `public/cabinet-audio`.
@@ -166,6 +176,22 @@ OPENAI_API_KEY="your_key_here" TTS_PROVIDER="openai" OPENAI_TTS_SPEED="1.1" npm 
 ```
 
 This reads `src/data/cabinetStories.llm.json` and writes one MP3 per object to `public/cabinet-audio/{objectId}.mp3`. Keep those generated files if you want natural narration available in development and deployment. Add an AI-audio disclosure anywhere appropriate if you ship generated narration publicly.
+
+To generate audio for a specific story variant and write to a second folder:
+
+```bash
+STORY_VARIANT=1 CABINET_AUDIO_DIR=cabinet_audio_2 npm run data:audio -- --force
+```
+
+### Selecting a story variant and audio folder
+
+The client can pick which story variant and audio folder to use via public environment variables:
+
+```bash
+NEXT_PUBLIC_STORY_VARIANT=1 NEXT_PUBLIC_CABINET_AUDIO_DIR=cabinet_audio_2 npm run dev
+```
+
+Create the second audio folder under `public/` (for example `public/cabinet_audio_2`) and place the variant-2 MP3 files there using the same `{objectId}.mp3` naming scheme.
 
 ## Learn More
 

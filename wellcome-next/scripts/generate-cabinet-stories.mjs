@@ -4,8 +4,17 @@ import path from "node:path";
 const rootDir = process.cwd();
 const dataPath = path.join(rootDir, "src", "data", "curatedCabinetItems.json");
 const outputPath = path.join(rootDir, "src", "data", "cabinetStories.llm.json");
+const metaOutputPath = path.join(rootDir, "src", "data", "cabinetStories.json");
 const maxWords = 50;
 const defaultModel = "gpt-4.1-mini";
+
+function normalizeVariantCount(value) {
+  if (!Number.isFinite(value)) {
+    return 1;
+  }
+
+  return Math.max(1, Math.floor(value));
+}
 
 function parseArgs(argv) {
   const options = {
@@ -13,7 +22,9 @@ function parseArgs(argv) {
     help: false,
     ids: new Set(),
     limit: null,
+    refresh: false,
     validate: false,
+    variants: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -23,6 +34,8 @@ function parseArgs(argv) {
       options.help = true;
     } else if (arg === "--force") {
       options.force = true;
+    } else if (arg === "--refresh") {
+      options.refresh = true;
     } else if (arg === "--validate") {
       options.validate = true;
     } else if (arg === "--id") {
@@ -41,6 +54,15 @@ function parseArgs(argv) {
       const value = Number(arg.slice("--limit=".length));
       if (!Number.isInteger(value) || value <= 0) throw new Error("--limit requires a positive integer");
       options.limit = value;
+    } else if (arg === "--variants") {
+      const value = Number(argv[index + 1]);
+      if (!Number.isInteger(value) || value <= 0) throw new Error("--variants requires a positive integer");
+      options.variants = value;
+      index += 1;
+    } else if (arg.startsWith("--variants=")) {
+      const value = Number(arg.slice("--variants=".length));
+      if (!Number.isInteger(value) || value <= 0) throw new Error("--variants requires a positive integer");
+      options.variants = value;
     } else {
       throw new Error(`Unknown argument: ${arg}`);
     }
@@ -57,17 +79,21 @@ function printHelp() {
     "  OPENAI_API_KEY=\"...\" npm run data:stories",
     "  OPENAI_API_KEY=\"...\" npm run data:stories -- --limit=3",
     "  OPENAI_API_KEY=\"...\" npm run data:stories -- --id hbke5rty --force",
+    "  OPENAI_API_KEY=\"...\" npm run data:stories -- --variants 2",
     "  npm run data:stories:validate",
     "",
     "Options:",
     "  --force        Regenerate selected stories even if they already exist.",
+    "  --refresh      Regenerate all variants, ignoring existing output.",
     "  --id <id>      Generate one object id. Can be repeated.",
     "  --limit <n>    Generate the first n curated objects.",
+    "  --variants <n> Generate n variants per object.",
     "  --validate     Check that every curated object has a <=50 word story.",
     "  --help         Show this help text.",
     "",
     "Environment:",
     `  OPENAI_MODEL  Defaults to ${defaultModel}.`,
+    "  STORY_VARIANTS Default variant count if --variants is not set.",
   ].join("\n"));
 }
 
@@ -107,14 +133,40 @@ function limitWords(text, limit = maxWords) {
   return `${words.slice(0, limit).join(" ").replace(/[,:;]$/, "")}.`;
 }
 
-function validateStories(stories, items) {
-  const missingStories = items.map((item) => item.id).filter((id) => !(id in stories));
+function normalizeStoryEntry(entry) {
+  if (Array.isArray(entry)) {
+    return entry.filter(Boolean);
+  }
+
+  if (typeof entry === "string" && entry.trim()) {
+    return [entry];
+  }
+
+  return [];
+}
+
+function normalizeStoriesPayload(payload) {
+  if (payload && typeof payload === "object" && "stories" in payload) {
+    return payload.stories ?? {};
+  }
+
+  return payload ?? {};
+}
+
+function validateStories(stories, items, expectedVariants) {
+  const missingStories = items
+    .map((item) => item.id)
+    .filter((id) => normalizeStoryEntry(stories[id]).length < expectedVariants);
   const emptyStories = Object.entries(stories)
-    .filter(([, story]) => typeof story !== "string" || story.trim().length === 0)
-    .map(([id]) => id);
+    .flatMap(([id, entry]) => normalizeStoryEntry(entry)
+      .map((story, index) => ({ id, index, story })))
+    .filter(({ story }) => !story || story.trim().length === 0)
+    .map(({ id, index }) => `${id}:${index + 1}`);
   const longStories = Object.entries(stories)
-    .filter(([, story]) => typeof story === "string" && wordCount(story) > maxWords)
-    .map(([id]) => id);
+    .flatMap(([id, entry]) => normalizeStoryEntry(entry)
+      .map((story, index) => ({ id, index, story })))
+    .filter(({ story }) => typeof story === "string" && wordCount(story) > maxWords)
+    .map(({ id, index }) => `${id}:${index + 1}`);
 
   if (missingStories.length > 0 || emptyStories.length > 0 || longStories.length > 0) {
     if (missingStories.length > 0) {
@@ -147,7 +199,11 @@ function buildMetadata(item) {
   };
 }
 
-function buildPrompt(item) {
+function buildPrompt(item, variantIndex, totalVariants) {
+  const variantHint = totalVariants > 1
+    ? `This is variant ${variantIndex + 1} of ${totalVariants}. Make this variant feel distinct from the others in opening, structure, and imagery.`
+    : "";
+
   return [
     "Write one short spoken narration for this cabinet object.",
     `Maximum length: ${maxWords} words.`,
@@ -164,6 +220,7 @@ function buildPrompt(item) {
     "Avoid repeating the same opening grammar across nearby objects.",
     "Use the tone like you're an historian or archaeologist",
     "Return only the narration text. No title, bullets, markdown, or quotation marks.",
+    variantHint,
     "",
     "",
     `Metadata: ${JSON.stringify(buildMetadata(item))}`,
@@ -188,7 +245,7 @@ function sleep(ms) {
   });
 }
 
-async function generateWithOpenAI(item, { apiKey, model }) {
+async function generateWithOpenAI(item, { apiKey, model, variantIndex, totalVariants }) {
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -206,7 +263,7 @@ async function generateWithOpenAI(item, { apiKey, model }) {
         {
           role: "user",
           content: [
-            { type: "input_text", text: buildPrompt(item) },
+            { type: "input_text", text: buildPrompt(item, variantIndex, totalVariants) },
             { type: "input_image", image_url: item.imageUrl, detail: "low" },
           ],
         },
@@ -258,8 +315,18 @@ if (options.help) {
 }
 
 if (options.validate) {
-  const stories = readJson(outputPath, {});
-  validateStories(stories, items);
+  const llmPayload = readJson(outputPath, {});
+  const llmStories = normalizeStoriesPayload(llmPayload);
+  const expectedVariants = normalizeVariantCount(llmPayload.variants ?? options.variants ?? Number(process.env.STORY_VARIANTS));
+  validateStories(llmStories, items, expectedVariants);
+
+  if (fs.existsSync(metaOutputPath)) {
+    const metaPayload = readJson(metaOutputPath, {});
+    const metaStories = normalizeStoriesPayload(metaPayload);
+    const metaVariants = normalizeVariantCount(metaPayload.variants ?? expectedVariants);
+    validateStories(metaStories, items, metaVariants);
+  }
+
   console.log(`Validated ${items.length} stories against ${outputPath}`);
   process.exit(0);
 }
@@ -272,7 +339,12 @@ if (!apiKey) {
 }
 
 const model = process.env.OPENAI_MODEL ?? defaultModel;
-const existingStories = readJson(outputPath, {});
+const variantCount = normalizeVariantCount(options.variants ?? Number(process.env.STORY_VARIANTS));
+const reuseExisting = !options.refresh;
+const existingPayload = reuseExisting
+  ? (fs.existsSync(outputPath) ? readJson(outputPath, {}) : readJson(metaOutputPath, {}))
+  : {};
+const existingStories = normalizeStoriesPayload(existingPayload);
 let selectedItems = items;
 
 if (options.ids.size > 0) {
@@ -295,13 +367,26 @@ const total = selectedItems.length;
 console.log(`Generating ${total} cabinet story/stories with OpenAI model ${model}.`);
 
 for (const [index, item] of selectedItems.entries()) {
-  if (!options.force && isPartialRun && stories[item.id]) {
-    console.log(`Skipping ${index + 1}/${total}: ${item.id} already exists`);
-    continue;
+  const existingEntry = normalizeStoryEntry(existingStories[item.id]);
+  const variants = [];
+
+  for (let variantIndex = 0; variantIndex < variantCount; variantIndex += 1) {
+    if (!options.force && !options.refresh && existingEntry[variantIndex]) {
+      variants.push(existingEntry[variantIndex]);
+      continue;
+    }
+
+    console.log(`Generating story ${index + 1}/${total} (variant ${variantIndex + 1}/${variantCount}): ${item.id}`);
+    const story = await generateWithRetry(item, {
+      apiKey,
+      model,
+      variantIndex,
+      totalVariants: variantCount,
+    });
+    variants.push(story);
   }
 
-  console.log(`Generating story ${index + 1}/${total}: ${item.id}`);
-  stories[item.id] = await generateWithRetry(item, { apiKey, model });
+  stories[item.id] = variants;
 }
 
 const orderedStories = {};
@@ -311,6 +396,12 @@ for (const item of items) {
   }
 }
 
-validateStories(orderedStories, isPartialRun ? selectedItems : items);
+validateStories(orderedStories, isPartialRun ? selectedItems : items, variantCount);
 writeJson(outputPath, orderedStories);
-console.log(`Wrote ${Object.keys(orderedStories).length} LLM story/stories to ${outputPath}`);
+writeJson(metaOutputPath, {
+  generatedAt: new Date().toISOString(),
+  source: path.basename(dataPath),
+  variants: variantCount,
+  stories: orderedStories,
+});
+console.log(`Wrote ${Object.keys(orderedStories).length} story sets (${variantCount} variants) to ${outputPath}`);

@@ -3,14 +3,16 @@ import path from "node:path";
 
 const rootDir = process.cwd();
 const storiesPath = path.join(rootDir, "src", "data", "cabinetStories.llm.json");
-const audioDir = path.join(rootDir, "public", "cabinet-audio");
+const defaultAudioDir = "cabinet-audio";
 
 function parseArgs(argv) {
   const options = {
     force: false,
     ids: new Set(),
     limit: null,
+    outputDir: null,
     provider: null,
+    variant: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -34,6 +36,13 @@ function parseArgs(argv) {
       const value = Number(arg.slice("--limit=".length));
       if (!Number.isInteger(value) || value <= 0) throw new Error("--limit requires a positive integer");
       options.limit = value;
+    } else if (arg === "--audio-dir") {
+      const value = argv[index + 1];
+      if (!value) throw new Error("--audio-dir requires a value");
+      options.outputDir = value;
+      index += 1;
+    } else if (arg.startsWith("--audio-dir=")) {
+      options.outputDir = arg.slice("--audio-dir=".length);
     } else if (arg === "--provider") {
       const value = argv[index + 1];
       if (!value) throw new Error("--provider requires a value");
@@ -41,6 +50,15 @@ function parseArgs(argv) {
       index += 1;
     } else if (arg.startsWith("--provider=")) {
       options.provider = arg.slice("--provider=".length);
+    } else if (arg === "--variant") {
+      const value = Number(argv[index + 1]);
+      if (!Number.isInteger(value) || value < 0) throw new Error("--variant requires a non-negative integer");
+      options.variant = value;
+      index += 1;
+    } else if (arg.startsWith("--variant=")) {
+      const value = Number(arg.slice("--variant=".length));
+      if (!Number.isInteger(value) || value < 0) throw new Error("--variant requires a non-negative integer");
+      options.variant = value;
     } else {
       throw new Error(`Unknown argument: ${arg}`);
     }
@@ -81,7 +99,51 @@ if (provider === "openai" && (!Number.isFinite(openAiSpeed) || openAiSpeed < 0.2
   process.exit(1);
 }
 
-const stories = JSON.parse(fs.readFileSync(storiesPath, "utf8"));
+function normalizeStoriesPayload(payload) {
+  if (payload && typeof payload === "object" && "stories" in payload) {
+    return payload.stories ?? {};
+  }
+
+  return payload ?? {};
+}
+
+function normalizeStoryEntry(entry) {
+  if (Array.isArray(entry)) {
+    return entry.filter(Boolean);
+  }
+
+  if (typeof entry === "string" && entry.trim()) {
+    return [entry];
+  }
+
+  return [];
+}
+
+function resolveVariant(entry, variantIndex) {
+  const variants = normalizeStoryEntry(entry);
+  if (variants.length === 0) {
+    return "";
+  }
+
+  const safeIndex = Math.min(Math.max(variantIndex, 0), variants.length - 1);
+  return variants[safeIndex] ?? variants[0] ?? "";
+}
+
+function normalizeAudioDir(value) {
+  return value.replace(/^\/+|\/+$/g, "");
+}
+
+const variantIndex = options.variant
+  ?? Number(process.env.STORY_VARIANT ?? process.env.NEXT_PUBLIC_STORY_VARIANT ?? "0");
+const safeVariantIndex = Number.isFinite(variantIndex) && variantIndex >= 0 ? Math.floor(variantIndex) : 0;
+const configuredAudioDir = options.outputDir
+  ?? process.env.CABINET_AUDIO_DIR
+  ?? process.env.NEXT_PUBLIC_CABINET_AUDIO_DIR
+  ?? defaultAudioDir;
+const audioDir = path.join(rootDir, "public", normalizeAudioDir(configuredAudioDir || defaultAudioDir));
+
+const storiesPayload = JSON.parse(fs.readFileSync(storiesPath, "utf8"));
+const stories = normalizeStoriesPayload(storiesPayload);
 let selectedStories = Object.entries(stories);
 
 if (options.ids.size > 0) {
@@ -157,8 +219,14 @@ async function generateWithOpenAI(story) {
   return Buffer.from(await response.arrayBuffer());
 }
 
-for (const [index, [itemId, story]] of selectedStories.entries()) {
+for (const [index, [itemId, entry]] of selectedStories.entries()) {
   const outputPath = path.join(audioDir, `${itemId}.mp3`);
+  const story = resolveVariant(entry, safeVariantIndex);
+
+  if (!story) {
+    console.warn(`Skipping ${index + 1}/${selectedStories.length}: ${itemId} has no variant ${safeVariantIndex + 1}`);
+    continue;
+  }
 
   if (!force && fs.existsSync(outputPath)) {
     console.log(`Skipping ${index + 1}/${selectedStories.length}: ${itemId}.mp3 already exists`);
