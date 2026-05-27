@@ -109,6 +109,12 @@ const backgroundSeedTolerance = 42;
 const backgroundFloodTolerance = 54;
 const backgroundNeighborTolerance = 34;
 const alphaVisibilityThreshold = 24;
+const storyAudioDirectories = ["cabinet_audio", "cabinet_audio_2"] as const;
+
+function getStoryVariant(itemId: string, playCounts: Record<string, number>) {
+  const playCount = playCounts[itemId] ?? 0;
+  return playCount >= 1 ? 1 : 0;
+}
 
 function createWoodShakeNoiseBuffer(context: AudioContext) {
   const durationSeconds = 0.18;
@@ -1103,10 +1109,10 @@ function getLeadCabinetIds(groups: CabinetGroup[], placements: FurniturePlacemen
     .map((entry) => entry.groupId);
 }
 
-function buildBackstory(item: CabinetItem) {
+function buildBackstory(item: CabinetItem, variant = 0) {
   const story = cabinetStories[item.id as keyof typeof cabinetStories];
-  if (story) {
-    return story;
+  if (Array.isArray(story) && story.length > 0) {
+    return story[variant] ?? story[0];
   }
 
   const year = cleanYear(item.year || "an unknown year");
@@ -2643,6 +2649,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
   const cabinetItemAudioRef = useRef<HTMLAudioElement | null>(null);
+  const narrationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const itemPlayCountRef = useRef<Record<string, number>>({});
   const suggestionMediaAudioRefs = useRef<HTMLAudioElement[]>([]);
   const suggestionMediaTimeoutRefs = useRef<number[]>([]);
   const suggestionCueRef = useRef<DoorSuggestionCue>(null);
@@ -2720,7 +2728,23 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-      const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
+    let isCancelled = false;
+    const finishNarration = () => {
+      if (isCancelled) {
+        return;
+      }
+
+      lastInteractionAtRef.current = Date.now();
+      setIsDaydreaming(false);
+    };
+
+    const playBrowserNarration = () => {
+      if (!speech || isCancelled) {
+        return undefined;
+      }
+
+      const storyVariant = getStoryVariant(focusedItem.id, itemPlayCountRef.current);
+      const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem, storyVariant));
       const applyVoice = () => {
         const preferredVoice = chooseNarrationVoice(speech.getVoices());
 
@@ -2741,8 +2765,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         speech.removeEventListener("voiceschanged", applyVoice);
       };
     };
+
     let removeVoiceListener: (() => void) | undefined;
-    const audio = new Audio(`/cabinet-audio/${focusedItem.id}.mp3`);
+    const storyVariant = getStoryVariant(focusedItem.id, itemPlayCountRef.current);
+    const narrationAudioDirectory = storyVariant === 1 ? "cabinet_audio_2" : "cabinet-audio";
+    const audio = new Audio(`/${narrationAudioDirectory}/${focusedItem.id}.mp3`);
     narrationAudioRef.current = audio;
     audio.preload = "auto";
     audio.volume = 1;
@@ -2870,7 +2897,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
     stopCabinetItemAudio();
 
-    const audio = new Audio(`/cabinet_audio/${itemId}.mp3`);
+    const storyVariant = getStoryVariant(itemId, itemPlayCountRef.current);
+    const audioDirectory = storyAudioDirectories[storyVariant] ?? storyAudioDirectories[0];
+    itemPlayCountRef.current[itemId] = (itemPlayCountRef.current[itemId] ?? 0) + 1;
+
+    const audio = new Audio(`/${audioDirectory}/${itemId}.mp3`);
     audio.preload = "auto";
     audio.onended = () => {
       if (cabinetItemAudioRef.current === audio) {
