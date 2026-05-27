@@ -91,6 +91,14 @@ type DoorSuggestionCue = {
 const postZoomSwapDelayMs = 220;
 const idleShakeDelayMs = 5000;
 const suggestionModeCycle: SuggestionMode[] = ["shake", "creak", "color", "size"];
+const creakCycleDuration = 3.8;
+const creakOpenDuration = 2;
+const creakHoldDuration = 0.2;
+const creakCloseDuration = 0.18;
+const creakSettleDuration = 0.4;
+const creakOpenSoundDelayMs = Math.round(creakOpenDuration * 0.34 * 1000);
+const creakCloseSoundDelayMs = Math.round((creakOpenDuration + creakHoldDuration + creakCloseDuration * 0.45) * 1000);
+const firstVisibleCabinetCount = 3;
 
 const playerRadius = 0.28;
 const roomRadius = 4.385;
@@ -185,6 +193,247 @@ function playWoodShakeBurst(context: AudioContext, noiseBuffer: AudioBuffer) {
     aftershockSource.start(aftershockStartAt);
     aftershockSource.stop(aftershockStartAt + 0.09);
   }
+}
+
+function playWoodCreakCycle(context: AudioContext, noiseBuffer: AudioBuffer) {
+  const startAt = context.currentTime;
+  const openDuration = 1.05;
+  const shutAt = startAt + 1.12;
+
+  const creakSource = context.createBufferSource();
+  creakSource.buffer = noiseBuffer;
+  creakSource.playbackRate.setValueAtTime(0.12, startAt);
+  creakSource.playbackRate.linearRampToValueAtTime(0.08, startAt + openDuration);
+
+  const creakBandpass = context.createBiquadFilter();
+  creakBandpass.type = "bandpass";
+  creakBandpass.frequency.setValueAtTime(460, startAt);
+  creakBandpass.frequency.linearRampToValueAtTime(280, startAt + openDuration);
+  creakBandpass.Q.value = 2.4;
+
+  const creakLowpass = context.createBiquadFilter();
+  creakLowpass.type = "lowpass";
+  creakLowpass.frequency.setValueAtTime(1400, startAt);
+  creakLowpass.frequency.linearRampToValueAtTime(760, startAt + openDuration);
+
+  const creakGain = context.createGain();
+  creakGain.gain.setValueAtTime(0.0001, startAt);
+  creakGain.gain.linearRampToValueAtTime(0.06, startAt + 0.08);
+  creakGain.gain.linearRampToValueAtTime(0.1, startAt + 0.42);
+  creakGain.gain.linearRampToValueAtTime(0.07, startAt + 0.88);
+  creakGain.gain.exponentialRampToValueAtTime(0.0001, startAt + openDuration);
+
+  creakSource.connect(creakBandpass);
+  creakBandpass.connect(creakLowpass);
+  creakLowpass.connect(creakGain);
+  creakGain.connect(context.destination);
+  creakSource.start(startAt);
+  creakSource.stop(startAt + openDuration + 0.02);
+
+  const squeal = context.createOscillator();
+  squeal.type = "sawtooth";
+  squeal.frequency.setValueAtTime(980, startAt);
+  squeal.frequency.linearRampToValueAtTime(620, startAt + 0.34);
+  squeal.frequency.linearRampToValueAtTime(760, startAt + 0.7);
+  squeal.frequency.linearRampToValueAtTime(420, startAt + openDuration);
+
+  const squealBandpass = context.createBiquadFilter();
+  squealBandpass.type = "bandpass";
+  squealBandpass.frequency.setValueAtTime(1100, startAt);
+  squealBandpass.frequency.linearRampToValueAtTime(680, startAt + openDuration);
+  squealBandpass.Q.value = 6;
+
+  const squealGain = context.createGain();
+  squealGain.gain.setValueAtTime(0.0001, startAt);
+  squealGain.gain.linearRampToValueAtTime(0.014, startAt + 0.1);
+  squealGain.gain.linearRampToValueAtTime(0.028, startAt + 0.56);
+  squealGain.gain.exponentialRampToValueAtTime(0.0001, startAt + openDuration);
+
+  squeal.connect(squealBandpass);
+  squealBandpass.connect(squealGain);
+  squealGain.connect(context.destination);
+  squeal.start(startAt);
+  squeal.stop(startAt + openDuration + 0.02);
+
+  const hingeRattle = context.createBufferSource();
+  hingeRattle.buffer = noiseBuffer;
+  hingeRattle.playbackRate.value = 0.42;
+
+  const hingeHighpass = context.createBiquadFilter();
+  hingeHighpass.type = "highpass";
+  hingeHighpass.frequency.value = 820;
+
+  const hingeGain = context.createGain();
+  hingeGain.gain.setValueAtTime(0.0001, startAt + 0.18);
+  hingeGain.gain.linearRampToValueAtTime(0.018, startAt + 0.22);
+  hingeGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.76);
+
+  hingeRattle.connect(hingeHighpass);
+  hingeHighpass.connect(hingeGain);
+  hingeGain.connect(context.destination);
+  hingeRattle.start(startAt + 0.18);
+  hingeRattle.stop(startAt + 0.78);
+
+  const closeThunk = context.createOscillator();
+  closeThunk.type = "triangle";
+  closeThunk.frequency.setValueAtTime(172, shutAt);
+  closeThunk.frequency.exponentialRampToValueAtTime(58, shutAt + 0.14);
+
+  const closeThunkGain = context.createGain();
+  closeThunkGain.gain.setValueAtTime(0.0001, shutAt);
+  closeThunkGain.gain.linearRampToValueAtTime(0.14, shutAt + 0.015);
+  closeThunkGain.gain.exponentialRampToValueAtTime(0.0001, shutAt + 0.18);
+
+  closeThunk.connect(closeThunkGain);
+  closeThunkGain.connect(context.destination);
+  closeThunk.start(shutAt);
+  closeThunk.stop(shutAt + 0.18);
+
+  const slamNoise = context.createBufferSource();
+  slamNoise.buffer = noiseBuffer;
+  slamNoise.playbackRate.value = 0.76;
+
+  const slamLowpass = context.createBiquadFilter();
+  slamLowpass.type = "lowpass";
+  slamLowpass.frequency.value = 460;
+
+  const slamGain = context.createGain();
+  slamGain.gain.setValueAtTime(0.0001, shutAt - 0.005);
+  slamGain.gain.linearRampToValueAtTime(0.16, shutAt + 0.012);
+  slamGain.gain.exponentialRampToValueAtTime(0.0001, shutAt + 0.16);
+
+  slamNoise.connect(slamLowpass);
+  slamLowpass.connect(slamGain);
+  slamGain.connect(context.destination);
+  slamNoise.start(shutAt - 0.005);
+  slamNoise.stop(shutAt + 0.16);
+}
+
+function playColorShiftPulse(context: AudioContext) {
+  const startAt = context.currentTime;
+
+  const shimmer = context.createOscillator();
+  shimmer.type = "sine";
+  shimmer.frequency.setValueAtTime(260, startAt);
+  shimmer.frequency.exponentialRampToValueAtTime(520, startAt + 0.48);
+  shimmer.frequency.exponentialRampToValueAtTime(340, startAt + 1.08);
+
+  const shimmerGain = context.createGain();
+  shimmerGain.gain.setValueAtTime(0.0001, startAt);
+  shimmerGain.gain.linearRampToValueAtTime(0.035, startAt + 0.16);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 1.14);
+
+  const shimmerFilter = context.createBiquadFilter();
+  shimmerFilter.type = "bandpass";
+  shimmerFilter.frequency.value = 720;
+  shimmerFilter.Q.value = 1.2;
+
+  shimmer.connect(shimmerFilter);
+  shimmerFilter.connect(shimmerGain);
+  shimmerGain.connect(context.destination);
+  shimmer.start(startAt);
+  shimmer.stop(startAt + 1.18);
+
+  const halo = context.createOscillator();
+  halo.type = "triangle";
+  halo.frequency.setValueAtTime(620, startAt + 0.04);
+  halo.frequency.exponentialRampToValueAtTime(930, startAt + 0.42);
+  halo.frequency.exponentialRampToValueAtTime(700, startAt + 0.92);
+
+  const haloGain = context.createGain();
+  haloGain.gain.setValueAtTime(0.0001, startAt + 0.04);
+  haloGain.gain.linearRampToValueAtTime(0.012, startAt + 0.18);
+  haloGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 1.02);
+
+  halo.connect(haloGain);
+  haloGain.connect(context.destination);
+  halo.start(startAt + 0.04);
+  halo.stop(startAt + 1.04);
+}
+
+function playSizeWarpPulse(context: AudioContext) {
+  const startAt = context.currentTime;
+
+  const warp = context.createOscillator();
+  warp.type = "sawtooth";
+  warp.frequency.setValueAtTime(120, startAt);
+  warp.frequency.exponentialRampToValueAtTime(62, startAt + 0.26);
+  warp.frequency.exponentialRampToValueAtTime(150, startAt + 0.72);
+
+  const warpFilter = context.createBiquadFilter();
+  warpFilter.type = "lowpass";
+  warpFilter.frequency.setValueAtTime(420, startAt);
+  warpFilter.frequency.linearRampToValueAtTime(180, startAt + 0.24);
+  warpFilter.frequency.linearRampToValueAtTime(520, startAt + 0.74);
+
+  const warpGain = context.createGain();
+  warpGain.gain.setValueAtTime(0.0001, startAt);
+  warpGain.gain.linearRampToValueAtTime(0.045, startAt + 0.06);
+  warpGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.86);
+
+  warp.connect(warpFilter);
+  warpFilter.connect(warpGain);
+  warpGain.connect(context.destination);
+  warp.start(startAt);
+  warp.stop(startAt + 0.9);
+
+  const pop = context.createOscillator();
+  pop.type = "triangle";
+  pop.frequency.setValueAtTime(210, startAt + 0.08);
+  pop.frequency.exponentialRampToValueAtTime(98, startAt + 0.22);
+
+  const popGain = context.createGain();
+  popGain.gain.setValueAtTime(0.0001, startAt + 0.08);
+  popGain.gain.linearRampToValueAtTime(0.028, startAt + 0.11);
+  popGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.28);
+
+  pop.connect(popGain);
+  popGain.connect(context.destination);
+  pop.start(startAt + 0.08);
+  pop.stop(startAt + 0.3);
+}
+
+function getSuggestionAudioLoopMs(mode: SuggestionMode) {
+  switch (mode) {
+    case "shake":
+      return 260;
+    case "creak":
+      return Math.round(creakCycleDuration * 1000);
+    case "color":
+      return 3200;
+    case "size":
+      return Math.round((Math.PI * 2 / 3.6) * 1000);
+    default:
+      return 1000;
+  }
+}
+
+function playDoorCreakFiles(
+  activeAudioElements: HTMLAudioElement[],
+  creakTimeoutRefs: number[],
+) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const openTimeoutId = window.setTimeout(() => {
+    const creakAudio = new Audio("/creak_door.mp3");
+    creakAudio.preload = "auto";
+    creakAudio.volume = 0.9;
+    activeAudioElements.push(creakAudio);
+    void creakAudio.play().catch(() => {});
+  }, creakOpenSoundDelayMs);
+
+  const closeTimeoutId = window.setTimeout(() => {
+    const closeAudio = new Audio("/door_close.mp3");
+    closeAudio.preload = "auto";
+    closeAudio.volume = 0.92;
+    activeAudioElements.push(closeAudio);
+    void closeAudio.play().catch(() => {});
+  }, creakCloseSoundDelayMs);
+
+  creakTimeoutRefs.push(openTimeoutId);
+  creakTimeoutRefs.push(closeTimeoutId);
 }
 
 function trimTitle(title: string) {
@@ -414,6 +663,46 @@ function buildDisplayTexture(sourceTexture: Texture) {
   };
 }
 
+function drawWrappedCanvasText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  startY: number,
+  maxWidth: number,
+  lineHeight: number,
+  maxLines: number,
+) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+
+    if (context.measureText(nextLine).width <= maxWidth) {
+      currentLine = nextLine;
+      continue;
+    }
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    currentLine = word;
+
+    if (lines.length >= maxLines) {
+      break;
+    }
+  }
+
+  if (currentLine && lines.length < maxLines) {
+    lines.push(currentLine);
+  }
+
+  lines.slice(0, maxLines).forEach((line, index) => {
+    context.fillText(line, x, startY + index * lineHeight);
+  });
+}
+
 function hashSeed(value: string) {
   let hash = 2166136261;
 
@@ -423,6 +712,18 @@ function hashSeed(value: string) {
   }
 
   return hash >>> 0;
+}
+
+function getShuffledDoorIds(doorIds: string[]) {
+  return [...doorIds].sort((left, right) => {
+    const leftHash = hashSeed(`door-layout-${left}`);
+    const rightHash = hashSeed(`door-layout-${right}`);
+    return leftHash - rightHash || left.localeCompare(right);
+  });
+}
+
+function getCabinetIdFromDoorId(doorId: string) {
+  return doorId.replace(/-\d+$/, "");
 }
 
 function buildLinkKeywordCounts(items: CabinetItem[]) {
@@ -641,18 +942,15 @@ function chooseNextPoolItem(
   if (unseenItemId) {
     return unseenItemId;
   }
+  return "";
+}
 
-  const seen3dItemId = pool.find((itemId) => Boolean(itemsById.get(itemId)?.modelUrl));
-  if (seen3dItemId) {
-    return seen3dItemId;
-  }
-
-  if (pool.length === 1) {
-    return pool[0];
-  }
-
-  const currentIndex = currentItemId ? pool.indexOf(currentItemId) : -1;
-  return pool[currentIndex === -1 ? 0 : (currentIndex + 1) % pool.length] ?? pool[0];
+function chooseLeadSequenceItem(
+  items: CabinetItem[],
+  seenItemIds: Record<string, boolean>,
+  boardItemIds: string[],
+) {
+  return items.find((item) => item.modelUrl && !seenItemIds[item.id] && !boardItemIds.includes(item.id))?.id ?? "";
 }
 
 function chooseInitialDoorItem(
@@ -734,11 +1032,21 @@ function chooseConnectedClosedDoor(
 function chooseRandomClosedDoor(
   doorItemIds: Record<string, string>,
   openedDoorIds: Record<string, boolean>,
+  itemsById: Map<string, CabinetItem>,
 ) {
   const candidates = Object.keys(doorItemIds).filter((doorId) => !openedDoorIds[doorId]);
 
   if (candidates.length === 0) {
     return "";
+  }
+
+  const threeDCandidates = candidates.filter((doorId) => {
+    const itemId = doorItemIds[doorId];
+    return Boolean(itemId && itemsById.get(itemId)?.modelUrl);
+  });
+
+  if (threeDCandidates.length > 0) {
+    return threeDCandidates[Math.floor(Math.random() * threeDCandidates.length)] ?? "";
   }
 
   return candidates[Math.floor(Math.random() * candidates.length)] ?? "";
@@ -774,6 +1082,25 @@ function getFurniturePlacements(groups: CabinetGroup[]): FurniturePlacement[] {
   });
 
   return placements;
+}
+
+function getLeadCabinetIds(groups: CabinetGroup[], placements: FurniturePlacement[]) {
+  return placements
+    .map((placement, index) => ({
+      groupId: groups[index]?.id ?? "",
+      z: placement.position[2],
+      x: placement.position[0],
+    }))
+    .filter((entry) => Boolean(entry.groupId))
+    .sort((left, right) => {
+      if (left.z !== right.z) {
+        return left.z - right.z;
+      }
+
+      return Math.abs(left.x) - Math.abs(right.x);
+    })
+    .slice(0, firstVisibleCabinetCount)
+    .map((entry) => entry.groupId);
 }
 
 function buildBackstory(item: CabinetItem) {
@@ -980,12 +1307,14 @@ function ItemDisplay({
   style,
   open,
   active,
+  onReplay,
 }: {
   item: CabinetItem;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
+  onReplay: () => void;
 }) {
   const objectRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, item.imageUrl, (loader) => {
@@ -1017,22 +1346,36 @@ function ItemDisplay({
 
     const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.02 : 0;
     const targetRotationY = active ? Math.sin(state.clock.elapsedTime * 0.7) * 0.12 : 0;
-    const targetDepth = active ? 1.5 : 0;
+    const targetDepth = active ? 0.98 : open ? 0.18 : -0.02;
+    const motionDamp = active ? 6 : 12;
+    const scaleDamp = active ? 6 : 14;
 
-    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4, delta);
-    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, 4, delta);
-    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.1 : 0, 4, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
-    objectRef.current.scale.setScalar(active ? 2.25 : open ? 1.08 : 1);
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, motionDamp, delta);
+    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, targetRotationY, motionDamp, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.1 : 0, motionDamp, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, motionDamp, delta);
+    objectRef.current.scale.setScalar(MathUtils.damp(
+      objectRef.current.scale.x,
+      active ? 1.24 : open ? 1.04 : 1,
+      scaleDamp,
+      delta,
+    ));
   });
 
-  const displayZ = open ? style.depth * 0.3 : style.depth * 0.1;
+  const displayZ = open ? style.depth * 0.14 : style.depth * 0.1;
   const displayY = spec.y - spec.height * 0.04;
 
   return (
     <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
       <group ref={objectRef}>
-        <mesh position={[0, 0, 0.002]} renderOrder={12}>
+        <mesh
+          position={[0, 0, 0.002]}
+          renderOrder={12}
+          onClick={(event) => {
+            event.stopPropagation();
+            onReplay();
+          }}
+        >
           <planeGeometry args={[imageWidth, imageHeight]} />
           <meshBasicMaterial
             map={displayTexture}
@@ -1048,18 +1391,152 @@ function ItemDisplay({
   );
 }
 
+function MetadataCardDisplay({
+  item,
+  spec,
+  style,
+  active,
+}: {
+  item: CabinetItem;
+  spec: CompartmentSpec;
+  style: CabinetStyle;
+  active: boolean;
+}) {
+  const objectRef = useRef<Group>(null);
+  const imageTexture = useLoader(TextureLoader, item.imageUrl, (loader) => {
+    loader.crossOrigin = "anonymous";
+  });
+  const cardTexture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 900;
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      const fallback = new CanvasTexture(canvas);
+      fallback.colorSpace = SRGBColorSpace;
+      fallback.needsUpdate = true;
+      return fallback;
+    }
+
+    context.fillStyle = "#efe1c4";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = "#2d160f";
+    context.fillRect(44, 44, canvas.width - 88, canvas.height - 88);
+    context.fillStyle = "#f2e7d0";
+    context.fillRect(60, 60, canvas.width - 120, canvas.height - 120);
+
+    const imageColumnX = 88;
+    const imageColumnY = 88;
+    const imageColumnWidth = 470;
+    const imageColumnHeight = canvas.height - 176;
+    const textColumnX = 620;
+    const textColumnWidth = canvas.width - textColumnX - 92;
+
+    const metadataRows = [
+      ["Date", cleanYear(item.year || "").trim()],
+      ["Theme", item.theme.trim()],
+      ["Type", (item.type ?? "").trim()],
+      ["Object", (item.objectKinds ?? []).join(", ").trim()],
+      ["Subjects", (item.subjects ?? []).join(", ").trim()],
+      ["Genres", (item.genres ?? []).join(", ").trim()],
+      ["Contributors", (item.contributors ?? []).join(", ").trim()],
+    ].filter(([, value]) => {
+      if (!value) {
+        return false;
+      }
+
+      const lowered = value.toLowerCase();
+      return lowered !== "unknown" && lowered !== "date unknown";
+    });
+
+    const image = imageTexture.image as HTMLImageElement | HTMLCanvasElement | undefined;
+    if (image && image.width && image.height) {
+      const imageAspect = image.width / Math.max(image.height, 1);
+      const frameAspect = imageColumnWidth / imageColumnHeight;
+
+      let drawWidth = imageColumnWidth;
+      let drawHeight = imageColumnHeight;
+
+      if (imageAspect > frameAspect) {
+        drawHeight = imageColumnWidth / imageAspect;
+      } else {
+        drawWidth = imageColumnHeight * imageAspect;
+      }
+
+      const drawX = imageColumnX + (imageColumnWidth - drawWidth) / 2;
+      const drawY = imageColumnY + (imageColumnHeight - drawHeight) / 2;
+
+      context.fillStyle = "#d4c1a0";
+      context.fillRect(imageColumnX - 10, imageColumnY - 10, imageColumnWidth + 20, imageColumnHeight + 20);
+      context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+    }
+
+    context.fillStyle = "#2d160f";
+    context.font = "700 46px Georgia, serif";
+    drawWrappedCanvasText(context, trimTitle(item.title), textColumnX, 132, textColumnWidth, 56, 4);
+
+    let cursorY = 280;
+    metadataRows.forEach(([label, value]) => {
+      context.fillStyle = "#6f5848";
+      context.font = "600 20px Arial";
+      context.fillText(label.toUpperCase(), textColumnX, cursorY);
+      context.fillStyle = "#2d160f";
+      context.font = "400 27px Georgia, serif";
+      drawWrappedCanvasText(context, value, textColumnX, cursorY + 38, textColumnWidth, 34, 3);
+      cursorY += 118;
+    });
+
+    const nextTexture = new CanvasTexture(canvas);
+    nextTexture.colorSpace = SRGBColorSpace;
+    nextTexture.needsUpdate = true;
+    return nextTexture;
+  }, [imageTexture, item]);
+
+  useFrame((state, delta) => {
+    if (!objectRef.current) return;
+
+    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.016 : 0;
+    const targetDepth = active ? 1.72 : 0.24;
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 6, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
+    objectRef.current.rotation.y = MathUtils.damp(objectRef.current.rotation.y, 0, 6, delta);
+    objectRef.current.rotation.x = MathUtils.damp(objectRef.current.rotation.x, active ? -0.06 : 0, 6, delta);
+    objectRef.current.scale.setScalar(MathUtils.damp(objectRef.current.scale.x, active ? 1.9 : 1.08, 6, delta));
+  });
+
+  const cardWidth = spec.width * 0.78;
+  const cardHeight = Math.min(spec.height * 0.9, cardWidth * 1.3);
+  const displayY = spec.y - spec.height * 0.02;
+  const displayZ = style.depth * 0.44;
+
+  return (
+    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
+      <group ref={objectRef}>
+        <mesh renderOrder={12}>
+          <planeGeometry args={[cardWidth, cardHeight]} />
+          <meshBasicMaterial map={cardTexture} side={DoubleSide} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
 function ModelDisplay({
   modelUrl,
   spec,
   style,
   open,
   active,
+  onReplay,
 }: {
   modelUrl: string;
   spec: CompartmentSpec;
   style: CabinetStyle;
   open: boolean;
   active: boolean;
+  onReplay: () => void;
 }) {
   const gltf = useLoader(GLTFLoader, modelUrl);
   const scene = useMemo(() => {
@@ -1104,35 +1581,56 @@ function ModelDisplay({
   const objectRef = useRef<Group>(null);
   const spinXRef = useRef(0);
   const spinYRef = useRef(0);
-  const displayZ = open ? style.depth * 0.26 : style.depth * 0.04;
+  const spinSpeed = useMemo(() => {
+    const seed = Math.abs(hashSeed(modelUrl));
+
+    return {
+      x: 1.1 + (seed % 9) * 0.1,
+      y: 1.4 + (seed % 11) * 0.1,
+    };
+  }, [modelUrl]);
   const displayY = spec.y - spec.height * 0.04;
 
   useFrame((state, delta) => {
     if (!objectRef.current) return;
 
-    const targetFloatY = active ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
-    const targetDepth = active ? 1.35 : -0.16;
+    const isAnimating = active;
+    const targetFloatY = isAnimating ? Math.sin(state.clock.elapsedTime * 1.3) * 0.026 : 0;
+    const targetDepth = isAnimating ? 0.98 : open ? -0.18 : -0.32;
+    const motionDamp = isAnimating ? 6 : 12;
+    const scaleDamp = isAnimating ? 6 : 14;
 
-    if (active) {
-      spinXRef.current += delta * 0.9;
-      spinYRef.current += delta * 1.2;
+    if (isAnimating) {
+      spinXRef.current += delta * spinSpeed.x;
+      spinYRef.current += delta * spinSpeed.y;
     } else {
       spinXRef.current = MathUtils.damp(spinXRef.current, 0, 8, delta);
       spinYRef.current = MathUtils.damp(spinYRef.current, 0, 8, delta);
     }
 
-    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, 4.5, delta);
-    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, 6, delta);
+    objectRef.current.position.y = MathUtils.damp(objectRef.current.position.y, targetFloatY, motionDamp, delta);
+    objectRef.current.position.z = MathUtils.damp(objectRef.current.position.z, targetDepth, motionDamp, delta);
     objectRef.current.rotation.x = spinXRef.current;
     objectRef.current.rotation.y = spinYRef.current;
-    objectRef.current.scale.setScalar(active ? 1.95 : 1.02);
+    objectRef.current.scale.setScalar(MathUtils.damp(
+      objectRef.current.scale.x,
+      isAnimating ? 1.24 : open ? 0.9 : 0.86,
+      scaleDamp,
+      delta,
+    ));
   });
 
   return (
-    <group position={[spec.x, displayY, displayZ]} renderOrder={11}>
+    <group position={[spec.x, displayY, open ? style.depth * 0.14 : -style.depth * 0.04]} renderOrder={11}>
       <ambientLight intensity={1.0} />
       <pointLight position={[0, spec.height * 0.12, 0.22]} intensity={1.8} color="#ffd39a" distance={2.1} />
-      <group ref={objectRef}>
+      <group
+        ref={objectRef}
+        onClick={(event) => {
+          event.stopPropagation();
+          onReplay();
+        }}
+      >
         <primitive object={scene} scale={scale} position={[-center.x, -center.y, -center.z]} />
       </group>
     </group>
@@ -1363,12 +1861,12 @@ function ClickableFront({
         colorMix = colorPulse * 0.5;
         break;
       case "creak": {
-        const cycleDuration = 3.8;
+        const cycleDuration = creakCycleDuration;
         const cycleTime = elapsed % cycleDuration;
-        const openDuration = 2;
-        const holdDuration = 0.2;
-        const closeDuration = 0.18;
-        const settleDuration = 0.4;
+        const openDuration = creakOpenDuration;
+        const holdDuration = creakHoldDuration;
+        const closeDuration = creakCloseDuration;
+        const settleDuration = creakSettleDuration;
         const maxOpenOffset = 0.38;
         let creakProgress = 0;
 
@@ -1571,8 +2069,10 @@ function CabinetCompartment({
   hasFocusedDoor,
   suggestionMode,
   suggestionNonce,
+  isDaydreaming,
   interactionLocked,
   onToggle,
+  onReplayItem,
 }: {
   doorId: string;
   item?: CabinetItem;
@@ -1585,8 +2085,10 @@ function CabinetCompartment({
   hasFocusedDoor: boolean;
   suggestionMode: SuggestionMode | null;
   suggestionNonce: number;
+  isDaydreaming: boolean;
   interactionLocked: boolean;
   onToggle: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const lockerDepth = style.depth * 0.8; // Adjusted for new depth
   const innerWidth = spec.width - 0.04;
@@ -1676,7 +2178,14 @@ function CabinetCompartment({
       {item ? (
         modelUrl ? (
           <Suspense fallback={null}>
-            <ModelDisplay modelUrl={modelUrl} spec={spec} style={style} open={open} active={active} />
+            <ModelDisplay
+              modelUrl={modelUrl}
+              spec={spec}
+              style={style}
+              open={open}
+              active={active}
+              onReplay={() => onReplayItem(doorId)}
+            />
           </Suspense>
         ) : (
           <Suspense fallback={null}>
@@ -1686,6 +2195,7 @@ function CabinetCompartment({
               style={style}
               open={open}
               active={active}
+              onReplay={() => onReplayItem(doorId)}
             />
           </Suspense>
         )
@@ -1712,23 +2222,29 @@ function CabinetPanel({
   placement,
   openedDoorIds,
   focusedDoorId,
+  activeDoorId,
   allItems,
   doorItemIds,
   suggestionCue,
   interactionLocked,
+  isDaydreaming,
   woodTextures,
   onToggleDoor,
+  onReplayItem,
 }: {
   group: CabinetGroup;
   placement: FurniturePlacement;
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
+  activeDoorId: string;
   allItems: CabinetItem[];
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
+  isDaydreaming: boolean;
   woodTextures: Texture[];
   onToggleDoor: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const style = getCabinetStyle();
   const specs = getCompartmentSpecs(style, doorsPerCabinet);
@@ -1766,12 +2282,14 @@ function CabinetPanel({
               style={style}
               woodTexture={cabinetWoodTexture}
               open={Boolean(openedDoorIds[doorId])}
-              active={focusedDoorId === doorId}
+              active={activeDoorId === doorId}
               hasFocusedDoor={Boolean(focusedDoorId)}
               suggestionMode={suggestionCue?.doorId === doorId ? suggestionCue.mode : null}
               suggestionNonce={suggestionCue?.doorId === doorId ? suggestionCue.nonce : 0}
+              isDaydreaming={isDaydreaming}
               interactionLocked={interactionLocked}
               onToggle={onToggleDoor}
+              onReplayItem={onReplayItem}
             />
           );
         })}
@@ -1936,9 +2454,11 @@ function CabinetRoom({
   placements,
   openedDoorIds,
   focusedDoorId,
+  activeDoorId,
   doorItemIds,
   suggestionCue,
   interactionLocked,
+  isDaydreaming,
   woodTextures,
   rugTexture,
   floorTexture,
@@ -1947,15 +2467,18 @@ function CabinetRoom({
   onRoamPoseChange,
   onTargetReached,
   onToggleDoor,
+  onReplayItem,
 }: {
   allItems: CabinetItem[];
   groups: CabinetGroup[];
   placements: FurniturePlacement[];
   openedDoorIds: Record<string, boolean>;
   focusedDoorId: string;
+  activeDoorId: string;
   doorItemIds: Record<string, string>;
   suggestionCue: DoorSuggestionCue;
   interactionLocked: boolean;
+  isDaydreaming: boolean;
   woodTextures: Texture[];
   rugTexture?: Texture | null;
   floorTexture?: Texture | null;
@@ -1964,6 +2487,7 @@ function CabinetRoom({
   onRoamPoseChange: (pose: CameraPose) => void;
   onTargetReached: (mode: "focus" | "return") => void;
   onToggleDoor: (doorId: string) => void;
+  onReplayItem: (doorId: string) => void;
 }) {
   const blockers = useMemo(() => getFurnitureBlockers(groups, placements), [groups, placements]);
 
@@ -2006,12 +2530,15 @@ function CabinetRoom({
               placement={placements[index]}
               openedDoorIds={openedDoorIds}
               focusedDoorId={focusedDoorId}
+              activeDoorId={activeDoorId}
               allItems={allItems}
               doorItemIds={doorItemIds}
               suggestionCue={suggestionCue}
               interactionLocked={interactionLocked}
+              isDaydreaming={isDaydreaming}
               woodTextures={woodTextures}
               onToggleDoor={onToggleDoor}
+              onReplayItem={onReplayItem}
             />
           );
         })}
@@ -2027,16 +2554,56 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const groups = useMemo(() => chunkItems(items), [items]);
   const doorIds = useMemo(() => getDoorIdsForGroups(groups), [groups]);
   const placements = useMemo(() => getFurniturePlacements(groups), [groups]);
+  const leadCabinetIds = useMemo(() => getLeadCabinetIds(groups, placements), [groups, placements]);
+  const leadCabinetIdSet = useMemo(() => new Set(leadCabinetIds), [leadCabinetIds]);
   const doorItemPools = useMemo(() => buildDoorItemPools(groups, items), [groups, items]);
   const initialDoorItemIds = useMemo(() => {
     const nextDoorItemIds: Record<string, string> = {};
     const assignedItemIds = new Set<string>();
+    const shuffledDoorIds = getShuffledDoorIds(doorIds);
+    const shuffledCabinetIds = [...new Set(shuffledDoorIds.map((doorId) => getCabinetIdFromDoorId(doorId)))];
+    const doorsByCabinetId = new Map<string, string[]>();
+    const threeDItems = items.filter((item) => Boolean(item.modelUrl));
+    const nonThreeDItems = items.filter((item) => !item.modelUrl);
 
     if (items.length === 0) {
       return nextDoorItemIds;
     }
 
-    doorIds.forEach((doorId) => {
+    shuffledDoorIds.forEach((doorId) => {
+      const cabinetId = getCabinetIdFromDoorId(doorId);
+      const cabinetDoorIds = doorsByCabinetId.get(cabinetId) ?? [];
+      cabinetDoorIds.push(doorId);
+      doorsByCabinetId.set(cabinetId, cabinetDoorIds);
+    });
+
+    threeDItems.forEach((item, index) => {
+      const cabinetId = shuffledCabinetIds[index % Math.max(shuffledCabinetIds.length, 1)];
+      const cabinetDoorIds = doorsByCabinetId.get(cabinetId) ?? [];
+      const targetDoorId = cabinetDoorIds.shift();
+
+      if (!targetDoorId) {
+        return;
+      }
+
+      nextDoorItemIds[targetDoorId] = item.id;
+      assignedItemIds.add(item.id);
+      doorsByCabinetId.set(cabinetId, cabinetDoorIds);
+    });
+
+    shuffledDoorIds.forEach((doorId) => {
+      if (nextDoorItemIds[doorId]) {
+        return;
+      }
+
+      nextDoorItemIds[doorId] = chooseInitialDoorItem(nonThreeDItems, assignedItemIds);
+    });
+
+    shuffledDoorIds.forEach((doorId) => {
+      if (nextDoorItemIds[doorId]) {
+        return;
+      }
+
       nextDoorItemIds[doorId] = chooseInitialDoorItem(items, assignedItemIds);
     });
 
@@ -2045,12 +2612,14 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const [doorItemIds, setDoorItemIds] = useState<Record<string, string>>(() => initialDoorItemIds);
   const [seenItemIds, setSeenItemIds] = useState<Record<string, boolean>>({});
   const [focusedDoorId, setFocusedDoorId] = useState("");
+  const [activeDoorId, setActiveDoorId] = useState("");
   const [openedDoorIds, setOpenedDoorIds] = useState<Record<string, boolean>>({});
   const [closingDoorId, setClosingDoorId] = useState("");
   const [pendingDoorSwap, setPendingDoorSwap] = useState<PendingDoorSwap>(null);
   const [suggestionCue, setSuggestionCue] = useState<DoorSuggestionCue>(null);
   const [returnPose, setReturnPose] = useState<CameraPose | null>(null);
   const [interactionLocked, setInteractionLocked] = useState(false);
+  const [isDaydreaming, setIsDaydreaming] = useState(false);
   const focusedItem = useMemo(() => {
     if (!focusedDoorId) {
       return undefined;
@@ -2073,7 +2642,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   const shakeAudioContextRef = useRef<AudioContext | null>(null);
   const shakeNoiseBufferRef = useRef<AudioBuffer | null>(null);
   const shakeAudioStopRef = useRef<(() => void) | null>(null);
-  const narrationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const cabinetItemAudioRef = useRef<HTMLAudioElement | null>(null);
+  const suggestionMediaAudioRefs = useRef<HTMLAudioElement[]>([]);
+  const suggestionMediaTimeoutRefs = useRef<number[]>([]);
   const suggestionCueRef = useRef<DoorSuggestionCue>(null);
   const suggestionNonceRef = useRef(0);
   const suggestionModeIndexRef = useRef(0);
@@ -2132,7 +2703,11 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    setIsDaydreaming(false);
+  }, [focusedDoorId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       return;
     }
 
@@ -2141,26 +2716,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     narrationAudioRef.current?.pause();
     narrationAudioRef.current = null;
 
-    if (!focusedDoorId || !focusedItem) {
+    if (!focusedDoorId || !focusedItem || !isDaydreaming) {
       return;
     }
-
-    let isCancelled = false;
-    const finishNarration = () => {
-      if (isCancelled) {
-        return;
-      }
-
-      setReturnPose(roamPoseRef.current);
-      setFocusedDoorId("");
-      lastInteractionAtRef.current = Date.now();
-    };
-
-    const playBrowserNarration = () => {
-      if (!speech || isCancelled) {
-        finishNarration();
-        return;
-      }
 
       const utterance = new SpeechSynthesisUtterance(buildBackstory(focusedItem));
       const applyVoice = () => {
@@ -2216,7 +2774,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       }
       speech?.cancel();
     };
-  }, [doorItemIds, focusedDoorId, focusedItem, itemsById]);
+  }, [doorItemIds, focusedDoorId, focusedItem, isDaydreaming, itemsById]);
 
   useEffect(() => {
     return () => {
@@ -2227,9 +2785,21 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         shakeAudioStopRef.current();
         shakeAudioStopRef.current = null;
       }
+      suggestionMediaTimeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      suggestionMediaTimeoutRefs.current = [];
+      suggestionMediaAudioRefs.current.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      suggestionMediaAudioRefs.current = [];
       if (shakeAudioContextRef.current) {
         void shakeAudioContextRef.current.close().catch(() => {});
         shakeAudioContextRef.current = null;
+      }
+      if (cabinetItemAudioRef.current) {
+        cabinetItemAudioRef.current.pause();
+        cabinetItemAudioRef.current.currentTime = 0;
+        cabinetItemAudioRef.current = null;
       }
     };
   }, []);
@@ -2243,6 +2813,12 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       setInteractionLocked(false);
     }
   }, [focusedDoorId, interactionLocked, returnPose]);
+
+  useEffect(() => {
+    if (focusedDoorId && focusedItem && !isDaydreaming && interactionLocked) {
+      setInteractionLocked(false);
+    }
+  }, [focusedDoorId, focusedItem, interactionLocked, isDaydreaming]);
 
   useEffect(() => {
     if (!pendingDoorSwap || returnPose || interactionLocked) {
@@ -2267,9 +2843,55 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       shakeAudioStopRef.current();
       shakeAudioStopRef.current = null;
     }
+
+    suggestionMediaTimeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    suggestionMediaTimeoutRefs.current = [];
+    suggestionMediaAudioRefs.current.forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    suggestionMediaAudioRefs.current = [];
   }, []);
 
-  const startShakeAudio = useCallback(() => {
+  const stopCabinetItemAudio = useCallback(() => {
+    if (!cabinetItemAudioRef.current) {
+      return;
+    }
+
+    cabinetItemAudioRef.current.pause();
+    cabinetItemAudioRef.current.currentTime = 0;
+    cabinetItemAudioRef.current = null;
+  }, []);
+
+  const playCabinetItemAudio = useCallback((itemId: string, doorId: string) => {
+    if (typeof window === "undefined" || !itemId) {
+      return;
+    }
+
+    stopCabinetItemAudio();
+
+    const audio = new Audio(`/cabinet_audio/${itemId}.mp3`);
+    audio.preload = "auto";
+    audio.onended = () => {
+      if (cabinetItemAudioRef.current === audio) {
+        cabinetItemAudioRef.current = null;
+      }
+
+      lastInteractionAtRef.current = Date.now();
+      setActiveDoorId((currentDoorId) => (currentDoorId === doorId ? "" : currentDoorId));
+    };
+    cabinetItemAudioRef.current = audio;
+    void audio.play().catch(() => {
+      if (cabinetItemAudioRef.current === audio) {
+        cabinetItemAudioRef.current = null;
+      }
+
+      lastInteractionAtRef.current = Date.now();
+      setActiveDoorId((currentDoorId) => (currentDoorId === doorId ? "" : currentDoorId));
+    });
+  }, [stopCabinetItemAudio]);
+
+  const startSuggestionAudio = useCallback((mode: SuggestionMode) => {
     if (typeof window === "undefined") {
       return;
     }
@@ -2290,14 +2912,34 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
     let cancelled = false;
     let timeoutId: number | null = null;
+    const loopMs = getSuggestionAudioLoopMs(mode);
 
     const scheduleNext = () => {
       if (cancelled) {
         return;
       }
 
-      playWoodShakeBurst(context, noiseBuffer);
-      timeoutId = window.setTimeout(scheduleNext, 190 + Math.random() * 170);
+      switch (mode) {
+        case "shake":
+          playWoodShakeBurst(context, noiseBuffer);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "creak":
+          playDoorCreakFiles(suggestionMediaAudioRefs.current, suggestionMediaTimeoutRefs.current);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "color":
+          playColorShiftPulse(context);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        case "size":
+          playSizeWarpPulse(context);
+          timeoutId = window.setTimeout(scheduleNext, loopMs);
+          break;
+        default:
+          timeoutId = window.setTimeout(scheduleNext, 1000);
+          break;
+      }
     };
 
     const begin = () => {
@@ -2340,10 +2982,8 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     setSuggestionCue(nextCue);
 
     stopShakeAudio();
-    if (mode === "shake" || mode === "creak") {
-      startShakeAudio();
-    }
-  }, [startShakeAudio, stopShakeAudio]);
+    startSuggestionAudio(mode);
+  }, [startSuggestionAudio, stopShakeAudio]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -2351,9 +2991,9 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     }
 
     const intervalId = window.setInterval(() => {
-      const isZoomedOut = !focusedDoorId && !interactionLocked && !returnPose;
+      const isIdleState = !focusedDoorId && !interactionLocked && !returnPose && !activeDoorId;
 
-      if (!isZoomedOut) {
+      if (!isIdleState) {
         return;
       }
 
@@ -2365,7 +3005,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         return;
       }
 
-      const doorId = chooseRandomClosedDoor(doorItemIds, openedDoorIds);
+      const doorId = chooseRandomClosedDoor(doorItemIds, openedDoorIds, itemsById);
 
       if (!doorId) {
         return;
@@ -2378,13 +3018,47 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [doorItemIds, focusedDoorId, interactionLocked, openedDoorIds, returnPose, triggerDoorSuggestion]);
+  }, [activeDoorId, doorItemIds, focusedDoorId, interactionLocked, itemsById, openedDoorIds, returnPose, triggerDoorSuggestion]);
 
   useEffect(() => {
     if (!suggestionCue) {
       stopShakeAudio();
     }
   }, [stopShakeAudio, suggestionCue]);
+
+  const replayDoorItem = useCallback((doorId: string) => {
+    if (!openedDoorIds[doorId]) {
+      return;
+    }
+
+    const itemId = doorItemIds[doorId];
+    if (!itemId) {
+      return;
+    }
+
+    const item =
+      items.find((candidate) => candidate.id === itemId) ??
+      items[hashSeed(doorId) % Math.max(items.length, 1)];
+
+    if (!item) {
+      return;
+    }
+
+    lastInteractionAtRef.current = Date.now();
+
+    if (suggestionCue) {
+      suggestionCueRef.current = null;
+      setSuggestionCue(null);
+      stopShakeAudio();
+    }
+
+    setSeenItemIds((currentSeenItemIds) => ({
+      ...currentSeenItemIds,
+      [item.id]: true,
+    }));
+    setActiveDoorId(doorId);
+    playCabinetItemAudio(item.id, doorId);
+  }, [doorItemIds, items, openedDoorIds, playCabinetItemAudio, stopShakeAudio, suggestionCue]);
 
   const toggleDoor = (doorId: string) => {
     lastInteractionAtRef.current = Date.now();
@@ -2404,7 +3078,33 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    const resolvedItemId = currentItemId;
+    const pool = doorItemPools[doorId] ?? [];
+    const boardItemIds = Object.entries(doorItemIds)
+      .filter(([candidateDoorId, itemId]) => candidateDoorId !== doorId && Boolean(itemId))
+      .map(([, itemId]) => itemId);
+    const cabinetId = doorId.replace(/-\d+$/, "");
+    const isLeadCabinet = leadCabinetIdSet.has(cabinetId);
+    let resolvedItemId = currentItemId;
+
+    if (!openedDoorIds[doorId]) {
+      const prioritizedItemId = isLeadCabinet
+        ? chooseLeadSequenceItem(items, seenItemIds, boardItemIds)
+        : "";
+      const unseenReplacementItemId =
+        prioritizedItemId ||
+        (seenItemIds[currentItemId]
+          ? chooseNextPoolItem(pool, currentItemId, seenItemIds, itemsById, boardItemIds)
+          : "");
+
+      if (unseenReplacementItemId && unseenReplacementItemId !== currentItemId) {
+        resolvedItemId = unseenReplacementItemId;
+        setDoorItemIds((currentDoorItemIds) => ({
+          ...currentDoorItemIds,
+          [doorId]: unseenReplacementItemId,
+        }));
+      }
+    }
+
     const currentItem =
       items.find((candidate) => candidate.id === resolvedItemId) ??
       items[hashSeed(doorId) % Math.max(items.length, 1)];
@@ -2413,15 +3113,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       return;
     }
 
-    if (!openedDoorIds[doorId]) {
-      setOpenedDoorIds((currentDoors) => ({
-        ...currentDoors,
-        [doorId]: true,
-      }));
-    }
-
-    if (focusedDoorId === doorId) {
-      setClosingDoorId(doorId);
+    if (openedDoorIds[doorId]) {
       setOpenedDoorIds((currentDoors) => {
         if (!currentDoors[doorId]) {
           return currentDoors;
@@ -2429,8 +3121,10 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
 
         return { ...currentDoors, [doorId]: false };
       });
-      setReturnPose(roamPoseRef.current);
-      setFocusedDoorId("");
+      if (activeDoorId === doorId) {
+        stopCabinetItemAudio();
+        setActiveDoorId("");
+      }
       return;
     }
 
@@ -2439,34 +3133,17 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
       [currentItem.id]: true,
     }));
 
-    if (openedDoorIds[doorId] && !focusedDoorId) {
-      setOpenedDoorIds((currentDoors) => ({
-        ...currentDoors,
-        [doorId]: true,
-      }));
-      setInteractionLocked(true);
-      console.log("[Cabinet] opened object", {
-        doorId,
-        itemId: currentItem.id,
-        title: currentItem.title,
-      });
-      setFocusedDoorId(doorId);
-      setReturnPose(null);
-      return;
-    }
-
     setOpenedDoorIds((currentDoors) => ({
       ...currentDoors,
       [doorId]: true,
     }));
-    setInteractionLocked(true);
+    setActiveDoorId(doorId);
+    playCabinetItemAudio(currentItem.id, doorId);
     console.log("[Cabinet] opened object", {
       doorId,
       itemId: currentItem.id,
       title: currentItem.title,
     });
-    setFocusedDoorId(doorId);
-    setReturnPose(null);
   };
 
   const handleRoamPoseChange = useCallback((pose: CameraPose) => {
@@ -2480,12 +3157,19 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         const pool = doorItemPools[closingDoorId] ?? [];
 
         if (currentItemId && pool.length > 0) {
-          const nextItemId = chooseNextPoolItem(pool, currentItemId, {
+          const closingCabinetId = closingDoorId.replace(/-\d+$/, "");
+          const isLeadCabinet = leadCabinetIdSet.has(closingCabinetId);
+          const boardItemIds = Object.entries(doorItemIds)
+            .filter(([candidateDoorId, itemId]) => candidateDoorId !== closingDoorId && Boolean(itemId))
+            .map(([, itemId]) => itemId);
+          const seenWithCurrent = {
             ...seenItemIds,
             [currentItemId]: true,
-          }, itemsById, Object.entries(doorItemIds)
-            .filter(([candidateDoorId, itemId]) => candidateDoorId !== closingDoorId && Boolean(itemId))
-            .map(([, itemId]) => itemId));
+          };
+          const nextItemId = isLeadCabinet
+            ? chooseLeadSequenceItem(items, seenWithCurrent, boardItemIds) ||
+              chooseNextPoolItem(pool, currentItemId, seenWithCurrent, itemsById, boardItemIds)
+            : chooseNextPoolItem(pool, currentItemId, seenWithCurrent, itemsById, boardItemIds);
 
           if (nextItemId && nextItemId !== currentItemId) {
             setPendingDoorSwap({
@@ -2510,7 +3194,7 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
         returnReleaseFrameRef.current = null;
       });
     }
-  }, [closingDoorId, doorItemIds, doorItemPools, itemsById, seenItemIds]);
+  }, [closingDoorId, doorItemIds, doorItemPools, items, itemsById, leadCabinetIdSet, seenItemIds]);
 
   return (
     <section className="panorama-shell" aria-label="Cabinet of curiosities panorama">
@@ -2528,22 +3212,24 @@ function CabinetPanoramaScene({ items }: CabinetPanoramaProps) {
                 placements={placements}
                 openedDoorIds={openedDoorIds}
                 focusedDoorId={focusedDoorId}
-                doorItemIds={doorItemIds}
-                suggestionCue={suggestionCue}
-                interactionLocked={interactionLocked}
-                woodTextures={woodTextures}
-                rugTexture={rugTexture}
-                floorTexture={floorTexture}
+                activeDoorId={activeDoorId}
+              doorItemIds={doorItemIds}
+              suggestionCue={suggestionCue}
+              interactionLocked={interactionLocked}
+              isDaydreaming={isDaydreaming}
+              woodTextures={woodTextures}
+              rugTexture={rugTexture}
+              floorTexture={floorTexture}
                 focusTarget={focusTarget}
                 targetMode={targetMode}
                 onRoamPoseChange={handleRoamPoseChange}
                 onTargetReached={handleTargetReached}
                 onToggleDoor={toggleDoor}
+                onReplayItem={replayDoorItem}
               />
             </Suspense>
           )}
         </Canvas>
-
         <div className="panorama-vignette" />
       </div>
     </section>
