@@ -22,6 +22,7 @@ function parseArgs(argv) {
     help: false,
     ids: new Set(),
     limit: null,
+    onlyVariant: null,
     refresh: false,
     validate: false,
     variants: null,
@@ -54,6 +55,15 @@ function parseArgs(argv) {
       const value = Number(arg.slice("--limit=".length));
       if (!Number.isInteger(value) || value <= 0) throw new Error("--limit requires a positive integer");
       options.limit = value;
+    } else if (arg === "--only-variant") {
+      const value = Number(argv[index + 1]);
+      if (!Number.isInteger(value) || value < 0) throw new Error("--only-variant requires a non-negative integer");
+      options.onlyVariant = value;
+      index += 1;
+    } else if (arg.startsWith("--only-variant=")) {
+      const value = Number(arg.slice("--only-variant=".length));
+      if (!Number.isInteger(value) || value < 0) throw new Error("--only-variant requires a non-negative integer");
+      options.onlyVariant = value;
     } else if (arg === "--variants") {
       const value = Number(argv[index + 1]);
       if (!Number.isInteger(value) || value <= 0) throw new Error("--variants requires a positive integer");
@@ -87,6 +97,7 @@ function printHelp() {
     "  --refresh      Regenerate all variants, ignoring existing output.",
     "  --id <id>      Generate one object id. Can be repeated.",
     "  --limit <n>    Generate the first n curated objects.",
+    "  --only-variant <n> Regenerate just one variant (0-based index).",
     "  --variants <n> Generate n variants per object.",
     "  --validate     Check that every curated object has a <=50 word story.",
     "  --help         Show this help text.",
@@ -199,9 +210,12 @@ function buildMetadata(item) {
   };
 }
 
-function buildPrompt(item, variantIndex, totalVariants) {
+function buildPrompt(item, variantIndex, totalVariants, baseStory) {
   const variantHint = totalVariants > 1
     ? `This is variant ${variantIndex + 1} of ${totalVariants}. Make this variant feel distinct from the others in opening, structure, and imagery.`
+    : "";
+  const differenceHint = baseStory
+    ? "Write a completely different (almost polar opposites, but no need to mention the other intentionally) story from the first variant below. Do not reuse distinctive phrases, facts, or imagery from it."
     : "";
 
   return [
@@ -221,8 +235,10 @@ function buildPrompt(item, variantIndex, totalVariants) {
     "Use the tone like you're an historian or archaeologist",
     "Return only the narration text. No title, bullets, markdown, or quotation marks.",
     variantHint,
+    differenceHint,
     "",
     "",
+    baseStory ? `First story (variant 1): ${baseStory}` : "",
     `Metadata: ${JSON.stringify(buildMetadata(item))}`,
   ].join("\n");
 }
@@ -245,7 +261,7 @@ function sleep(ms) {
   });
 }
 
-async function generateWithOpenAI(item, { apiKey, model, variantIndex, totalVariants }) {
+async function generateWithOpenAI(item, { apiKey, model, variantIndex, totalVariants, baseStory }) {
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -263,7 +279,7 @@ async function generateWithOpenAI(item, { apiKey, model, variantIndex, totalVari
         {
           role: "user",
           content: [
-            { type: "input_text", text: buildPrompt(item, variantIndex, totalVariants) },
+            { type: "input_text", text: buildPrompt(item, variantIndex, totalVariants, baseStory) },
             { type: "input_image", image_url: item.imageUrl, detail: "low" },
           ],
         },
@@ -371,17 +387,28 @@ for (const [index, item] of selectedItems.entries()) {
   const variants = [];
 
   for (let variantIndex = 0; variantIndex < variantCount; variantIndex += 1) {
+    if (options.onlyVariant !== null && variantIndex !== options.onlyVariant) {
+      if (existingEntry[variantIndex]) {
+        variants.push(existingEntry[variantIndex]);
+      }
+      continue;
+    }
+
     if (!options.force && !options.refresh && existingEntry[variantIndex]) {
       variants.push(existingEntry[variantIndex]);
       continue;
     }
 
+    const baseStory = variantIndex > 0
+      ? (variants[0] ?? existingEntry[0] ?? "")
+      : "";
     console.log(`Generating story ${index + 1}/${total} (variant ${variantIndex + 1}/${variantCount}): ${item.id}`);
     const story = await generateWithRetry(item, {
       apiKey,
       model,
       variantIndex,
       totalVariants: variantCount,
+      baseStory,
     });
     variants.push(story);
   }
